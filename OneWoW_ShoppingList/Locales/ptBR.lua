@@ -232,13 +232,13 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["OWSL_TAB_SHOPPING"] = "Compras",
     ["OWSL_BTN_LIST"] = "Lista",
     ["OWSL_MENU_FARM"] = "Farm",
-    ["OWSL_MENU_WANT"] = "Quero",
-    ["OWSL_FARM_WANTED"] = "Desejados",
     ["OWSL_SEND_TO_SHOPPING"] = "Enviar para a lista de compras",
     ["OWSL_SEND_TO_FARM"] = "Enviar para Farm",
-    ["OWSL_MOVE_TO_WANTED"] = "Mover para Desejados",
-    ["OWSL_MOVE_TO_FARMING"] = "Mover para Farming",
     ["OWSL_FARM_SELECT_ITEM"] = "Selecione um item",
+    ["OWSL_BUY_INSTEAD"] = "Comprar em vez disso",
+    ["OWSL_SEARCH_AH"] = "Buscar na Casa de Leiloes",
+    ["OWSL_FARM_NO_PLACE"] = "Sem local no catalogo",
+    ["OWSL_SOLD_BY_VENDOR"] = "Vendido por %s",
 
     ["ADDON_CHAT_PREFIX"] = "|cFFFFD100OneWoW Shopping List:|r",
 

@@ -65,7 +65,6 @@ Data\Encounters_Dragonflight.lua
 Data\Encounters_TheWarWithin.lua
 Data\Encounters_Midnight.lua
 Data\Difficulties.lua
-Data\MapDifficulties.lua
 Data\TierMembership.lua
 Data\ListingOverrides.lua
 

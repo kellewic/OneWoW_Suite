@@ -4,21 +4,28 @@ local L = ns.L
 -- ============================================================================
 -- FarmList
 -- ============================================================================
--- One account-wide farming list (Wanted / Farming styles), stored at
--- ns.db.global.farmList.items[itemID]. Owned counts reuse DataAccess with
--- searchAlts so "anywhere" matches Shopping List alt/warband scanning.
--- Catalog "where to get it" lines read pack APIs only when that pack is
--- already loaded -- never EnsureCatalogPack.
+-- One account-wide farming list, stored at ns.db.global.farmList.items[itemID].
+-- style is kept as "farming" for CompSync compat; the UI does not split Wanted
+-- vs Farming. Owned counts reuse DataAccess with searchAlts so "anywhere"
+-- matches Shopping List alt/warband scanning. Catalog sources and buy-instead
+-- vendor lines read pack APIs only when that pack is already loaded -- never
+-- EnsureCatalogPack.
 -- ============================================================================
 
 ns.FarmList = {}
 local FarmList = ns.FarmList
 
-local STYLE_WANTED  = "wanted"
 local STYLE_FARMING = "farming"
 local QTY_MIN = 1
 local QTY_MAX = 9999
 local SOURCE_LINE_CAP = 4
+local KIND_RANK = {
+    instance = 1,
+    vendor = 2,
+    quest = 3,
+    profession = 4,
+    other = 5,
+}
 
 local function GetItems()
     return ns.db.global.farmList.items
@@ -37,11 +44,49 @@ local function ClampQuantity(qty)
     return qty
 end
 
-local function NormalizeStyle(style)
-    if style == STYLE_FARMING then
-        return STYLE_FARMING
+--- Best catalog place label when the row has no stored instance_name.
+---@param itemID number
+---@return string|nil title
+---@return string kind
+local function InferPlace(itemID)
+    local journal = OneWoW:GetCatalogPackAPI("journal")
+    if journal then
+        local drops = journal.GetItemDropLocations(itemID) or {}
+        local drop = drops[1]
+        if drop and drop.instanceName and drop.instanceName ~= "" then
+            return drop.instanceName, "instance"
+        end
     end
-    return STYLE_WANTED
+    local vendorsAPI = OneWoW:GetCatalogPackAPI("vendors")
+    if vendorsAPI then
+        local vendors = vendorsAPI.GetVendorsByItem(itemID) or {}
+        local vendor = vendors[1]
+        if vendor and vendor.name and vendor.name ~= "" then
+            return vendor.name, "vendor"
+        end
+    end
+    local questAPI = OneWoW:GetCatalogPackAPI("quests")
+    if questAPI then
+        local ids = questAPI.GetQuestsRewardingItem(itemID)
+        if ids and ids[1] then
+            local name = questAPI.GetQuestName(ids[1])
+            if name and name ~= "" then
+                return name, "quest"
+            end
+        end
+    end
+    local tsAPI = OneWoW:GetCatalogPackAPI("tradeskills")
+    if tsAPI then
+        local recipes = tsAPI.GetRecipesByItem(itemID) or {}
+        local recipe = recipes[1]
+        if recipe then
+            local label = recipe.prof or tsAPI.GetRecipeProfession(recipe.id)
+            if label and label ~= "" then
+                return label, "profession"
+            end
+        end
+    end
+    return nil, "other"
 end
 
 local function ResolveName(itemID, stored)
@@ -90,8 +135,15 @@ function FarmList:AddItem(itemID, style, extras)
         return false, L["OWSL_INVALID_ITEM"]
     end
     extras = extras or {}
-    style = NormalizeStyle(style or extras.style)
+    style = STYLE_FARMING
     local now = GetServerTime()
+    local instanceName = extras.instance_name or ""
+    if instanceName == "" then
+        local inferred = InferPlace(itemID)
+        if inferred then
+            instanceName = inferred
+        end
+    end
     local items = GetItems()
     local existing = items[itemID]
     if existing then
@@ -112,6 +164,8 @@ function FarmList:AddItem(itemID, style, extras)
         end
         if extras.instance_name and extras.instance_name ~= "" then
             existing.instance_name = extras.instance_name
+        elseif instanceName ~= "" and (not existing.instance_name or existing.instance_name == "") then
+            existing.instance_name = instanceName
         end
         if extras.encounter and extras.encounter ~= "" then
             existing.encounter = extras.encounter
@@ -132,7 +186,7 @@ function FarmList:AddItem(itemID, style, extras)
         quantity      = ClampQuantity(extras.quantity or 1),
         style         = style,
         notes         = extras.notes or "",
-        instance_name = extras.instance_name or "",
+        instance_name = instanceName,
         encounter     = extras.encounter or "",
         instance      = tonumber(extras.instance) or 0,
         tier          = tonumber(extras.tier) or 0,
@@ -161,7 +215,7 @@ end
 function FarmList:SetStyle(itemID, style)
     local row = self:GetItem(itemID)
     if not row then return false, L["OWSL_LIST_NOT_FOUND"] end
-    row.style = NormalizeStyle(style)
+    row.style = STYLE_FARMING
     row.modified = GetServerTime()
     ScheduleRefresh()
     return true
@@ -227,34 +281,93 @@ local function SortByName(a, b)
     return (a.name or "") < (b.name or "")
 end
 
---- All farm rows grouped by style, name-sorted, with live display names.
----@return { wanted: table[], farming: table[] }
+local function CopyRow(itemID, row)
+    local copy = {
+        itemID        = itemID,
+        name          = ResolveName(itemID, row.name),
+        quantity      = row.quantity or 1,
+        style         = STYLE_FARMING,
+        notes         = row.notes or "",
+        instance_name = row.instance_name or "",
+        encounter     = row.encounter or "",
+        instance      = row.instance or 0,
+        tier          = row.tier or 0,
+        added         = row.added or 0,
+        modified      = row.modified or 0,
+    }
+    row.name = copy.name
+    return copy
+end
+
+--- All farm rows, name-sorted, with live display names.
+---@return table[]
 function FarmList:GetAll()
-    local wanted, farming = {}, {}
+    local items = {}
     for itemID, row in pairs(GetItems()) do
-        local copy = {
-            itemID        = itemID,
-            name          = ResolveName(itemID, row.name),
-            quantity      = row.quantity or 1,
-            style         = NormalizeStyle(row.style),
-            notes         = row.notes or "",
-            instance_name = row.instance_name or "",
-            encounter     = row.encounter or "",
-            instance      = row.instance or 0,
-            tier          = row.tier or 0,
-            added         = row.added or 0,
-            modified      = row.modified or 0,
-        }
-        row.name = copy.name
-        if copy.style == STYLE_FARMING then
-            farming[#farming + 1] = copy
-        else
-            wanted[#wanted + 1] = copy
-        end
+        items[#items + 1] = CopyRow(itemID, row)
     end
-    sort(wanted, SortByName)
-    sort(farming, SortByName)
-    return { wanted = wanted, farming = farming }
+    sort(items, SortByName)
+    return items
+end
+
+--- Farm rows grouped by catalog place (instance, vendor, quest, profession).
+---@return { key: string, title: string, kind: string, items: table[] }[]
+function FarmList:GetPlaceGroups()
+    local groupsByKey = {}
+    local order = {}
+    for itemID, row in pairs(GetItems()) do
+        local copy = CopyRow(itemID, row)
+        local title = copy.instance_name
+        local kind = "instance"
+        if title == "" then
+            title, kind = InferPlace(itemID)
+            if not title or title == "" then
+                title = L["OWSL_FARM_NO_PLACE"]
+                kind = "other"
+            end
+        end
+        local key = kind .. ":" .. title
+        local group = groupsByKey[key]
+        if not group then
+            group = { key = key, title = title, kind = kind, items = {} }
+            groupsByKey[key] = group
+            order[#order + 1] = group
+        end
+        group.items[#group.items + 1] = copy
+    end
+    for i = 1, #order do
+        sort(order[i].items, SortByName)
+    end
+    sort(order, function(a, b)
+        local ra = KIND_RANK[a.kind] or 9
+        local rb = KIND_RANK[b.kind] or 9
+        if ra ~= rb then
+            return ra < rb
+        end
+        return (a.title or "") < (b.title or "")
+    end)
+    return order
+end
+
+--- Vendor buy-instead notice when the vendors pack is already loaded.
+---@param itemID number|string
+---@return { hasVendor: boolean, vendorName: string }
+function FarmList:GetBuyInstead(itemID)
+    itemID = tonumber(itemID)
+    if not itemID then
+        return { hasVendor = false, vendorName = "" }
+    end
+    local vendorsAPI = OneWoW:GetCatalogPackAPI("vendors")
+    if not vendorsAPI then
+        return { hasVendor = false, vendorName = "" }
+    end
+    local vendors = vendorsAPI.GetVendorsByItem(itemID) or {}
+    local vendor = vendors[1]
+    local name = vendor and vendor.name or ""
+    if name == "" then
+        return { hasVendor = false, vendorName = "" }
+    end
+    return { hasVendor = true, vendorName = name }
 end
 
 --- Owned vs needed using DataAccess (alts + warband + guild when Storage is up).

@@ -27,7 +27,7 @@ loads them, not at login.
 
 | Module | Role |
 |--------|------|
-| `Core/DataLoader.lua` | Registrars: `RegisterPlaceData`, `RegisterEncounterData`, `RegisterDifficultyData`, `RegisterMapDifficultyData`, `RegisterTierMembership`, `RegisterListingOverrides` |
+| `Core/DataLoader.lua` | Registrars: `RegisterPlaceData`, `RegisterEncounterData`, `RegisterDifficultyData`, `RegisterTierMembership`, `RegisterListingOverrides` |
 | `Core/Database.lua` | SavedVariables init (`ns.db`) |
 | `Core/API.lua` | Public API (`GetPlace`, `GetEncounter`, `GetInstanceByMapID`, …) |
 | `Modules/JournalCard.lua` | Card mutation helpers for live overlay (sort / totals / place extra) |
@@ -59,8 +59,7 @@ Per-expansion shards under `Data/`:
 
 - `Places_<Expansion>.lua` — `ns:RegisterPlaceData` (Classic through Midnight)
 - `Encounters_<Expansion>.lua` — `ns:RegisterEncounterData`
-- `Difficulties.lua`, `MapDifficulties.lua`, `TierMembership.lua`,
-  `ListingOverrides.lua`
+- `Difficulties.lua`, `TierMembership.lua`, `ListingOverrides.lua`
 
 Merged into `ns.Places` (place key) and `ns.Encounters` (encounterID).
 

@@ -12,6 +12,9 @@ local COLLECTED = COLLECTED
 local NOT_COLLECTED = NOT_COLLECTED
 local SetPortraitTextureFromCreatureDisplayID = SetPortraitTextureFromCreatureDisplayID
 local EJ_GetCreatureInfo = EJ_GetCreatureInfo
+local C_EncounterJournal = C_EncounterJournal
+local OVERVIEW = OVERVIEW
+local ABILITIES = ABILITIES
 
 local BACKDROP_SIMPLE = OneWoW_GUI.Constants.BACKDROP_SIMPLE
 local BACKDROP_INNER_NO_INSETS = OneWoW_GUI.Constants.BACKDROP_INNER_NO_INSETS
@@ -2338,6 +2341,140 @@ local function BuildAchievementsTable(parent, instData, yOffset)
     return yOffset - 8
 end
 
+-- Guide overview headerType is local in FrameXML (EJ_HTYPE_OVERVIEW = 3).
+local EJ_SECTION_HEADER_OVERVIEW = 3
+local JOURNAL_ENCOUNTER_ID_MAX = 9999999
+
+local function IsGuideEncounterID(encounterID)
+    return type(encounterID) == "number"
+        and encounterID >= 1
+        and encounterID <= JOURNAL_ENCOUNTER_ID_MAX
+end
+
+local function InstanceHasGuidePage(instData)
+    if not instData or not instData.instanceID or instData.instanceID <= 0 then
+        return false
+    end
+    local instanceType = instData.instanceType
+    if instanceType == "zone" or instanceType == "delve" or instData.isCity then
+        return false
+    end
+    return true
+end
+
+local function AppendWrappedDetailText(parent, yOffset, text, fontSize, colorKey, indent)
+    local fs = OneWoW_GUI:CreateFS(parent, fontSize)
+    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", indent, yOffset)
+    fs:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, yOffset)
+    fs:SetJustifyH("LEFT")
+    fs:SetJustifyV("TOP")
+    fs:SetWordWrap(true)
+    fs:SetText(text)
+    fs:SetTextColor(OneWoW_GUI:GetThemeColor(colorKey))
+    table.insert(detailElements, fs)
+    return yOffset - (fs:GetStringHeight() or 0) - 6
+end
+
+local function AppendDetailSectionLabel(parent, yOffset, text, indent)
+    local fs = OneWoW_GUI:CreateFS(parent, 11)
+    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", indent or 10, yOffset)
+    fs:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, yOffset)
+    fs:SetJustifyH("LEFT")
+    fs:SetText(text)
+    fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_ACCENT"))
+    table.insert(detailElements, fs)
+    return yOffset - 16
+end
+
+local function CollectGuideSections(rootSectionID)
+    local sections = {}
+    local function skipOverviews(sectionID)
+        while sectionID and sectionID > 0 do
+            local info = C_EncounterJournal.GetSectionInfo(sectionID)
+            if not info then
+                return nil
+            end
+            if info.headerType == EJ_SECTION_HEADER_OVERVIEW then
+                sectionID = info.siblingSectionID
+            else
+                return sectionID
+            end
+        end
+        return nil
+    end
+
+    local function walk(sectionID, depth)
+        while sectionID and sectionID > 0 do
+            local info = C_EncounterJournal.GetSectionInfo(sectionID)
+            if not info then
+                break
+            end
+            tinsert(sections, {
+                title = info.title,
+                description = info.description,
+                depth = depth,
+            })
+            if info.firstChildSectionID and info.firstChildSectionID > 0 then
+                walk(info.firstChildSectionID, depth + 1)
+            end
+            sectionID = info.siblingSectionID
+        end
+    end
+
+    local startID = skipOverviews(rootSectionID)
+    if startID then
+        walk(startID, 0)
+    end
+    return sections
+end
+
+local function LiveInstanceDescription(instanceID)
+    if not OneWoW:EnsureLoaded("Blizzard_EncounterJournal") then
+        return nil
+    end
+    local _, description = EJ_GetInstanceInfo(instanceID)
+    if description and description ~= "" then
+        return description
+    end
+    return nil
+end
+
+local function AppendLiveEncounterGuide(parent, encounter, yOffset)
+    if encounter.worldRare or encounter.extrasCategory or encounter.questCategory then
+        return yOffset
+    end
+    local encID = encounter.encounterID
+    if not IsGuideEncounterID(encID) then
+        return yOffset
+    end
+    if not OneWoW:EnsureLoaded("Blizzard_EncounterJournal") then
+        return yOffset
+    end
+    local _, description, _, rootSectionID = EJ_GetEncounterInfo(encID)
+    if description and description ~= "" then
+        yOffset = AppendWrappedDetailText(parent, yOffset, description, 11, "TEXT_MUTED", 16)
+    end
+    if not rootSectionID or rootSectionID <= 0 then
+        return yOffset
+    end
+    local sections = CollectGuideSections(rootSectionID)
+    if #sections == 0 then
+        return yOffset
+    end
+    yOffset = AppendDetailSectionLabel(parent, yOffset, ABILITIES, 16)
+    for i = 1, #sections do
+        local sec = sections[i]
+        local indent = 16 + (sec.depth * 12)
+        if sec.title and sec.title ~= "" then
+            yOffset = AppendWrappedDetailText(parent, yOffset, sec.title, 11, "TEXT_SECONDARY", indent)
+        end
+        if sec.description and sec.description ~= "" then
+            yOffset = AppendWrappedDetailText(parent, yOffset, sec.description, 10, "TEXT_MUTED", indent)
+        end
+    end
+    return yOffset
+end
+
 RefreshDetailView = function(isSecondRefresh)
     if not panels_ref or not selectedInstance then return end
 
@@ -2386,6 +2523,14 @@ RefreshDetailView = function(isSecondRefresh)
     infoLine:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
     table.insert(detailElements, infoLine)
     yOffset = yOffset - 20
+
+    if InstanceHasGuidePage(instData) then
+        local instanceLore = LiveInstanceDescription(instData.instanceID)
+        if instanceLore then
+            yOffset = AppendDetailSectionLabel(parent, yOffset, OVERVIEW, 10)
+            yOffset = AppendWrappedDetailText(parent, yOffset, instanceLore, 11, "TEXT_MUTED", 10)
+        end
+    end
 
     local divider1 = OneWoW_GUI:CreateDivider(parent, { yOffset = yOffset })
     table.insert(detailElements, divider1)
@@ -2614,7 +2759,9 @@ RefreshDetailView = function(isSecondRefresh)
 
         yOffset = yOffset - ((showPortrait and ENC_ROW_HEIGHT_PORTRAIT or ENC_ROW_HEIGHT) + 2)
 
-        if isExpanded and #filteredItems > 0 then
+        if isExpanded then
+            yOffset = AppendLiveEncounterGuide(parent, encounter, yOffset)
+            if #filteredItems > 0 then
             if encounter.questCategory then
                 for i, item in ipairs(filteredItems) do
                     yOffset = BuildQuestItemRow(parent, item, yOffset, i)
@@ -2745,6 +2892,7 @@ RefreshDetailView = function(isSecondRefresh)
                 end)
 
                 yOffset = yOffset - (ITEM_ROW_HEIGHT + 2)
+            end
             end
             end
         end

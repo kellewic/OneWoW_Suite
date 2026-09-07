@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "zhCN", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "目录 - NPC",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "目录的NPC标签列出商店、训练师、任务给予者、稀有和首领。遭遇卡片显示类型、击杀任务、相关任务、掉落和位置。点击任务、查看掉落或位置可跳到任务、地区或地图。",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "购物清单 - 刷取",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "购物清单现在有刷取标签：一份账号通用清单，分为想要和刷取两组。查看已有数量、写备注，并把一行发到购物清单。笔记收藏品里的想要或刷取意图会在能解析物品时加入刷取清单。",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "购物清单现在有刷取标签：一份账号通用清单，按获取地点分组。商人提示和拍卖行搜索会告诉你何时可以改买不刷。笔记收藏品里的刷取意图会在能解析物品时加入刷取清单。",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - 小地图按钮收集器",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "OneWoW 小地图行可添加 Mail、Settings 和 Portals 按钮。在收集器设置中分别开关。已加载 Mail 时，右键 OneWoW 图标也可打开 Mail。",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "更新提示",

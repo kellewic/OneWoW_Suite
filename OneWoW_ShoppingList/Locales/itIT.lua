@@ -232,13 +232,13 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
     ["OWSL_TAB_SHOPPING"] = "Spesa",
     ["OWSL_BTN_LIST"] = "Elenco",
     ["OWSL_MENU_FARM"] = "Farm",
-    ["OWSL_MENU_WANT"] = "Desiderio",
-    ["OWSL_FARM_WANTED"] = "Desiderati",
     ["OWSL_SEND_TO_SHOPPING"] = "Invia alla lista della spesa",
     ["OWSL_SEND_TO_FARM"] = "Invia alla lista Farming",
-    ["OWSL_MOVE_TO_WANTED"] = "Sposta in Desiderati",
-    ["OWSL_MOVE_TO_FARMING"] = "Sposta in Farming",
     ["OWSL_FARM_SELECT_ITEM"] = "Seleziona un oggetto",
+    ["OWSL_BUY_INSTEAD"] = "Compra invece",
+    ["OWSL_SEARCH_AH"] = "Cerca in Casa d'aste",
+    ["OWSL_FARM_NO_PLACE"] = "Nessun luogo catalogo",
+    ["OWSL_SOLD_BY_VENDOR"] = "Venduto da %s",
 
     ["ADDON_CHAT_PREFIX"] = "|cFFFFD100OneWoW Shopping List:|r",
 

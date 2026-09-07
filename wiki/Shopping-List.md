@@ -1,4 +1,4 @@
-**OneWoW Shopping List** tracks what you need to buy, craft, or farm — and shows what you already own on this character or across your account. One window has two tabs: **Shopping** (named lists) and **Farming** (one account-wide list).
+**OneWoW Shopping List** tracks what you need to buy, craft, or farm — and shows what you already own on this character or across your account. One window has two tabs: **Shopping** (named lists) and **Farming** (one account-wide list grouped by where to get the item).
 
 **Requires:** [OneWoW](Home) core. Enable **Shopping List** under [Manage Features](Getting-Started).
 
@@ -20,14 +20,13 @@ Slash extras: `show` / `hide` / `help` / `add <itemID>` / `farm` on any Shopping
 
 ## Farming List
 
-One account-wide list (not multiple named lists). The left side has **Wanted** and **Farming** groups. Click a row to select it.
+One account-wide list (not multiple named lists). The left side groups rows by where to get the item. Click a row to select it.
 
-The right side shows item info, **Where it is** (owned copies, same colors as Shopping), **Where to get it** when a Catalog pack is already loaded this session, a short note, and a quantity.
+The right side shows item info, a **Buy instead** notice when a vendor is already loaded, **Where it is** (owned copies, same colors as Shopping), **Where to get it** when a Catalog pack is already loaded this session, a short note, and a quantity. Search Auction House from the detail pane when the house is open.
 
-* Move a row between Wanted and Farming
 * Send a farm row to a shopping list you pick (adds that quantity)
-* Right-click a Shopping row and choose **Send to Farm** (Wanted or Farming)
-* Notes Collectibles **Want** or **Farming** intent adds that item here when we can resolve an item id
+* Right-click a Shopping row and choose **Send to Farm**
+* Notes Collectibles **Farming** intent adds that item here when we can resolve an item id. **Want** stays on the Notes record
 
 ---
 

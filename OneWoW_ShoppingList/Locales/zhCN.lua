@@ -232,13 +232,13 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
     ["OWSL_TAB_SHOPPING"] = "购物",
     ["OWSL_BTN_LIST"] = "清单",
     ["OWSL_MENU_FARM"] = "刷取",
-    ["OWSL_MENU_WANT"] = "想要",
-    ["OWSL_FARM_WANTED"] = "想要",
     ["OWSL_SEND_TO_SHOPPING"] = "发送到购物清单",
     ["OWSL_SEND_TO_FARM"] = "发送到刷取清单",
-    ["OWSL_MOVE_TO_WANTED"] = "移到想要",
-    ["OWSL_MOVE_TO_FARMING"] = "移到刷取",
     ["OWSL_FARM_SELECT_ITEM"] = "选择一件物品",
+    ["OWSL_BUY_INSTEAD"] = "改为购买",
+    ["OWSL_SEARCH_AH"] = "搜索拍卖行",
+    ["OWSL_FARM_NO_PLACE"] = "无目录地点",
+    ["OWSL_SOLD_BY_VENDOR"] = "由%s出售",
 
     ["ADDON_CHAT_PREFIX"] = "|cFFFFD100OneWoW Shopping List:|r",
 

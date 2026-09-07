@@ -77,7 +77,7 @@ function Collectibles:UpsertCollectible(key, fields)
             if v ~= nil then existing[k] = v end
         end
         self:SaveCollectible(key, existing)
-        if fields.intent == "want" or fields.intent == "farming" then
+        if fields.intent == "farming" then
             self:SyncFarmListIntent(key, existing.intent)
         end
         return true, existing
@@ -101,7 +101,7 @@ function Collectibles:UpsertCollectible(key, fields)
     }
 
     self:SaveCollectible(key, record)
-    if fields.intent == "want" or fields.intent == "farming" then
+    if fields.intent == "farming" then
         self:SyncFarmListIntent(key, record.intent)
     end
     return true, record
@@ -144,13 +144,14 @@ function Collectibles:SetIntent(key, intent)
     end
 
     self:SaveCollectible(key, record)
-    if intent == "want" or intent == "farming" then
+    if intent == "farming" then
         self:SyncFarmListIntent(key, intent)
     end
 end
 
--- Shopping List is LoD and not a Notes RequiredDep. Push Want / Farming
--- items when the API is present; otherwise queue until data-ready.
+-- Shopping List is LoD and not a Notes RequiredDep. Push Farming-intent
+-- items when the API is present; otherwise queue until data-ready. Want
+-- stays on the Notes record.
 local pendingFarmPushes = {}
 local farmWatcherRegistered = false
 
@@ -205,10 +206,11 @@ end
 ---@param key string
 ---@param intent string
 function Collectibles:SyncFarmListIntent(key, intent)
+    if intent ~= "farming" then return end
     local itemID = ResolveCollectibleItemID(key)
     if not itemID then return end
 
-    local style = intent == "farming" and "farming" or "wanted"
+    local style = "farming"
     local display = OneWoW.Collectibles.ResolveDisplay(key)
     local extras = {
         name = display and display.name or "",

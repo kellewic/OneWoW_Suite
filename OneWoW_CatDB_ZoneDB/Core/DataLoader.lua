@@ -7,7 +7,6 @@ local _, ns = ...
 --   ns:RegisterPlaceData{ ["instance:63"] = { ... } }
 --   ns:RegisterEncounterData{ [89] = { ... } }
 --   ns:RegisterDifficultyData{ [1] = { ... } }
---   ns:RegisterMapDifficultyData{ ... }
 --   ns:RegisterTierMembership{ ... }
 --   ns:RegisterListingOverrides{ ... }
 -- ============================================================================
@@ -17,7 +16,6 @@ local pairs = pairs
 ns.Places = ns.Places or {}
 ns.Encounters = ns.Encounters or {}
 ns.Difficulties = ns.Difficulties or {}
-ns.MapDifficulties = ns.MapDifficulties or {}
 ns.TierMembership = ns.TierMembership or {}
 ns.ListingOverrides = ns.ListingOverrides or {}
 
@@ -44,12 +42,6 @@ end
 ---@param source table<number, table>
 function ns:RegisterDifficultyData(source)
     MergeByKey(ns.Difficulties, source)
-end
-
---- Merge MapDifficulty rows.
----@param source table
-function ns:RegisterMapDifficultyData(source)
-    MergeByKey(ns.MapDifficulties, source)
 end
 
 --- Merge journal-tier membership.

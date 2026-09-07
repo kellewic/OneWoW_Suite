@@ -231,13 +231,13 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["OWSL_TAB_SHOPPING"] = "쇼핑",
     ["OWSL_BTN_LIST"] = "목록",
     ["OWSL_MENU_FARM"] = "파밍",
-    ["OWSL_MENU_WANT"] = "원함",
-    ["OWSL_FARM_WANTED"] = "원함",
     ["OWSL_SEND_TO_SHOPPING"] = "쇼핑 목록으로 보내기",
     ["OWSL_SEND_TO_FARM"] = "파밍 목록으로 보내기",
-    ["OWSL_MOVE_TO_WANTED"] = "원함으로 이동",
-    ["OWSL_MOVE_TO_FARMING"] = "파밍으로 이동",
     ["OWSL_FARM_SELECT_ITEM"] = "아이템을 선택하세요",
+    ["OWSL_BUY_INSTEAD"] = "대신 구매",
+    ["OWSL_SEARCH_AH"] = "경매장 검색",
+    ["OWSL_FARM_NO_PLACE"] = "카탈로그 위치 없음",
+    ["OWSL_SOLD_BY_VENDOR"] = "%s가 판매",
 
     ["ADDON_CHAT_PREFIX"] = "|cFFFFD100OneWoW Shopping List:|r",
 

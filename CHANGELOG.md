@@ -33,6 +33,7 @@
 ## Journal
 - Extra drops that come from a quest or an achievement sit in their own groups again. Click the quest link to open that quest.
 - Encounter rows have See NPC and See Map after the source icon when we know that NPC or a pin.
+- Opening a dungeon or raid card shows the Adventure Guide overview. Expanding a Guide boss shows that encounter's text and abilities.
 
 ## Quests
 - Show on Map uses the NPC database pin for the giver or turn-in, including object starters.
@@ -106,10 +107,10 @@
 
 # Shopping List
 ## Farming List
-- The Shopping List window has a Farming tab: one account-wide list with Wanted and Farming groups.
-- Select a row for item info, where you already have copies, where to get it (when Catalog packs are already loaded), a note, and a quantity.
-- Move a row between Wanted and Farming, or send it to a shopping list. Right-click a shopping-list item to send it to Farm.
-- Notes Collectibles Want or Farming intent adds that item to the Farming List when we can resolve an item id.
+- The Shopping List window has a Farming tab: one account-wide list grouped by where to get the item.
+- Select a row for item info, where you already have copies, where to get it (when Catalog packs are already loaded), a note, and a quantity. A vendor line and Auction House search show when you can buy instead of farming.
+- Send a farm row to a shopping list. Right-click a shopping-list item to send it to Farm.
+- Notes Collectibles Farming intent adds that item to the Farming List when we can resolve an item id. Want stays on the Notes record.
 
 ---
 
@@ -117,4 +118,4 @@
 
 ---
 
-- **Last Updated**: Sep 6, 2026
+- **Last Updated**: Sep 7, 2026

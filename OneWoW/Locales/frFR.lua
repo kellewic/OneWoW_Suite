@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "frFR", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "Catalogue - PNJ",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "L'onglet PNJ du Catalogue liste les marchands, maitres, donneur de quetes, rares et boss. Les cartes de rencontre montrent le type, la quete de kill, les quetes liees, le butin et le lieu. Cliquez une quete, Voir le butin ou un lieu pour ouvrir Quetes, Zones ou la carte.",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "Liste de courses - Farming",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "La liste de courses a un onglet Farming : une liste de compte avec les groupes Souhaites et Farming. Voyez ce que vous possedez, ajoutez une note, et envoyez une ligne vers une liste de courses. L'intention Want ou Farming des collectibles Notes ajoute l'objet quand on peut le resoudre.",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "La liste de courses a un onglet Farming : une liste de compte groupee par lieu d'obtention. Un avis vendeur et la recherche a l'hotel des ventes indiquent quand vous pouvez acheter au lieu de farmer. L'intention Farming des collectibles Notes ajoute l'objet quand on peut le resoudre.",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - Collecteur de boutons de minicarte",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "La rangee de minicarte OneWoW peut ajouter les boutons Mail, Settings et Portals. Activez ou desactivez chacun dans les parametres du collecteur. Un clic droit sur l'icone OneWoW propose aussi Ouvrir Mail quand Mail est charge.",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "Avis de mise à jour",

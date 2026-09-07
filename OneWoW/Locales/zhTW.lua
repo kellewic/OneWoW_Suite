@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "zhTW", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "目錄 - NPC",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "目錄的NPC分頁列出商店、訓練師、任務給予者、稀有和首領。遭遇卡片顯示類型、擊殺任務、相關任務、掉落和位置。點擊任務、查看掉落或位置可跳到任務、地區或地圖。",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "購物清單 - 刷取",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "購物清單現在有刷取分頁：一份帳號共用清單，分為想要和刷取兩組。查看已有數量、寫備註，並把一列傳到購物清單。筆記收藏品的想要或刷取意圖會在能解析物品時加入刷取清單。",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "購物清單現在有刷取分頁：一份帳號共用清單，依取得地點分組。商人提示與拍賣場搜尋會告訴你何時可以改買不刷。筆記收藏品的刷取意圖會在能解析物品時加入刷取清單。",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - 小地圖按鈕收集器",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "OneWoW 小地圖列可加入 Mail、Settings 和 Portals 按鈕。在收集器設定中分別開關。已載入 Mail 時，右鍵 OneWoW 圖示也可開啟 Mail。",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "更新提示",

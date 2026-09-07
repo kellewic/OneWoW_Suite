@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "esES", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "Catalogo - PNJ",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "La pestana PNJ del Catalogo lista tiendas, instructores, dadores de mision, raros y jefes. Las fichas de encuentro muestran tipo, mision de muerte, misiones relacionadas, botin y ubicacion. Haz clic en una mision, Ver botin o una ubicacion para ir a Misiones, Zonas o el mapa.",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "Lista de compras - Farmeo",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "La lista de compras tiene una pestana de Farmeo: una lista de cuenta con grupos Deseados y Farmeo. Mira lo que ya tienes, anade una nota y envia una fila a una lista de compras. La intencion Want o Farmeo en Coleccionables de Notes anade el objeto cuando podemos resolverlo.",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "La lista de compras tiene una pestana de Farmeo: una lista de cuenta agrupada por donde conseguir el objeto. Un aviso de vendedor y la busqueda en la casa de subastas muestran cuando puedes comprar en vez de farmear. La intencion Farmeo en Coleccionables de Notes anade el objeto cuando podemos resolverlo.",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - Colector de botones del minimapa",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "La fila del minimapa de OneWoW puede anadir botones de Mail, Settings y Portals. Activa o desactiva cada uno en los ajustes del colector. Clic derecho en el icono de OneWoW tambien ofrece Abrir Mail cuando Mail esta cargado.",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "Aviso de actualizacion",

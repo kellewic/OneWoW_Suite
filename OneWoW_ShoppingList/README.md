@@ -21,7 +21,7 @@
 
 ### Farming List
 
-One account-wide list on the **Farming** tab (Wanted and Farming groups). Select a row for item info, where you already have copies, where to get it when Catalog packs are already loaded, a note, and a quantity. Move rows between groups, or send a farm row to a shopping list. Notes Collectibles Want or Farming intent adds the item here when we can resolve an item id.
+One account-wide list on the **Farming** tab, grouped by where to get the item. Select a row for item info, where you already have copies, where to get it when Catalog packs are already loaded, a buy-instead vendor notice, Auction House search, a note, and a quantity. Send a farm row to a shopping list. Notes Collectibles Farming intent adds the item here when we can resolve an item id. Want stays on the Notes record.
 
 ### Multiple Lists
 

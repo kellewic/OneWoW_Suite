@@ -97,7 +97,7 @@ end
 
 --- Add or update an item on the account-wide Farming List.
 ---@param itemID number|string
----@param style string|nil "wanted" or "farming"
+---@param style string|nil ignored; rows are stored as farming
 ---@param extras table|nil
 ---@return boolean
 function OneWoW_ShoppingList_API.AddFarmItem(itemID, style, extras)
@@ -111,7 +111,7 @@ function OneWoW_ShoppingList_API.RemoveFarmItem(itemID)
     return ns.FarmList:RemoveItem(itemID)
 end
 
---- Set Wanted or Farming style on a farm row.
+--- Kept for CompSync / older callers. Style is always farming.
 ---@param itemID number|string
 ---@param style string
 ---@return boolean
@@ -119,8 +119,8 @@ function OneWoW_ShoppingList_API.SetFarmStyle(itemID, style)
     return ns.FarmList:SetStyle(itemID, style)
 end
 
---- All farm rows grouped as `{ wanted = {...}, farming = {...} }`.
----@return { wanted: table[], farming: table[] }
+--- All farm rows, name-sorted.
+---@return table[]
 function OneWoW_ShoppingList_API.GetFarmItems()
     return ns.FarmList:GetAll()
 end
@@ -147,7 +147,7 @@ function OneWoW_ShoppingList_API.GetListButtonLabel()
     return ns.L["OWSL_BTN_LIST"]
 end
 
---- Farm / Want / Shopping picker for one item. Shopping opens a submenu of named lists.
+--- Farm / Shopping picker for one item. Shopping opens a submenu of named lists.
 ---@param owner Frame
 ---@param itemID number|string
 ---@param extras table|nil
@@ -162,9 +162,6 @@ function OneWoW_ShoppingList_API.ShowAddToListMenu(owner, itemID, extras)
         rootDescription:CreateTitle(L["OWSL_BTN_LIST"])
         rootDescription:CreateButton(L["OWSL_MENU_FARM"], function()
             ns.FarmList:AddItem(itemID, "farming", extras)
-        end)
-        rootDescription:CreateButton(L["OWSL_MENU_WANT"], function()
-            ns.FarmList:AddItem(itemID, "wanted", extras)
         end)
         local shopMenu = rootDescription:CreateButton(L["OWSL_TAB_SHOPPING"])
         local names = ns.ShoppingList:GetParentLists()

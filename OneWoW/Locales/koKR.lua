@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "koKR", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "카탈로그 - NPC",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "카탈로그 NPC 탭에는 상점, 기술 전문가, 퀘스트 제공자, 희귀와 보스가 나옵니다. 전투 카드에는 유형, 처치 퀘스트, 관련 퀘스트, 전리품, 위치가 있습니다. 퀘스트, 전리품 보기, 위치를 클릭하면 퀘스트, 지역 또는 지도로 이동합니다.",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "쇼핑 목록 - 파밍",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "쇼핑 목록에 파밍 탭이 생겼습니다. 계정 공유 목록에 원함과 파밍 그룹이 있고, 보유 수량과 메모를 본 뒤 쇼핑 목록으로 보낼 수 있습니다. 수집품에서 원함 또는 파밍 의도를 정하면 아이템 ID를 알 수 있을 때 파밍 목록에 추가됩니다.",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "쇼핑 목록에 파밍 탭이 생겼습니다. 계정 공유 목록이 획득 장소별로 모이고, 상인 안내와 경매장 검색으로 파밍 대신 살 수 있는지 보여 줍니다. 수집품에서 파밍 의도를 정하면 아이템 ID를 알 수 있을 때 파밍 목록에 추가됩니다.",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - 미니맵 버튼 수집기",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "OneWoW 미니맵 줄에 Mail, Settings, Portals 단추를 넣을 수 있습니다. 수집기 설정에서 각각 켜고 끕니다. Mail이 켜져 있으면 OneWoW 아이콘을 오른쪽 클릭해 Mail 열기도 됩니다.",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "업데이트 알림",

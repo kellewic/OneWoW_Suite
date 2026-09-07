@@ -21,6 +21,7 @@ Browse dungeons, raids, Delves, and World hubs from every expansion:
 - Cards use a type-colored border for raid, dungeon, world, zone, city, Delve, and bountiful Delve
 - Achievements sit above loot on the details side (collapsible, same header as Items). Cards show bosses, rares (World), items, and the achievement count. World cards include that expansion's exploration achievements. Status is a check / Warband mark / X
 - Adventure Guide button on dungeon and raid details. Delves keep a disabled Difficulty dropdown so the map pin lines up
+- Details show Adventure Guide overview text. Expanding a Guide boss shows that encounter's text and abilities
 - Detailed encounter information (if data addon is installed)
 - Look up loot tables and boss mechanics
 - Search for specific raids, dungeons, or delves

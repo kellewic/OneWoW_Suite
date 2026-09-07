@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "deDE", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "Katalog - NSCs",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "Der Katalog-Reiter NSCs listet Laeden, Lehrer, Questgeber, Seltene und Bosse. Begegnungskarten zeigen Typ, Kill-Quest, zugehoerige Quests, Beute und Ort. Klickt eine Quest, Beute anzeigen oder einen Ort, um zu Quests, Zonen oder der Karte zu springen.",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "Einkaufsliste - Farmen",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "Die Einkaufsliste hat jetzt einen Farmen-Tab: eine accountweite Liste mit Gewunscht und Farmen. Seht, was ihr schon habt, schreibt eine Notiz und schickt eine Zeile auf eine Einkaufsliste. Want- oder Farmen-Absicht bei Notes-Sammelstucken setzt den Gegenstand auf die Farmliste, wenn wir die ID kennen.",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "Die Einkaufsliste hat jetzt einen Farmen-Tab: eine accountweite Liste, gruppiert nach Herkunftsort. Ein Haendlerhinweis und die Auktionshaus-Suche zeigen, wann ihr statt Farmen kaufen koennt. Die Farmen-Absicht bei Notes-Sammelstucken setzt den Gegenstand auf die Farmliste, wenn wir die ID kennen.",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - Minimap-Button-Sammler",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "Die OneWoW-Minimap-Reihe kann Mail-, Settings- und Portals-Schalter hinzufugen. Jeden in den Sammler-Einstellungen ein- oder ausschalten. Rechtsklick auf das OneWoW-Symbol bietet auch Mail offnen, wenn Mail geladen ist.",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "Update-Hinweis",

@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "itIT", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "Catalogo - PNG",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "La scheda PNG del Catalogo elenca negozi, istruttori, datori di missioni, rari e boss. Le schede scontro mostrano tipo, missione di uccisione, missioni collegate, bottino e posizione. Clicca una missione, Vedi bottino o una posizione per aprire Missioni, Zone o la mappa.",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "Lista della spesa - Farm",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "La lista della spesa ha una scheda Farm: una lista dell'account con i gruppi Desiderati e Farm. Vedi cosa possiedi gia, aggiungi una nota e invia una riga a una lista della spesa. L'intento Want o Farm nei Collezionabili di Notes aggiunge l'oggetto quando riusciamo a risolverlo.",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "La lista della spesa ha una scheda Farm: una lista dell'account raggruppata per dove ottenere l'oggetto. Un avviso venditore e la ricerca in Casa d'aste mostrano quando puoi comprare invece di farmare. L'intento Farm nei Collezionabili di Notes aggiunge l'oggetto quando riusciamo a risolverlo.",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - Raccoglitore di pulsanti della minimappa",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "La riga minimappa OneWoW puo aggiungere i pulsanti Mail, Settings e Portals. Accendi o spegni ciascuno nelle impostazioni del raccoglitore. Clic destro sull'icona OneWoW offre anche Apri Mail quando Mail e caricato.",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "Avviso di aggiornamento",

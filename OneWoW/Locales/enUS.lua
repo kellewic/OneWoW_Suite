@@ -197,7 +197,7 @@ ns.Locale:Register(ADDON_NAME, "enUS", {
     ["WHATS_NEW_H_CATALOG_NPCS_TITLE"] = "Catalog - NPCs",
     ["WHATS_NEW_H_CATALOG_NPCS_BODY"] = "The Catalog NPCs tab lists shops, trainers, quest givers, rares, and bosses. Encounter cards show type, kill quest, related quests, loot, and location. Click a quest, View loot, or a location to jump to Quests, Zones, or the map.",
     ["WHATS_NEW_H_FARMING_LIST_TITLE"] = "Shopping List - Farming",
-    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "Shopping List now has a Farming tab: one account-wide list with Wanted and Farming groups. See what you already own, add a note, and send a row to a shopping list. Notes Collectibles Want or Farming intent adds the item when we can resolve it.",
+    ["WHATS_NEW_H_FARMING_LIST_BODY"] = "Shopping List now has a Farming tab: one account-wide list grouped by where to get the item. A vendor notice and Auction House search show when you can buy instead of farming. Notes Collectibles Farming intent adds the item when we can resolve it.",
     ["WHATS_NEW_H_COLLECTOR_TITLE"] = "QoL - Minimap Collector",
     ["WHATS_NEW_H_COLLECTOR_BODY"] = "The OneWoW minimap row can add Mail, Settings, and Portals buttons. Turn each on or off in collector settings. Right-click the OneWoW icon also offers Open Mail when Mail is loaded.",
     ["WHATS_NEW_H_VERSIONCHECK_TITLE"] = "Update notice",
