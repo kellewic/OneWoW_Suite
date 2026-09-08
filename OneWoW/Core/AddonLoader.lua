@@ -365,8 +365,8 @@ local function GetManifestParent(storeName)
 end
 
 --- True when a store still TOC-depends on its manifest parent (soft opt-out of
---- the parent must block EnsureLoaded). Most AltTracker and all Catalog packs
---- load with OneWoW only; Endgame remains parent-required.
+--- the parent must block EnsureLoaded). Most AltTracker stores load with OneWoW
+--- only; Endgame and all Catalog packs remain parent-required.
 ---@param storeName string
 ---@return boolean
 function ns:StoreRequiresParent(storeName)
@@ -703,13 +703,37 @@ ns.ModuleManifest = {
     { addon = "OneWoW_Catalog",         display = "Catalog",       cmd = "/1wcat", module = "catalog",    tabOrder = 3, loadPhase = "login",
         storePolicy = "optional",
         lazyStores = true,
-        -- Home / Manage Features / BringUp children. CatDB only.
+        -- Era packs, Other, and Tradeskills. Catalog itself is the query runtime.
+        parentRequiredStores = {
+            OneWoW_CatDB_Classic = true,
+            OneWoW_CatDB_BurningCrusade = true,
+            OneWoW_CatDB_WrathoftheLichKing = true,
+            OneWoW_CatDB_Cataclysm = true,
+            OneWoW_CatDB_MistsofPandaria = true,
+            OneWoW_CatDB_WarlordsofDraenor = true,
+            OneWoW_CatDB_Legion = true,
+            OneWoW_CatDB_BattleforAzeroth = true,
+            OneWoW_CatDB_Shadowlands = true,
+            OneWoW_CatDB_Dragonflight = true,
+            OneWoW_CatDB_TheWarWithin = true,
+            OneWoW_CatDB_Midnight = true,
+            OneWoW_CatDB_Other = true,
+            OneWoW_CatDB_TradeSkillDB = true,
+        },
         stores = {
-            "OneWoW_CatDB_ZoneDB",
-            "OneWoW_CatDB_NPCDB",
-            "OneWoW_CatDB_ItemDB",
-            "OneWoW_CatDB_QuestDBCurrent",
-            "OneWoW_CatDB_QuestDBArchive",
+            "OneWoW_CatDB_Classic",
+            "OneWoW_CatDB_BurningCrusade",
+            "OneWoW_CatDB_WrathoftheLichKing",
+            "OneWoW_CatDB_Cataclysm",
+            "OneWoW_CatDB_MistsofPandaria",
+            "OneWoW_CatDB_WarlordsofDraenor",
+            "OneWoW_CatDB_Legion",
+            "OneWoW_CatDB_BattleforAzeroth",
+            "OneWoW_CatDB_Shadowlands",
+            "OneWoW_CatDB_Dragonflight",
+            "OneWoW_CatDB_TheWarWithin",
+            "OneWoW_CatDB_Midnight",
+            "OneWoW_CatDB_Other",
             "OneWoW_CatDB_TradeSkillDB",
         } },
     { addon = "OneWoW_Trackers",        display = "Trackers",      cmd = "/1wt",   module = "trackers",   tabOrder = 4, loadPhase = "login" },
@@ -731,11 +755,19 @@ local STORE_LABEL_KEYS = {
     OneWoW_AltTracker_Endgame       = "DATA_MOD_ENDGAME",
     OneWoW_AltTracker_Accounting    = "DATA_MOD_ACCOUNTING",
     OneWoW_AltTracker_Auctions      = "DATA_MOD_AUCTIONS",
-    OneWoW_CatDB_ZoneDB             = "CAT_MOD_ZONEDB",
-    OneWoW_CatDB_NPCDB              = "CAT_MOD_NPCDB",
-    OneWoW_CatDB_ItemDB             = "CAT_MOD_ITEMDB",
-    OneWoW_CatDB_QuestDBCurrent     = "CAT_MOD_QUESTDB_CURRENT",
-    OneWoW_CatDB_QuestDBArchive     = "CAT_MOD_QUESTDB_ARCHIVE",
+    OneWoW_CatDB_Classic            = "CAT_MOD_ERA_CLASSIC",
+    OneWoW_CatDB_BurningCrusade     = "CAT_MOD_ERA_BURNINGCRUSADE",
+    OneWoW_CatDB_WrathoftheLichKing = "CAT_MOD_ERA_WOTLK",
+    OneWoW_CatDB_Cataclysm          = "CAT_MOD_ERA_CATACLYSM",
+    OneWoW_CatDB_MistsofPandaria    = "CAT_MOD_ERA_MOP",
+    OneWoW_CatDB_WarlordsofDraenor  = "CAT_MOD_ERA_WOD",
+    OneWoW_CatDB_Legion             = "CAT_MOD_ERA_LEGION",
+    OneWoW_CatDB_BattleforAzeroth   = "CAT_MOD_ERA_BFA",
+    OneWoW_CatDB_Shadowlands        = "CAT_MOD_ERA_SHADOWLANDS",
+    OneWoW_CatDB_Dragonflight       = "CAT_MOD_ERA_DRAGONFLIGHT",
+    OneWoW_CatDB_TheWarWithin       = "CAT_MOD_ERA_TWW",
+    OneWoW_CatDB_Midnight           = "CAT_MOD_ERA_MIDNIGHT",
+    OneWoW_CatDB_Other              = "CAT_MOD_ERA_OTHER",
     OneWoW_CatDB_TradeSkillDB       = "CAT_MOD_TRADESKILLDB",
 }
 
@@ -769,6 +801,13 @@ end
 ---@return string|nil
 function ns:GetStoreLabelKey(storeAddon)
     return STORE_LABEL_KEYS[storeAddon]
+end
+
+--- Runtime CatDB query addon is always pulled with an era; hide it in Manage Features.
+---@param storeAddon string
+---@return boolean
+function ns:IsHiddenStore(storeAddon)
+    return C_AddOns.GetAddOnMetadata(storeAddon, "X-OneWoW-CatDB-Runtime") == "1"
 end
 
 --- True when a store is owned by a `lazyStores` hub (Catalog packs today).

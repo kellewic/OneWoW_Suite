@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
 
     ["JOURNAL_EMPTY"] = "未加载日志数据。",
     ["JOURNAL_SELECT"] = "选择一个条目以查看详情。",
-    ["JOURNAL_NO_DATA"] = "安装地区数据库数据包以查看副本数据。",
+    ["JOURNAL_NO_DATA"] = "在功能管理中打开 Catalog 下的资料片即可查看副本数据。",
     ["JOURNAL_SEARCH"] = "搜索副本……",
     ["JOURNAL_STATS"] = "%d 个副本",
     ["JOURNAL_STATS_FILTERED"] = "%d/%d 个副本",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "仅显示丰裕",
 
     ["JOURNAL_GENERAL_LOOT"] = "通用战利品",
+    ["JOURNAL_QUEST_LOOT"] = "任务相关 / 任务掉落",
+    ["JOURNAL_WORLD_BOSSES"] = "世界首领",
+    ["JOURNAL_WORLD_RARES"] = "世界稀有",
+    ["JOURNAL_NPC_UNNAMED"] = "NPC #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "未知物品",
+    ["JOURNAL_UNKNOWN_INST"] = "未知副本",
     ["JOURNAL_ITEMS_COUNT"] = "%d 件物品",
 
     ["JOURNAL_QUEST_PREFIX"] = "任务",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
     ["VENDORS_ITEM_COUNT"] = "在售物品",
     ["VENDORS_LIMITED"] = "限量",
     ["VENDORS_PRICE_UNKNOWN"] = "价格未知",
-    ["VENDORS_NO_DATA"] = "安装NPC数据库数据包以收集NPC数据。",
+    ["VENDORS_NO_DATA"] = "在功能管理中打开资料片的 NPC，即可收集 NPC 数据。",
     ["VENDORS_WAYPOINT"] = "标记",
     ["VENDORS_WAYPOINT_TT"] = "在此NPC处设置实时路径点。打开世界地图到该区域。到达后路径点会清除。有些地图不允许设置实时路径点。",
     ["VENDORS_WAYPOINT_FAILED"] = "此地图不允许设置实时路径点。",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
 
     ["TRADESKILLS_EMPTY"] = "未加载专业技能数据。",
     ["TRADESKILLS_SELECT"] = "选择一个专业以查看配方。",
-    ["TRADESKILLS_NO_DATA"] = "安装专业技能数据库数据包以查看专业数据。",
+    ["TRADESKILLS_NO_DATA"] = "在功能管理中打开专业即可查看专业数据。",
     ["TRADESKILLS_SEARCH"] = "搜索配方……",
     ["TRADESKILLS_FILTER_CLEAR"] = "清除",
     ["TRADESKILLS_EXPANSION_ALL"] = "所有资料片",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
     ["QUESTS_ZONE_ALL"] = "所有区域",
     ["QUESTS_TYPE_ALL"] = "所有类型",
     ["QUESTS_QTYPE_ALL"] = "所有任务类型",
-    ["QUESTS_NO_DATA"] = "安装任务数据库数据包以收集任务数据。",
+    ["QUESTS_NO_DATA"] = "在功能管理中打开资料片的任务，即可收集任务数据。",
     ["QUESTS_NONE_YET"] = "尚未收集任何任务。进行游戏以填充此数据库。",
     ["QUESTS_DEFAULT_EMPTY"] = "没有进行中或收藏的任务。搜索或选择筛选条件以浏览所有任务。",
     ["QUESTS_STATUS_COUNT"] = "%d 个任务",

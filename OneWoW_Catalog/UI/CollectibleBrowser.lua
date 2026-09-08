@@ -1,6 +1,7 @@
 local _, ns = ...
 local L = ns.L
 
+local OneWoW = OneWoW
 local OneWoW_GUI = OneWoW_GUI
 
 local ipairs, wipe, tinsert = ipairs, wipe, tinsert
@@ -435,74 +436,83 @@ function ns.UI.CreateCollectibleBrowser(parent, spec)
             end
 
             if entry.itemID then
-                if ns.GetCatalogPackAPI("journal") then
-                    yOffset = yOffset - 6
-                    AddSectionHeader(L["ITEMSEARCH_SECTION_DROPS"])
-                    if #sources.drops > 0 then
-                        for _, drop in ipairs(sources.drops) do
-                            local thisDrop = drop
-                            local inst = thisDrop.instanceName
-                            local enc = thisDrop.encounterName
-                            if not inst or inst == "" or inst == "?" or inst == "???" then
-                                inst = nil
-                            end
-                            if not enc or enc == "" or enc == "?" or enc == "???" then
-                                enc = nil
-                            end
-                            local line
-                            if inst and enc then
-                                line = inst .. "  -  " .. enc
-                            else
-                                line = inst or enc or BATTLE_PET_SOURCE_1
-                            end
-                            if Browse.DropCanJump(thisDrop) then
-                                AddClickableRow(line, 12, function()
-                                    Browse.JumpToPlace(thisDrop)
-                                end)
-                            else
-                                AddTextRow(line, 12, "TEXT_PRIMARY")
-                            end
+                yOffset = yOffset - 6
+                AddSectionHeader(L["ITEMSEARCH_SECTION_DROPS"])
+                if #sources.drops > 0 then
+                    for _, drop in ipairs(sources.drops) do
+                        local thisDrop = drop
+                        local inst = thisDrop.instanceName
+                        local enc = thisDrop.encounterName
+                        if not inst or inst == "" or inst == "?" or inst == "???" then
+                            inst = nil
                         end
+                        if not enc or enc == "" or enc == "?" or enc == "???" then
+                            enc = nil
+                        end
+                        local line
+                        if inst and enc then
+                            line = inst .. "  -  " .. enc
+                        else
+                            line = inst or enc or BATTLE_PET_SOURCE_1
+                        end
+                        if Browse.DropCanJump(thisDrop) then
+                            AddClickableRow(line, 12, function()
+                                Browse.JumpToPlace(thisDrop)
+                            end)
+                        else
+                            AddTextRow(line, 12, "TEXT_PRIMARY")
+                        end
+                    end
+                else
+                    local notice = OneWoW:GetCatalogUnavailableNotice("journal")
+                    if notice then
+                        AddTextRow(notice, 12, "TEXT_WARNING")
                     else
                         AddTextRow(L["ITEMSEARCH_NO_DROPS"], 12, "TEXT_MUTED")
                     end
                 end
 
-                if ns.GetCatalogPackAPI("vendors") then
-                    yOffset = yOffset - 6
-                    AddSectionHeader(L["ITEMSEARCH_SECTION_VENDORS"])
-                    if #sources.vendors > 0 then
-                        for _, v in ipairs(sources.vendors) do
-                            local thisVendor = v
-                            local line = thisVendor.name or L["VENDORS_UNKNOWN"]
-                            if thisVendor.zone and thisVendor.zone ~= "" then
-                                line = line .. "  (" .. thisVendor.zone .. ")"
-                            end
-                            if thisVendor.npcID then
-                                AddClickableRow(line, 12, function()
-                                    Browse.JumpToVendor(thisVendor.npcID)
-                                end)
-                            else
-                                AddTextRow(line, 12, "TEXT_PRIMARY")
-                            end
+                yOffset = yOffset - 6
+                AddSectionHeader(L["ITEMSEARCH_SECTION_VENDORS"])
+                if #sources.vendors > 0 then
+                    for _, v in ipairs(sources.vendors) do
+                        local thisVendor = v
+                        local line = thisVendor.name or L["VENDORS_UNKNOWN"]
+                        if thisVendor.zone and thisVendor.zone ~= "" then
+                            line = line .. "  (" .. thisVendor.zone .. ")"
                         end
+                        if thisVendor.npcID then
+                            AddClickableRow(line, 12, function()
+                                Browse.JumpToVendor(thisVendor.npcID)
+                            end)
+                        else
+                            AddTextRow(line, 12, "TEXT_PRIMARY")
+                        end
+                    end
+                else
+                    local notice = OneWoW:GetCatalogUnavailableNotice("vendors")
+                    if notice then
+                        AddTextRow(notice, 12, "TEXT_WARNING")
                     else
                         AddTextRow(L["ITEMSEARCH_NO_VENDORS"], 12, "TEXT_MUTED")
                     end
                 end
 
-                if ns.GetCatalogPackAPI("quests") then
-                    yOffset = yOffset - 6
-                    AddSectionHeader(L["ITEMSEARCH_SECTION_QUESTS"])
-                    if #sources.quests > 0 then
-                        for _, qr in ipairs(sources.quests) do
-                            local thisQuest = qr
-                            local qname = thisQuest.questName
-                                or string.format(L["QUESTS_UNNAMED"], thisQuest.questID)
-                            AddClickableRow(qname, 12, function()
-                                Browse.JumpToQuest(thisQuest.questID)
-                            end)
-                        end
+                yOffset = yOffset - 6
+                AddSectionHeader(L["ITEMSEARCH_SECTION_QUESTS"])
+                if #sources.quests > 0 then
+                    for _, qr in ipairs(sources.quests) do
+                        local thisQuest = qr
+                        local qname = thisQuest.questName
+                            or string.format(L["QUESTS_UNNAMED"], thisQuest.questID)
+                        AddClickableRow(qname, 12, function()
+                            Browse.JumpToQuest(thisQuest.questID)
+                        end)
+                    end
+                else
+                    local notice = OneWoW:GetCatalogUnavailableNotice("quests")
+                    if notice then
+                        AddTextRow(notice, 12, "TEXT_WARNING")
                     else
                         AddTextRow(L["ITEMSEARCH_NO_QUESTS"], 12, "TEXT_MUTED")
                     end

@@ -4,7 +4,7 @@
 ## Notes: OneWoW Data Addon that: provides profession and recipe data for the Catalog.
 ## Author: OneWoW Dev Team
 
-## RequiredDeps: OneWoW
+## RequiredDeps: OneWoW, OneWoW_Catalog
 ## LoadOnDemand: 1
 ## Category: OneWoW
 ## Group: OneWoW_Catalog

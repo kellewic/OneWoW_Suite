@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
 
     ["JOURNAL_EMPTY"] = "Nenhum dado de diário carregado.",
     ["JOURNAL_SELECT"] = "Selecione uma entrada para ver os detalhes.",
-    ["JOURNAL_NO_DATA"] = "Instale o pacote Banco de zonas para ver os dados de instancia.",
+    ["JOURNAL_NO_DATA"] = "Ative uma expansao em Catalog em Gerenciar funcionalidades para ver os dados de instancia.",
     ["JOURNAL_SEARCH"] = "Buscar instâncias...",
     ["JOURNAL_STATS"] = "%d instâncias",
     ["JOURNAL_STATS_FILTERED"] = "%d de %d instâncias",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Só abundantes",
 
     ["JOURNAL_GENERAL_LOOT"] = "Despojo geral",
+    ["JOURNAL_QUEST_LOOT"] = "Relacionado a missão / Saque de missão",
+    ["JOURNAL_WORLD_BOSSES"] = "Chefes mundiais",
+    ["JOURNAL_WORLD_RARES"] = "Raros mundiais",
+    ["JOURNAL_NPC_UNNAMED"] = "PNJ #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Item desconhecido",
+    ["JOURNAL_UNKNOWN_INST"] = "Instância desconhecida",
     ["JOURNAL_ITEMS_COUNT"] = "%d itens",
 
     ["JOURNAL_QUEST_PREFIX"] = "Missão",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["VENDORS_ITEM_COUNT"] = "Itens à venda",
     ["VENDORS_LIMITED"] = "Limitado",
     ["VENDORS_PRICE_UNKNOWN"] = "Preço desconhecido",
-    ["VENDORS_NO_DATA"] = "Instale o pacote Banco de PNJs para coletar dados de PNJs.",
+    ["VENDORS_NO_DATA"] = "Ative PNJs de uma expansao em Gerenciar funcionalidades para coletar dados de PNJs.",
     ["VENDORS_WAYPOINT"] = "Marcador",
     ["VENDORS_WAYPOINT_TT"] = "Define um ponto de rota neste PNJ. Abre o mapa-mundi nessa zona. O ponto some ao chegar. Alguns mapas nao permitem um ponto de rota.",
     ["VENDORS_WAYPOINT_FAILED"] = "Este mapa nao permite um ponto de rota.",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
 
     ["TRADESKILLS_EMPTY"] = "Nenhum dado de profissão carregado.",
     ["TRADESKILLS_SELECT"] = "Selecione uma profissão para ver as receitas.",
-    ["TRADESKILLS_NO_DATA"] = "Instale o pacote Banco de profissoes para ver os dados de profissao.",
+    ["TRADESKILLS_NO_DATA"] = "Ative Profissoes em Gerenciar funcionalidades para ver os dados de profissao.",
     ["TRADESKILLS_SEARCH"] = "Buscar receitas...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Limpar",
     ["TRADESKILLS_EXPANSION_ALL"] = "Todas as expansões",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["QUESTS_ZONE_ALL"] = "Todas as zonas",
     ["QUESTS_TYPE_ALL"] = "Todos os tipos",
     ["QUESTS_QTYPE_ALL"] = "Todos os tipos de missão",
-    ["QUESTS_NO_DATA"] = "Instale o pacote Banco de missoes para coletar dados de missoes.",
+    ["QUESTS_NO_DATA"] = "Ative Missoes de uma expansao em Gerenciar funcionalidades para coletar dados de missoes.",
     ["QUESTS_NONE_YET"] = "Nenhuma missão coletada ainda. Jogue para preencher este banco de dados.",
     ["QUESTS_DEFAULT_EMPTY"] = "Nenhuma missão ativa ou favorita. Busque ou escolha um filtro para explorar todas as missões.",
     ["QUESTS_STATUS_COUNT"] = "%d missões",

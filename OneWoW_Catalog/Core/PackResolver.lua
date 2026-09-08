@@ -30,6 +30,14 @@ function ns.EnsureCatalogPack(roleOrName)
     return OneWoW:EnsureCatalogPack(roleOrName)
 end
 
+function ns.IsCatalogRoleReady(roleOrName)
+    return OneWoW:IsCatalogRoleReady(roleOrName)
+end
+
+function ns.GetCatalogUnavailableNotice(roleOrRoles)
+    return OneWoW:GetCatalogUnavailableNotice(roleOrRoles)
+end
+
 --- Deduped list of addons Item Search watches for data-ready.
 ---@return string[]
 function ns.GetCatalogItemSearchAddons()

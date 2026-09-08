@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
 
     ["JOURNAL_EMPTY"] = "未載入日誌資料。",
     ["JOURNAL_SELECT"] = "選擇一個項目以檢視詳細資料。",
-    ["JOURNAL_NO_DATA"] = "安裝區域資料庫資料包以檢視副本資料。",
+    ["JOURNAL_NO_DATA"] = "在功能管理中開啟 Catalog 下的資料片即可檢視副本資料。",
     ["JOURNAL_SEARCH"] = "搜尋副本……",
     ["JOURNAL_STATS"] = "%d 個副本",
     ["JOURNAL_STATS_FILTERED"] = "%d/%d 個副本",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "僅顯示豐碩",
 
     ["JOURNAL_GENERAL_LOOT"] = "一般戰利品",
+    ["JOURNAL_QUEST_LOOT"] = "任務相關 / 任務掉落",
+    ["JOURNAL_WORLD_BOSSES"] = "世界首領",
+    ["JOURNAL_WORLD_RARES"] = "世界稀有",
+    ["JOURNAL_NPC_UNNAMED"] = "NPC #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "未知物品",
+    ["JOURNAL_UNKNOWN_INST"] = "未知副本",
     ["JOURNAL_ITEMS_COUNT"] = "%d 件物品",
 
     ["JOURNAL_QUEST_PREFIX"] = "任務",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
     ["VENDORS_ITEM_COUNT"] = "販售物品",
     ["VENDORS_LIMITED"] = "限量",
     ["VENDORS_PRICE_UNKNOWN"] = "價格未知",
-    ["VENDORS_NO_DATA"] = "安裝NPC資料庫資料包以收集NPC資料。",
+    ["VENDORS_NO_DATA"] = "在功能管理中開啟資料片的 NPC，即可收集 NPC 資料。",
     ["VENDORS_WAYPOINT"] = "標記",
     ["VENDORS_WAYPOINT_TT"] = "在此NPC處設定即時路徑點。開啟世界地圖到該區域。到達後路徑點會清除。有些地圖不允許設定即時路徑點。",
     ["VENDORS_WAYPOINT_FAILED"] = "此地圖不允許設定即時路徑點。",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
 
     ["TRADESKILLS_EMPTY"] = "未載入專業技能資料。",
     ["TRADESKILLS_SELECT"] = "選擇一個專業以檢視配方。",
-    ["TRADESKILLS_NO_DATA"] = "安裝專業技能資料庫資料包以檢視專業資料。",
+    ["TRADESKILLS_NO_DATA"] = "在功能管理中開啟專業技能即可檢視專業資料。",
     ["TRADESKILLS_SEARCH"] = "搜尋配方……",
     ["TRADESKILLS_FILTER_CLEAR"] = "清除",
     ["TRADESKILLS_EXPANSION_ALL"] = "所有資料片",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
     ["QUESTS_ZONE_ALL"] = "所有區域",
     ["QUESTS_TYPE_ALL"] = "所有類型",
     ["QUESTS_QTYPE_ALL"] = "所有任務類型",
-    ["QUESTS_NO_DATA"] = "安裝任務資料庫資料包以收集任務資料。",
+    ["QUESTS_NO_DATA"] = "在功能管理中開啟資料片的任務，即可收集任務資料。",
     ["QUESTS_NONE_YET"] = "尚未收集任何任務。進行遊戲以填充此資料庫。",
     ["QUESTS_DEFAULT_EMPTY"] = "沒有進行中或最愛的任務。搜尋或選擇篩選條件以瀏覽所有任務。",
     ["QUESTS_STATUS_COUNT"] = "%d 個任務",

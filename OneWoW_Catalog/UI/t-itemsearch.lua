@@ -614,7 +614,12 @@ ShowItemDetail = function(result)
             end
         end
     else
-        AddTextRow(L["ITEMSEARCH_NO_DROPS"], 12, "TEXT_MUTED")
+        local notice = OneWoW:GetCatalogUnavailableNotice("journal")
+        if notice then
+            AddTextRow(notice, 12, "TEXT_WARNING")
+        else
+            AddTextRow(L["ITEMSEARCH_NO_DROPS"], 12, "TEXT_MUTED")
+        end
     end
 
     yOffset = yOffset - 6
@@ -635,7 +640,12 @@ ShowItemDetail = function(result)
             end
         end
     else
-        AddTextRow(L["ITEMSEARCH_NO_VENDORS"], 12, "TEXT_MUTED")
+        local notice = OneWoW:GetCatalogUnavailableNotice("vendors")
+        if notice then
+            AddTextRow(notice, 12, "TEXT_WARNING")
+        else
+            AddTextRow(L["ITEMSEARCH_NO_VENDORS"], 12, "TEXT_MUTED")
+        end
     end
 
     yOffset = yOffset - 6
@@ -664,7 +674,12 @@ ShowItemDetail = function(result)
                 end
             end
         else
-            AddTextRow(L["ITEMSEARCH_NO_CRAFTED"], 12, "TEXT_MUTED")
+            local notice = OneWoW:GetCatalogUnavailableNotice("tradeskills")
+            if notice then
+                AddTextRow(notice, 12, "TEXT_WARNING")
+            else
+                AddTextRow(L["ITEMSEARCH_NO_CRAFTED"], 12, "TEXT_MUTED")
+            end
         end
     end
 
@@ -701,7 +716,12 @@ ShowItemDetail = function(result)
             end)
         end
     else
-        AddTextRow(L["ITEMSEARCH_NO_QUESTS"], 12, "TEXT_MUTED")
+        local notice = OneWoW:GetCatalogUnavailableNotice("quests")
+        if notice then
+            AddTextRow(notice, 12, "TEXT_WARNING")
+        else
+            AddTextRow(L["ITEMSEARCH_NO_QUESTS"], 12, "TEXT_MUTED")
+        end
     end
 
     yOffset = yOffset - 6

@@ -89,9 +89,8 @@ function MigrationFix:ConsolidateCrossReferenceCharKeys()
     total = total + DB:ConsolidateCharacterKeys(ns.db.global.favorites)
 
     if not ns.db.global.legacyCatalogDataCopied then
-        local questOk = OneWoW:EnsureLoaded("OneWoW_CatDB_QuestDBCurrent")
-        local npcOk = OneWoW:EnsureLoaded("OneWoW_CatDB_NPCDB")
-        if questOk and npcOk then
+        local catOk = OneWoW:EnsureLoaded("OneWoW_Catalog")
+        if catOk then
             CopyLegacyCatalogDataSVs()
             ns.db.global.legacyCatalogDataCopied = true
         end

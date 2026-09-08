@@ -1,0 +1,30 @@
+## Interface: 120100
+## Version: R6.2609.0106
+## Title: OneWoW - Data: |cFFFFFFFFMistsofPandaria|r
+## Notes: OneWoW Catalog data for MistsofPandaria.
+## Author: OneWoW Dev Team
+
+## RequiredDeps: OneWoW, OneWoW_Catalog
+## LoadOnDemand: 1
+## Category: OneWoW
+## Group: OneWoW_Catalog
+## IconTexture: Interface\AddOns\OneWoW\Media\neutral-mini.png
+
+## X-Website: https://onewow.net/
+## X-Category: |cFFFFD100OneWoW|r
+## X-BugGrabber-Display: OneWow
+## X-OneWoW-CatDB: 5
+
+OneWoW_CatDB_MistsofPandaria.lua
+Data\hubs.lua
+Data\zone.lua
+Data\npc.lua
+Data\quest.lua
+Data\item.lua
+Data\achievement.lua
+Data\mappin.lua
+DataExtra\zone_extra.lua
+DataExtra\npc_extra.lua
+DataExtra\quest_extra.lua
+DataExtra\item_extra.lua
+Activate.lua

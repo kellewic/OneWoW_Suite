@@ -9,7 +9,7 @@
 --     reloads (the only way to truly evict a loaded addon, or to re-enable a
 --     Blizzard-disabled one).
 -- Shared/dependency datastores follow the consumer graph (and BringUp pulls).
--- Parent-required stores (Endgame only today) still TOC-require their owning hub.
+-- Parent-required stores (Endgame and Catalog packs) still TOC-require their owning hub.
 
 local _, ns = ...
 
@@ -144,12 +144,7 @@ FirstRun.CATALOG = {
 
 -- Per-data-module icons (numeric file IDs) so sub-rows mirror the parent's icon slot.
 local STORE_ICONS = {
-    OneWoW_CatDB_ZoneDB             = 5341597,
-    OneWoW_CatDB_QuestDBCurrent     = 236670,
-    OneWoW_CatDB_QuestDBArchive     = 236669,
     OneWoW_CatDB_TradeSkillDB       = 136241,
-    OneWoW_CatDB_NPCDB              = 901746,
-    OneWoW_CatDB_ItemDB             = 133771,   -- inv_misc_book_09
     OneWoW_AltTracker_Accounting    = 413573,   -- achievement_guildperk_cashflow_rank2
     OneWoW_AltTracker_Auctions      = 413570,   -- achievement_guildperk_bartering
     OneWoW_AltTracker_Character     = 134148,   -- inv_misc_grouplooking
@@ -161,12 +156,7 @@ local STORE_ICONS = {
 
 -- Sub-row copy and "What's affected?" modal keys (Catalog optional stores only).
 local STORE_DESC_KEYS = {
-    OneWoW_CatDB_ZoneDB            = "WIZARD_CAT_DATA_JOURNAL_DESC",
-    OneWoW_CatDB_QuestDBCurrent    = "WIZARD_CAT_DATA_QUESTS_DESC",
-    OneWoW_CatDB_QuestDBArchive    = "WIZARD_CAT_DATA_QUESTS_ARCHIVE_DESC",
-    OneWoW_CatDB_NPCDB             = "WIZARD_CAT_DATA_VENDORS_DESC",
     OneWoW_CatDB_TradeSkillDB      = "WIZARD_CAT_DATA_TRADESKILLS_DESC",
-    OneWoW_CatDB_ItemDB            = "WIZARD_CAT_DATA_ITEMDB_DESC",
 }
 
 local function ForEachInUnitFeature(fn)
@@ -199,31 +189,59 @@ function FirstRun:ApplyInUnitFeatures(featureSelections)
 end
 
 local STORE_AFFECTED_KEYS = {
-    OneWoW_CatDB_ZoneDB = {
-        title = "WIZARD_AFFECTED_JOURNAL_TITLE",
-        body  = "WIZARD_AFFECTED_JOURNAL_BODY",
-    },
-    OneWoW_CatDB_QuestDBCurrent = {
-        title = "WIZARD_AFFECTED_QUESTS_TITLE",
-        body  = "WIZARD_AFFECTED_QUESTS_BODY",
-    },
-    OneWoW_CatDB_QuestDBArchive = {
-        title = "WIZARD_AFFECTED_QUESTS_ARCHIVE_TITLE",
-        body  = "WIZARD_AFFECTED_QUESTS_ARCHIVE_BODY",
-    },
-    OneWoW_CatDB_NPCDB = {
-        title = "WIZARD_AFFECTED_VENDORS_TITLE",
-        body  = "WIZARD_AFFECTED_VENDORS_BODY",
+    OneWoW_Catalog = {
+        title = "WIZARD_AFFECTED_CATALOG_TITLE",
+        body  = "WIZARD_AFFECTED_CATALOG_BODY",
     },
     OneWoW_CatDB_TradeSkillDB = {
         title = "WIZARD_AFFECTED_TRADESKILLS_TITLE",
         body  = "WIZARD_AFFECTED_TRADESKILLS_BODY",
     },
-    OneWoW_CatDB_ItemDB = {
-        title = "WIZARD_AFFECTED_ITEMDB_TITLE",
-        body  = "WIZARD_AFFECTED_ITEMDB_BODY",
-    },
 }
+
+local TOPIC_LABEL_KEYS = {
+    hubs = "CAT_MOD_TOPIC_HUBS",
+    zone = "CAT_MOD_TOPIC_ZONE",
+    zone_extra = "CAT_MOD_TOPIC_ZONE_EXTRA",
+    npc = "CAT_MOD_TOPIC_NPC",
+    quest = "CAT_MOD_TOPIC_QUEST",
+    item = "CAT_MOD_TOPIC_ITEM",
+    achievement = "CAT_MOD_TOPIC_ACHIEVEMENT",
+    mappin = "CAT_MOD_TOPIC_MAPPIN",
+}
+
+local function StoreTitle(store)
+    local title = ns.CatalogData:GetStoreTitle(store)
+    if title and title ~= "" then
+        return title
+    end
+    local labelKey = ns:GetStoreLabelKey(store)
+    return labelKey and L[labelKey] or store
+end
+
+local function StoreDescKey(store)
+    if STORE_DESC_KEYS[store] then
+        return STORE_DESC_KEYS[store]
+    end
+    if store == "OneWoW_CatDB_Other" then
+        return "WIZARD_CAT_DATA_OTHER_DESC"
+    end
+    if ns.CatalogData:IsEraAddon(store) then
+        return "WIZARD_CAT_DATA_ERA_DESC"
+    end
+    return nil
+end
+
+local function TopicLabel(topic)
+    if topic == "item" then
+        return ITEMS
+    end
+    if topic == "achievement" then
+        return ACHIEVEMENTS
+    end
+    local key = TOPIC_LABEL_KEYS[topic]
+    return key and L[key] or topic
+end
 
 -- CATALOG.datastores may name a pack role or CatDB folder.
 -- Resolve at consume time so ShoppingList always pulls TradeSkillDB.
@@ -380,7 +398,11 @@ function FirstRun:GetCurrentStoreSelections(perCharacter)
     for _, manifest in ipairs(ns:GetManifestParentsWithStores()) do
         if manifest.storePolicy == "optional" then
             for _, store in ipairs(manifest.stores) do
-                selections[store] = ns:IsFeatureWanted(store, perCharacter)
+                if ns:IsHiddenStore(store) then
+                    selections[store] = true
+                else
+                    selections[store] = ns:IsFeatureWanted(store, perCharacter)
+                end
             end
         end
     end
@@ -588,6 +610,41 @@ function FirstRun:BuildPanel(parent, opts)
     local storeMeta = {}
     local featureCards = {}
     local featureMeta = {}
+    local topicSelections = {}
+    local originalTopics = {}
+    local topicRows = {}
+
+    for _, era in ipairs(ns.CatalogData:GetEras()) do
+        topicSelections[era.addon] = {}
+        originalTopics[era.addon] = {}
+        for _, topic in ipairs(ns.CatalogData:GetTopics()) do
+            local on = ns.CatalogData:IsTopicEnabled(era.addon, topic)
+            topicSelections[era.addon][topic] = on
+            originalTopics[era.addon][topic] = on
+        end
+    end
+
+    local function CommitTopics()
+        for addon, topics in pairs(topicSelections) do
+            for topic, on in pairs(topics) do
+                ns.CatalogData:SetTopicEnabled(addon, topic, on)
+            end
+        end
+    end
+
+    local function TopicsChanged()
+        for addon, topics in pairs(topicSelections) do
+            local orig = originalTopics[addon]
+            if orig then
+                for topic, on in pairs(topics) do
+                    if (on and true or false) ~= (orig[topic] and true or false) then
+                        return true
+                    end
+                end
+            end
+        end
+        return false
+    end
 
     local function CountSelected()
         local count = 0
@@ -604,9 +661,11 @@ function FirstRun:BuildPanel(parent, opts)
         local pool = ComputeEligibleDatastorePool(selections)
         local enabled, total = 0, 0
         for store in pairs(pool) do
-            total = total + 1
-            if effective[store] then
-                enabled = enabled + 1
+            if not ns:IsHiddenStore(store) then
+                total = total + 1
+                if effective[store] then
+                    enabled = enabled + 1
+                end
             end
         end
         return enabled, total
@@ -622,10 +681,12 @@ function FirstRun:BuildPanel(parent, opts)
         for _, manifest in ipairs(ns:GetManifestParentsWithStores()) do
             if manifest.storePolicy == "optional" then
                 for _, store in ipairs(manifest.stores) do
-                    local cur = storeSelections[store] and true or false
-                    local orig = originalStoreSelections[store] and true or false
-                    if cur ~= orig then
-                        return true
+                    if not ns:IsHiddenStore(store) then
+                        local cur = storeSelections[store] and true or false
+                        local orig = originalStoreSelections[store] and true or false
+                        if cur ~= orig then
+                            return true
+                        end
                     end
                 end
             end
@@ -638,7 +699,10 @@ function FirstRun:BuildPanel(parent, opts)
                 featureChanged = true
             end
         end)
-        return featureChanged
+        if featureChanged then
+            return true
+        end
+        return TopicsChanged()
     end
 
     local hero = OneWoW_GUI:CreateHeroPanel(content, {
@@ -837,7 +901,7 @@ function FirstRun:BuildPanel(parent, opts)
     local groupOrder  = { "feature", "standalone", "utility" }
 
     -- Forward-declared; closures below capture these.
-    local RefreshRow, RefreshAllRows, RefreshStoreRow, RefreshStoreRowsForParent, RefreshAllStoreRows, RefreshFeatureRow, RefreshFeatureRowsForParent, RefreshAllFeatureRows, RefreshActions
+    local RefreshRow, RefreshAllRows, RefreshStoreRow, RefreshStoreRowsForParent, RefreshAllStoreRows, RefreshTopicRow, RefreshAllTopicRows, RefreshFeatureRow, RefreshFeatureRowsForParent, RefreshAllFeatureRows, RefreshActions
 
     local function GetCatalogLabel(addonName)
         for _, entry in ipairs(FirstRun.CATALOG) do
@@ -935,9 +999,19 @@ function FirstRun:BuildPanel(parent, opts)
                 featureSelections[feat.id] = false
             end
         end)
+        for addon, topics in pairs(topicSelections) do
+            for topic in pairs(topics) do
+                if preset == "recommended" then
+                    topicSelections[addon][topic] = ns.CatalogData:GetDefaultTopicEnabled(addon, topic)
+                elseif preset == "minimal" then
+                    topicSelections[addon][topic] = false
+                end
+            end
+        end
         RefreshSummary()
         RefreshAllRows()
         RefreshAllStoreRows()
+        RefreshAllTopicRows()
         RefreshAllFeatureRows()
         RefreshActions()
     end
@@ -959,6 +1033,7 @@ function FirstRun:BuildPanel(parent, opts)
             if entry.group == group then
                 local addon = entry.addonName
                 local iconInfo = ns:GetFeatureIcon(addon) or {}
+                local affectedKeys = STORE_AFFECTED_KEYS[addon]
                 local card = OneWoW_GUI:CreateSelectableCard(listContainer, {
                     title = L[entry.labelKey],
                     summary = L[entry.summaryKey],
@@ -967,6 +1042,10 @@ function FirstRun:BuildPanel(parent, opts)
                     iconTexCoords = iconInfo.texCoords,
                     iconPlate = iconInfo.plate,
                     checked = selections[addon],
+                    affectedText = affectedKeys and L["WIZARD_WHATS_AFFECTED"] or nil,
+                    onAffectedClick = affectedKeys and function()
+                        FirstRun:ShowStoreAffectedDialog(addon)
+                    end or nil,
                     onToggle = function(_, checked)
                         selections[addon] = checked and true or false
                         local manifest = ns:GetManifestByAddon(addon)
@@ -1017,6 +1096,10 @@ function FirstRun:BuildPanel(parent, opts)
                     paddingX = 14,
                 })
                 loadBtn:SetPoint("RIGHT", card.checkbox, "LEFT", -OneWoW_GUI:GetSpacing("SM"), 0)
+                if card.affectedBtn then
+                    card.affectedBtn:ClearAllPoints()
+                    card.affectedBtn:SetPoint("RIGHT", loadBtn, "LEFT", -OneWoW_GUI:GetSpacing("SM"), 0)
+                end
                 loadBtn:Hide()
                 loadBtn.tooltipText = L["WIZARD_LOAD_ADDON_TOOLTIP"]
                 loadBtn:HookScript("OnEnter", function(myself)
@@ -1066,10 +1149,15 @@ function FirstRun:BuildPanel(parent, opts)
 
                 local manifest = ns:GetManifestByAddon(addon)
                 if manifest and manifest.stores then
-                    for si, store in ipairs(manifest.stores) do
-                        local labelKey = ns:GetStoreLabelKey(store)
-                        local title = labelKey and L[labelKey] or store
-                        local descKey = STORE_DESC_KEYS[store]
+                    local visibleStores = {}
+                    for _, store in ipairs(manifest.stores) do
+                        if not ns:IsHiddenStore(store) and C_AddOns.DoesAddOnExist(store) then
+                            visibleStores[#visibleStores + 1] = store
+                        end
+                    end
+                    for si, store in ipairs(visibleStores) do
+                        local title = StoreTitle(store)
+                        local descKey = StoreDescKey(store)
                         local rowSummary = descKey and L[descKey] or ""
                         local isOptional = manifest.storePolicy == "optional"
                         local affectedKeys = STORE_AFFECTED_KEYS[store]
@@ -1077,7 +1165,7 @@ function FirstRun:BuildPanel(parent, opts)
                         local sub = OneWoW_GUI:CreateSelectableSubCard(listContainer, {
                             title = title,
                             summary = rowSummary,
-                            iconTexture = STORE_ICONS[store],
+                            iconTexture = STORE_ICONS[store] or 5341597,
                             checked = storeSelections[store] and true or false,
                             interactive = isOptional,
                             affectedText = (isOptional and affectedKeys) and L["WIZARD_WHATS_AFFECTED"] or nil,
@@ -1086,8 +1174,6 @@ function FirstRun:BuildPanel(parent, opts)
                             end or nil,
                             onToggle = isOptional and function(_, checked)
                                 storeSelections[store] = checked and true or false
-                                -- Only parent-required stores (Endgame, Catalog
-                                -- packs) auto-enable their hub when ticked.
                                 if checked and not selections[addon] and ns:StoreRequiresParent(store) then
                                     selections[addon] = true
                                     if cards[addon] then
@@ -1097,6 +1183,7 @@ function FirstRun:BuildPanel(parent, opts)
                                 end
                                 presetButtons.SetActiveByValue("manual")
                                 RefreshStoreRow(store)
+                                RefreshTopicRow(store)
                                 RefreshRow(addon)
                                 RefreshActions()
                                 RefreshSummary()
@@ -1106,7 +1193,73 @@ function FirstRun:BuildPanel(parent, opts)
                         storeCards[store] = sub
                         storeMeta[store] = { parent = addon, optional = isOptional }
                         table.insert(listItems, sub)
-                        if si < #manifest.stores then
+
+                        if ns.CatalogData:IsEraAddon(store) then
+                            subRowTightAfter[#listItems] = true
+                            local topicRow = CreateFrame("Frame", nil, listContainer)
+                            topicRow._cbs = {}
+                            topicRow._byTopic = {}
+                            local topics = ns.CatalogData:GetTopics()
+                            for ti = 1, #topics do
+                                local topic = topics[ti]
+                                local cb = OneWoW_GUI:CreateCheckbox(topicRow, {
+                                    label = TopicLabel(topic),
+                                    checked = topicSelections[store] and topicSelections[store][topic],
+                                    onClick = function(self)
+                                        local on = self:GetChecked() and true or false
+                                        topicSelections[store] = topicSelections[store] or {}
+                                        topicSelections[store][topic] = on
+                                        if on and not storeSelections[store] then
+                                            storeSelections[store] = true
+                                            if storeCards[store] then
+                                                storeCards[store]:SetChecked(true, true)
+                                            end
+                                            RefreshStoreRow(store)
+                                            RefreshRow(addon)
+                                        end
+                                        presetButtons.SetActiveByValue("manual")
+                                        RefreshActions()
+                                        RefreshSummary()
+                                    end,
+                                })
+                                topicRow._cbs[#topicRow._cbs + 1] = cb
+                                topicRow._byTopic[topic] = cb
+                            end
+                            topicRow:SetScript("OnSizeChanged", function(row)
+                                if row._layingOut then
+                                    return
+                                end
+                                row._layingOut = true
+                                local cbs = row._cbs
+                                local x = 12
+                                local y = -2
+                                local rowH = 26
+                                local maxW = row:GetWidth() or 520
+                                if maxW < 80 then
+                                    maxW = 520
+                                end
+                                local lines = 1
+                                for i = 1, #cbs do
+                                    local box = cbs[i]
+                                    local w = box:GetMeasuredWidth() + 16
+                                    if x + w > maxW - 4 and x > 12 then
+                                        x = 12
+                                        y = y - rowH
+                                        lines = lines + 1
+                                    end
+                                    box:ClearAllPoints()
+                                    box:SetPoint("TOPLEFT", row, "TOPLEFT", x, y)
+                                    x = x + w
+                                end
+                                row:SetHeight(lines * rowH + 6)
+                                row._layingOut = nil
+                            end)
+                            topicRows[store] = topicRow
+                            table.insert(listItems, topicRow)
+                            if si < #visibleStores then
+                                subRowTightAfter[#listItems] = true
+                            end
+                        elseif si < #visibleStores then
                             subRowTightAfter[#listItems] = true
                         end
                     end
@@ -1254,6 +1407,28 @@ function FirstRun:BuildPanel(parent, opts)
         sub:SetMuted(muted)
         sub:SetInteractive(interactive)
         sub:SetBadgeText(badgeText)
+        RefreshTopicRow(storeAddon)
+    end
+
+    RefreshTopicRow = function(storeAddon)
+        local row = topicRows[storeAddon]
+        if not row then
+            return
+        end
+        local eraOn = storeSelections[storeAddon] and true or false
+        local topics = topicSelections[storeAddon]
+        for topic, cb in pairs(row._byTopic) do
+            local on = topics and topics[topic]
+            cb:SetChecked(on and true or false)
+            cb:Enable()
+            cb:SetAlpha(eraOn and 1 or 0.7)
+        end
+    end
+
+    RefreshAllTopicRows = function()
+        for store in pairs(topicRows) do
+            RefreshTopicRow(store)
+        end
     end
 
     RefreshStoreRowsForParent = function(parentAddon)
@@ -1386,6 +1561,12 @@ function FirstRun:BuildPanel(parent, opts)
         ForEachInUnitFeature(function(_, feat)
             originalFeatureSelections[feat.id] = featureSelections[feat.id] and true or false
         end)
+        for addon, topics in pairs(topicSelections) do
+            originalTopics[addon] = originalTopics[addon] or {}
+            for topic, on in pairs(topics) do
+                originalTopics[addon][topic] = on and true or false
+            end
+        end
     end
 
     -- Re-read the live enable state for `pc` into the staged selections and push
@@ -1415,6 +1596,7 @@ function FirstRun:BuildPanel(parent, opts)
         presetButtons.SetActiveByValue("manual")
         RefreshAllRows()
         RefreshAllStoreRows()
+        RefreshAllTopicRows()
         RefreshAllFeatureRows()
     end
 
@@ -1478,10 +1660,12 @@ function FirstRun:BuildPanel(parent, opts)
 
     softApplyBtn:SetScript("OnClick", function()
         if not softApplyBtn._enabled then return end
+        CommitTopics()
         FirstRun:Apply(selections, perCharacter, false, storeSelections, featureSelections)
         RebaseOriginal()
         RefreshAllRows()
         RefreshAllStoreRows()
+        RefreshAllTopicRows()
         RefreshAllFeatureRows()
         RefreshActions()
         RefreshSummary()
@@ -1489,11 +1673,13 @@ function FirstRun:BuildPanel(parent, opts)
 
     hardApplyBtn:SetScript("OnClick", function()
         if not hardApplyBtn._enabled then return end
+        CommitTopics()
         FirstRun:Apply(selections, perCharacter, true, storeSelections, featureSelections)
     end)
 
     RefreshAllRows()
     RefreshAllStoreRows()
+    RefreshAllTopicRows()
     RefreshAllFeatureRows()
     RefreshActions()
     RefreshSummary()

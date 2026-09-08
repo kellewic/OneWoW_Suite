@@ -101,7 +101,7 @@ swipes, and situation-based visibility (place × combat cards).
 
 ### ESC Menu Panel
 
-Display a Character Card, a Zone Card, and a portal strip alongside the ESC menu. Character Card shows a portrait with a faction badge, mail, durability, auction attention, Great Vault, Trading Post, and Housing Endeavors. Hover mail, durability, or the cart for details; click to open that window. Zone Card has this place's collections and Item Alert icons for Shopping List, notes, Trackers, and Farming. Hits sit left of |, the rest sit right. Hover an icon for details; click to open it. Click the Character Card to open the character screen, or the Zone Card to open that zone in Catalog. If Zones Catalog is not loaded, the card says so; left-click still opens that zone, right-click loads the pack and refreshes the card.
+Display a Character Card, a Zone Card, and a Travel card alongside the ESC menu. Optional Suite theme paints the Game Menu and wraps the columns in one panel. Character Card shows a portrait with a faction badge, mail, durability, auction attention, Great Vault, Trading Post, and Housing Endeavors. Hover mail, durability, or the cart for details; click to open that window. Zone Card has this place's collections and Item Alert icons for Shopping List, notes, Trackers, and Farming. Hits sit left of |, the rest sit right. Hover an icon for details; click to open it. Click the Character Card to open the character screen, or the Zone Card to open that zone in Catalog. If Zones Catalog is not loaded, the card says so; left-click still opens that zone, right-click loads the pack and refreshes the card.
 
 - **Module id:** `escpanel` · **Folder:** `Modules/external/escpanel/`
 

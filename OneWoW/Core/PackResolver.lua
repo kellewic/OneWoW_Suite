@@ -1,73 +1,39 @@
 local _, ns = ...
 
-local C_AddOns = C_AddOns
-
 -- ============================================================================
 -- Catalog pack resolver
 -- ============================================================================
 -- Consumers pass a role (journal, vendors, quests, tradeskills, items) or a
--- CatDB folder name. Home / Manage Features list CatDB as the Catalog
--- data stores. This lives on core so QoL / Notes / ShoppingList / toasts can
--- resolve without loading Catalog. Always returns the CatDB addon (`pack.cat`).
+-- CatDB folder name. Era shards live in OneWoW_CatDB_<Era>; query APIs live
+-- on OneWoW_Catalog. Tradeskills stay OneWoW_CatDB_TradeSkillDB.
+-- This lives on core so QoL / Notes / ShoppingList / toasts can resolve
+-- without opening Catalog tabs.
 --
 -- Roles: journal/zones, vendors/npcs, quests, archive, tradeskills, items.
 -- ============================================================================
 
-local PACKS = {
-    journal = {
-        cat = "OneWoW_CatDB_ZoneDB",
-    },
-    zones = {
-        cat = "OneWoW_CatDB_ZoneDB",
-    },
-    vendors = {
-        cat = "OneWoW_CatDB_NPCDB",
-    },
-    npcs = {
-        cat = "OneWoW_CatDB_NPCDB",
-    },
-    quests = {
-        cat = "OneWoW_CatDB_QuestDBCurrent",
-    },
-    archive = {
-        cat = "OneWoW_CatDB_QuestDBArchive",
-    },
-    tradeskills = {
-        cat = "OneWoW_CatDB_TradeSkillDB",
-    },
-    items = {
-        cat = "OneWoW_CatDB_ItemDB",
-    },
-}
-
-local ADDON_TO_ROLE = {
-    OneWoW_CatDB_ZoneDB = "journal",
-    OneWoW_CatDB_NPCDB = "vendors",
-    OneWoW_CatDB_QuestDBCurrent = "quests",
-    OneWoW_CatDB_QuestDBArchive = "archive",
-    OneWoW_CatDB_TradeSkillDB = "tradeskills",
-    OneWoW_CatDB_ItemDB = "items",
-}
-
---- Resolve a pack role or CatDB addon name to the CatDB addon to load.
+--- Resolve a pack role or CatDB addon name to the addon EnsureLoaded should
+--- treat as the provider (runtime for journal/vendors/quests/items).
 ---@param roleOrName string
 ---@return string|nil addonName
 function ns:ResolveCatalogPack(roleOrName)
     if not roleOrName then
         return nil
     end
-    local role = PACKS[roleOrName] and roleOrName or ADDON_TO_ROLE[roleOrName]
-    local pack = role and PACKS[role]
-    if not pack then
-        return roleOrName
-    end
-    return pack.cat
+    return ns.CatalogData:ResolveRoleAddon(roleOrName) or roleOrName
 end
 
---- Cross-unit API table for the resolved pack (`AddonName_API`).
+--- Cross-unit API table for the resolved pack role.
 ---@param roleOrName string
 ---@return table|nil api
 function ns:GetCatalogPackAPI(roleOrName)
+    if not roleOrName then
+        return nil
+    end
+    local api = ns.CatalogData:GetRoleAPI(roleOrName)
+    if api then
+        return api
+    end
     local addon = self:ResolveCatalogPack(roleOrName)
     if not addon then
         return nil
@@ -75,37 +41,72 @@ function ns:GetCatalogPackAPI(roleOrName)
     return _G[addon .. "_API"]
 end
 
---- EnsureLoaded the resolved CatDB pack. Explicit user actions only.
+--- Load runtime + enabled era topics for this role. Explicit user actions only.
 ---@param roleOrName string
 ---@return string|nil addonName
 function ns:EnsureCatalogPack(roleOrName)
-    local addon = self:ResolveCatalogPack(roleOrName)
-    if addon then
-        self:EnsureLoaded(addon)
+    if not roleOrName then
+        return nil
     end
-    return addon
+    return ns.CatalogData:EnsureRole(roleOrName)
 end
 
---- Load Journal places. Explicit user actions only.
+--- Load Journal places for every wanted expansion, including older packs.
 function ns:EnsureCatalogJournalPlaces()
-    self:EnsureCatalogPack("journal")
+    ns.CatalogData:EnsureWantedJournalPlaces()
 end
 
---- True when Journal place data is loaded and can answer this-place lookups.
+--- Load Journal hubs + zone for one suite expansion (no-op for All / 0).
+---@param expansionID number
+function ns:EnsureJournalShards(expansionID)
+    ns.CatalogData:EnsureJournalShards(expansionID)
+end
+
+--- Load the Zones expansion filter: one pack now, or this expansion plus the rest across frames.
+---@param expansionID number
+---@param onUpdate function|nil
+function ns:EnsureJournalShardsForFilter(expansionID, onUpdate)
+    ns.CatalogData:EnsureJournalShardsForFilter(expansionID, onUpdate)
+end
+
+--- True when wanted expansion Journal place shards are loaded and activated.
 function ns:AreWantedJournalPlacesLoaded()
-    return self:GetCatalogPackAPI("journal") ~= nil
+    return ns.CatalogData:AreWantedJournalPlacesLoaded()
 end
 
---- True if the resolved CatDB pack exists and is enabled (not necessarily loaded).
+--- True if the resolved CatDB provider exists and is enabled.
 ---@param roleOrName string
 ---@return boolean
 function ns:IsCatalogPackAvailable(roleOrName)
-    local name = self:ResolveCatalogPack(roleOrName)
-    if not name then
+    if not roleOrName then
         return false
     end
-    if not C_AddOns.DoesAddOnExist(name) then
+    return ns.CatalogData:IsRoleAvailable(roleOrName)
+end
+
+--- True when this role can query loaded expansion data (not merely that the API table exists).
+---@param roleOrName string
+---@return boolean
+function ns:IsCatalogRoleReady(roleOrName)
+    if not roleOrName then
         return false
     end
-    return self:IsAddonEnabled(name)
+    return ns.CatalogData:IsRoleQueryReady(roleOrName)
+end
+
+--- True when every wanted expansion for this role is loaded.
+---@param roleOrName string
+---@return boolean
+function ns:IsCatalogRoleFullyLoaded(roleOrName)
+    if not roleOrName then
+        return false
+    end
+    return ns.CatalogData:IsRoleFullyLoaded(roleOrName)
+end
+
+--- "Catalog not enabled" when a Catalog-backed surface cannot populate. Nil when it can.
+---@param roleOrRoles string|string[]
+---@return string|nil
+function ns:GetCatalogUnavailableNotice(roleOrRoles)
+    return ns.CatalogData:GetUnavailableNotice(roleOrRoles)
 end

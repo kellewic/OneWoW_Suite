@@ -139,6 +139,10 @@ local function Store()
     return ns.db.global.pinPacks
 end
 
+local function IsShippedPack(pack)
+    return type(pack) == "table" and pack.shipped == true
+end
+
 local function SerializeValue(val)
     if type(val) == "string" then
         return format("%q", val)
@@ -258,14 +262,28 @@ function Packs:GetPack(packId)
             return row
         end
     end
+    for _, shipped in ipairs(OneWoW.CatalogData:GetMapPinPacks()) do
+        if shipped.id == packId then
+            return shipped
+        end
+    end
     return nil
 end
 
 function Packs:GetAllPacks()
     local out = {}
+    local seen = {}
     for _, pack in pairs(Store()) do
         if type(pack) == "table" and type(pack.pins) == "table" then
             tinsert(out, pack)
+            if pack.id then
+                seen[pack.id] = true
+            end
+        end
+    end
+    for _, shipped in ipairs(OneWoW.CatalogData:GetMapPinPacks()) do
+        if type(shipped) == "table" and type(shipped.pins) == "table" and not seen[shipped.id] then
+            tinsert(out, shipped)
         end
     end
     sort(out, function(a, b)
@@ -428,7 +446,7 @@ end
 
 function Packs:SetEnabled(packId, enabled)
     local pack = self:GetPack(packId)
-    if not pack then
+    if not pack or IsShippedPack(pack) then
         return
     end
     pack.enabled = enabled and true or false
@@ -438,7 +456,7 @@ end
 
 function Packs:SetOrderLocked(packId, locked)
     local pack = self:GetPack(packId)
-    if not pack then
+    if not pack or IsShippedPack(pack) then
         return
     end
     pack.orderLocked = locked and true or false
@@ -447,7 +465,7 @@ end
 
 function Packs:SetLook(packId, fields)
     local pack = self:GetPack(packId)
-    if not pack or type(fields) ~= "table" then
+    if not pack or IsShippedPack(pack) or type(fields) ~= "table" then
         return
     end
     ApplyLook(pack, fields)
@@ -457,7 +475,7 @@ end
 
 function Packs:SetVisual(packId, icon, mapSize, minimapSize)
     local pack = self:GetPack(packId)
-    if not pack then
+    if not pack or IsShippedPack(pack) then
         return
     end
     if icon ~= nil then
@@ -475,7 +493,7 @@ end
 
 function Packs:SetMeta(packId, name, expansion)
     local pack = self:GetPack(packId)
-    if not pack then
+    if not pack or IsShippedPack(pack) then
         return
     end
     local trimmed = CopyNote(name)
@@ -539,7 +557,7 @@ end
 
 function Packs:AddPin(packId, fields)
     local pack = self:GetPack(packId)
-    if not pack or type(fields) ~= "table" then
+    if not pack or IsShippedPack(pack) or type(fields) ~= "table" then
         return nil
     end
     local mapID = tonumber(fields.mapID)
@@ -592,6 +610,9 @@ function Packs:SaveDisplayPin(display)
         packId, pinId = self:ParseDisplayId(display.id)
     end
     local pack = packId and self:GetPack(packId)
+    if not pack or IsShippedPack(pack) then
+        return
+    end
     local pin = pack and select(1, self:FindPin(pack, pinId))
     if not pin then
         return
@@ -627,7 +648,7 @@ end
 
 function Packs:DeletePinByDisplayId(pinID, quiet)
     local pack, _, index = self:ResolvePackedPin(pinID)
-    if not pack or index == nil then
+    if not pack or IsShippedPack(pack) or index == nil then
         return false
     end
     if type(index) == "number" then
@@ -753,7 +774,7 @@ end
 
 function Packs:ReorderPins(packId, fromIdx, toIdx, insertBefore)
     local pack = self:GetPack(packId)
-    if not pack or pack.orderLocked then
+    if not pack or IsShippedPack(pack) or pack.orderLocked then
         return
     end
     if ns.UI.ApplySectionReorder(pack.pins, fromIdx, toIdx, insertBefore) then
@@ -764,7 +785,7 @@ end
 
 function Packs:RemovePack(packId, returnPins)
     local pack = self:GetPack(packId)
-    if not pack then
+    if not pack or IsShippedPack(pack) then
         return
     end
     if returnPins then

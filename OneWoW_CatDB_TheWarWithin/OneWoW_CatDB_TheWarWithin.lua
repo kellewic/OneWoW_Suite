@@ -1,0 +1,1 @@
+-- OneWoW_CatDB_TheWarWithin: era data pack. Factories register from Data/ and DataExtra/; CatalogData activates enabled topics.

@@ -2,13 +2,14 @@ local _, ns = ...
 
 local OneWoW = OneWoW
 local C_Timer = C_Timer
+local C_AddOns = C_AddOns
 
 -- ============================================================================
 -- Catalog data-pack loader
 -- ============================================================================
 -- Catalog packs are lazyStores: login does not parse them. Opening a pack-backed
--- tab is the usual trigger (MainWindow EnsureLoaded). Quest capture still needs
--- the Quests pack when the player talks to an NPC without opening Catalog first.
+-- tab is the usual trigger (MainWindow EnsureCatalogPack). Quest capture still needs
+-- quest shards when the player talks to an NPC without opening Catalog first.
 -- Load on the next frame so the quest / reward UI can paint before the pack
 -- parse (QuestScanner.Initialize catch-up stores the dialog that triggered it).
 -- ============================================================================
@@ -21,7 +22,8 @@ questPackFrame:SetScript("OnEvent", function(self)
     end
     loadQueued = true
     C_Timer.After(0, function()
-        if OneWoW:EnsureLoaded(ns.ResolveCatalogPack("quests")) then
+        local addon = OneWoW:EnsureCatalogPack("quests")
+        if addon and C_AddOns.IsAddOnLoaded(addon) then
             self:UnregisterAllEvents()
         else
             loadQueued = false

@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
 
     ["JOURNAL_EMPTY"] = "Nessun dato di diario caricato.",
     ["JOURNAL_SELECT"] = "Seleziona una voce per vedere i dettagli.",
-    ["JOURNAL_NO_DATA"] = "Installa il pacchetto Database zone per vedere i dati delle istanze.",
+    ["JOURNAL_NO_DATA"] = "Attiva un'espansione in Catalog in Gestisci funzioni per vedere i dati delle istanze.",
     ["JOURNAL_SEARCH"] = "Cerca istanze...",
     ["JOURNAL_STATS"] = "%d istanze",
     ["JOURNAL_STATS_FILTERED"] = "%d di %d istanze",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Solo fruttuose",
 
     ["JOURNAL_GENERAL_LOOT"] = "Bottino generale",
+    ["JOURNAL_QUEST_LOOT"] = "Relativo a missione / Bottino di missione",
+    ["JOURNAL_WORLD_BOSSES"] = "Boss di mondo",
+    ["JOURNAL_WORLD_RARES"] = "Rari di mondo",
+    ["JOURNAL_NPC_UNNAMED"] = "PNG #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Oggetto sconosciuto",
+    ["JOURNAL_UNKNOWN_INST"] = "Istanza sconosciuta",
     ["JOURNAL_ITEMS_COUNT"] = "%d oggetti",
 
     ["JOURNAL_QUEST_PREFIX"] = "Missione",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
     ["VENDORS_ITEM_COUNT"] = "Oggetti in vendita",
     ["VENDORS_LIMITED"] = "Limitato",
     ["VENDORS_PRICE_UNKNOWN"] = "Prezzo sconosciuto",
-    ["VENDORS_NO_DATA"] = "Installa il pacchetto Database PNG per raccogliere i dati dei PNG.",
+    ["VENDORS_NO_DATA"] = "Attiva PNG per un'espansione in Gestisci funzioni per raccogliere i dati dei PNG.",
     ["VENDORS_WAYPOINT"] = "Segnalino",
     ["VENDORS_WAYPOINT_TT"] = "Imposta un punto di passaggio su questo PNG. Apre la mappa del mondo su quella zona. Il punto si cancella all'arrivo. Alcune mappe non consentono un punto di passaggio.",
     ["VENDORS_WAYPOINT_FAILED"] = "Questa mappa non consente un punto di passaggio.",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
 
     ["TRADESKILLS_EMPTY"] = "Nessun dato di professione caricato.",
     ["TRADESKILLS_SELECT"] = "Seleziona una professione per vedere le ricette.",
-    ["TRADESKILLS_NO_DATA"] = "Installa il pacchetto Database professioni per vedere i dati delle professioni.",
+    ["TRADESKILLS_NO_DATA"] = "Attiva Professioni in Gestisci funzioni per vedere i dati delle professioni.",
     ["TRADESKILLS_SEARCH"] = "Cerca ricette...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Cancella",
     ["TRADESKILLS_EXPANSION_ALL"] = "Tutte le espansioni",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
     ["QUESTS_ZONE_ALL"] = "Tutte le zone",
     ["QUESTS_TYPE_ALL"] = "Tutti i tipi",
     ["QUESTS_QTYPE_ALL"] = "Tutti i tipi di missione",
-    ["QUESTS_NO_DATA"] = "Installa il pacchetto Database missioni per raccogliere i dati delle missioni.",
+    ["QUESTS_NO_DATA"] = "Attiva Missioni per un'espansione in Gestisci funzioni per raccogliere i dati delle missioni.",
     ["QUESTS_NONE_YET"] = "Nessuna missione ancora raccolta. Gioca per riempire questo database.",
     ["QUESTS_DEFAULT_EMPTY"] = "Nessuna missione attiva o preferita. Cerca o scegli un filtro per sfogliare tutte le missioni.",
     ["QUESTS_STATUS_COUNT"] = "%d missioni",

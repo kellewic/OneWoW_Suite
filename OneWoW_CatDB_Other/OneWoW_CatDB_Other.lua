@@ -1,0 +1,1 @@
+-- OneWoW_CatDB_Other: unassigned Catalog rows. Factories register from Data/ and DataExtra/; CatalogData activates enabled topics.

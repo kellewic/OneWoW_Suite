@@ -2108,7 +2108,11 @@ function MainWindow:RefreshFarmDetail()
     y = y - 8
 
     local sources = ns.FarmList:GetCatalogSources(itemID)
+    local catalogNotice
     if #sources == 0 then
+        catalogNotice = OneWoW:GetCatalogUnavailableNotice({ "journal", "vendors", "quests", "tradeskills" })
+    end
+    if #sources == 0 and not catalogNotice then
         d.whereGetHeader:Hide()
         for i = 1, #d.whereGetLines do d.whereGetLines[i]:Hide() end
     else
@@ -2117,30 +2121,44 @@ function MainWindow:RefreshFarmDetail()
         d.whereGetHeader:SetPoint("TOPLEFT", farmDetailPanel, "TOPLEFT", pad, y)
         y = y - MeasureOr(d.whereGetHeader, 14) - 4
         local lineIdx = 1
-        for g = 1, #sources do
-            local group = sources[g]
-            local headerFS = d.whereGetLines[lineIdx]
-            if headerFS then
-                headerFS:Show()
-                headerFS:SetText(group.header)
-                headerFS:SetTextColor(OneWoW_GUI:GetThemeColor("ACCENT_MUTED"))
-                headerFS:ClearAllPoints()
-                headerFS:SetPoint("TOPLEFT", farmDetailPanel, "TOPLEFT", pad, y)
-                headerFS:SetPoint("RIGHT", farmDetailPanel, "RIGHT", -pad, 0)
-                y = y - MeasureOr(headerFS, 12) - 2
-                lineIdx = lineIdx + 1
-            end
-            for li = 1, #group.lines do
-                local fs = d.whereGetLines[lineIdx]
-                if not fs then break end
+        if catalogNotice then
+            local fs = d.whereGetLines[1]
+            if fs then
                 fs:Show()
-                fs:SetText(group.lines[li])
-                fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+                fs:SetText(catalogNotice)
+                fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_WARNING"))
                 fs:ClearAllPoints()
-                fs:SetPoint("TOPLEFT", farmDetailPanel, "TOPLEFT", pad + 8, y)
+                fs:SetPoint("TOPLEFT", farmDetailPanel, "TOPLEFT", pad, y)
                 fs:SetPoint("RIGHT", farmDetailPanel, "RIGHT", -pad, 0)
                 y = y - MeasureOr(fs, 12) - 2
-                lineIdx = lineIdx + 1
+                lineIdx = 2
+            end
+        else
+            for g = 1, #sources do
+                local group = sources[g]
+                local headerFS = d.whereGetLines[lineIdx]
+                if headerFS then
+                    headerFS:Show()
+                    headerFS:SetText(group.header)
+                    headerFS:SetTextColor(OneWoW_GUI:GetThemeColor("ACCENT_MUTED"))
+                    headerFS:ClearAllPoints()
+                    headerFS:SetPoint("TOPLEFT", farmDetailPanel, "TOPLEFT", pad, y)
+                    headerFS:SetPoint("RIGHT", farmDetailPanel, "RIGHT", -pad, 0)
+                    y = y - MeasureOr(headerFS, 12) - 2
+                    lineIdx = lineIdx + 1
+                end
+                for li = 1, #group.lines do
+                    local fs = d.whereGetLines[lineIdx]
+                    if not fs then break end
+                    fs:Show()
+                    fs:SetText(group.lines[li])
+                    fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+                    fs:ClearAllPoints()
+                    fs:SetPoint("TOPLEFT", farmDetailPanel, "TOPLEFT", pad + 8, y)
+                    fs:SetPoint("RIGHT", farmDetailPanel, "RIGHT", -pad, 0)
+                    y = y - MeasureOr(fs, 12) - 2
+                    lineIdx = lineIdx + 1
+                end
             end
         end
         for i = lineIdx, #d.whereGetLines do

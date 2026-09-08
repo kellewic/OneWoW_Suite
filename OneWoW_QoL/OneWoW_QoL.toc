@@ -90,6 +90,7 @@ Portals\portalhub-flyouts-nested.lua
 Portals\portalhub.lua
 Portals\portalhub-esc.lua
 Portals\portalhub-esc-panels.lua
+Portals\portalhub-esc-session.lua
 Portals\portalhub-lfg.lua
 UI\t-portals.lua
 Search.lua

@@ -55,7 +55,7 @@ flowchart TB
     OW --> Modules
 
     subgraph Stores [Data stores — LoadOnDemand: 1]
-        CatDB[OneWoW_CatDB_*<br/>RequiredDeps: OneWoW]
+        CatDB[OneWoW_CatDB_*<br/>RequiredDeps: OneWoW + Catalog]
         AltData[OneWoW_AltTracker_* most: OneWoW only<br/>Endgame: + AltTracker hub]
     end
     Catalog --> CatDB
@@ -76,7 +76,7 @@ flowchart TB
 |---|---|---|---|
 | **1 — Core hub** | `OneWoW` | Always | Orchestrator, Manage Features, hub UI, shared engines, GUI toolkit (`OneWoW_GUI` global) |
 | **2 — Feature modules** | AltTracker, Catalog, Notes, Trackers, QoL, ShoppingList, DirectDeposit, Bags | On demand | `RequiredDeps: OneWoW` + `LoadOnDemand: 1` |
-| **3 — Data stores** | `OneWoW_AltTracker_*`, `OneWoW_CatDB_*` | On demand | Owned under `ModuleManifest.stores`. Most stores: `RequiredDeps: OneWoW` (consumers may load without the owning hub). **Exception:** Endgame still `RequiredDeps: …, OneWoW_AltTracker` (`parentRequiredStores`). Catalog Home / Manage Features stores are CatDB (Zones, NPCs, Items, Quests, Tradeskills). `PackResolver` always returns CatDB. |
+| **3 — Data stores** | `OneWoW_AltTracker_*`, `OneWoW_CatDB_*` | On demand | Owned under `ModuleManifest.stores`. Most AltTracker stores: `RequiredDeps: OneWoW` (consumers may load without the owning hub). **Exceptions:** Endgame still `RequiredDeps: …, OneWoW_AltTracker`; all Catalog packs `RequiredDeps: …, OneWoW_Catalog` (`parentRequiredStores`). Catalog Home / Manage Features stores are per-expansion CatDB addons, Other, and Tradeskills. Query APIs live on Catalog. `PackResolver` role loads return Catalog (or TradeSkillDB). |
 | **4 — Utility** | `OneWoW_Utility_DevTool` | On demand, opt-in | `RequiredDeps: OneWoW` + `LoadOnDemand: 1`; soft-opted-out on a fresh account and excluded from recommended preset; `loadPhase = "login"` when wanted |
 
 Verified against current `.toc` files:
@@ -86,7 +86,7 @@ Verified against current `.toc` files:
 | **OneWoW** | — | Auctionator, TradeSkillMaster | — |
 | **OneWoW_Notes** | OneWoW | — | 1 |
 | **OneWoW_AltTracker** | OneWoW | — | 1 |
-| **OneWoW_Catalog** | OneWoW | — | 1 |
+| **OneWoW_Catalog** | OneWoW | AllTheThings | 1 |
 | **OneWoW_Trackers** | OneWoW | TradeSkillMaster, Auctionator | 1 |
 | **OneWoW_QoL** | OneWoW | — | 1 |
 | **OneWoW_ShoppingList** | OneWoW | — | 1 |
@@ -95,7 +95,7 @@ Verified against current `.toc` files:
 | **OneWoW_Utility_DevTool** | OneWoW | !BugGrabber | 1 |
 | **OneWoW_AltTracker_\*** (except Endgame) | OneWoW | — | 1 |
 | **OneWoW_AltTracker_Endgame** | OneWoW, OneWoW_AltTracker | — | 1 |
-| **OneWoW_CatDB_\*** | OneWoW | — | 1 (Catalog packs: `lazyStores`; parse on tab / quest event / Item Search source) |
+| **OneWoW_CatDB_\*** | OneWoW, OneWoW_Catalog | — | 1 (Catalog packs: `lazyStores`; parse on tab / quest event / Item Search source) |
 
 ### OptionalDeps policy
 
@@ -385,7 +385,7 @@ OneWoW:CreateItemDataLoader(dbTable)            -> ItemDataLoader (shared async 
 
 - **Soft opt-out enforced:** returns `"OPTED_OUT"` when the unit itself is opted out,
   or when `StoreRequiresParent(unit)` and the manifest parent is opted out
-  (`parentRequiredStores`: Endgame only). Other AltTracker and all Catalog packs
+  (`parentRequiredStores`: Endgame and all Catalog packs). Other AltTracker stores
   load with the owning hub soft-opted-out.
 - **`BringUp` consumer pulls:** appends `FirstRun.CATALOG[].datastores` for the
   feature (e.g. Bags → Storage + Character) so a Bags-only install loads data
@@ -558,16 +558,16 @@ while working.
 
 Manage Features' `FirstRun.CATALOG[].datastores` (consumer graph) and
 `ModuleManifest.stores` (ownership graph) remain **distinct** sources of truth.
-Catalog Home / Manage Features rows are the six `OneWoW_CatDB_*` stores.
+Catalog Home / Manage Features rows are one addon per expansion, Other, and Tradeskills.
 Manage Features renders manifest `stores` as indented sub-rows under Catalog and
 AltTracker. `storePolicy` is `optional` for both. Notes can also list
 `inUnitFeatures` on its CATALOG entry (OneWay Pins today). Those use the same
 sub-row chrome but are **not** load units: Apply calls the feature setter
 (`OneWoW_Notes_API.SetWayPinsEnabled`) instead of `SetFeatureOptOut` /
 `EnsureLoaded`. The row mutes when Notes is unchecked. AltTracker stores (except
-Endgame) and all Catalog packs toggle independently of their owning hub;
-Endgame stays parent-required (`parentRequiredStores` / TOC) and mutes when
-AltTracker is off. Consumer pulls (Bags → Storage/Character, ShoppingList →
+Endgame) toggle independently of their owning hub; Endgame and all Catalog packs
+stay parent-required (`parentRequiredStores` / TOC) and mute when the hub is
+off. Unticking Catalog stops every Catalog pack from loading. Consumer pulls (Bags → Storage/Character, ShoppingList →
 Storage / TradeSkillDB) still show “required by …” and stay non-interactive while
 that consumer is on. Soft Apply writes per-store `SetFeatureOptOut` and
 `EnsureLoaded`s wanted-but-unloaded **eager** stores; cold start also

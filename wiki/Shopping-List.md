@@ -55,7 +55,7 @@ With **OneWoW_CatDB_TradeSkillDB** installed, Craft can pick recipes and show wh
 ## Tips
 
 * Enable Shopping List in Manage Features even if you leave the AltTracker hub off — Storage can still load for alt scanning.
-* Keep the Catalog **Tradeskills** pack (`OneWoW_CatDB_TradeSkillDB`) if you rely on Craft / recipe picker.
+* Keep Catalog on, and keep the **Tradeskills** pack (`OneWoW_CatDB_TradeSkillDB`), if you rely on Craft / recipe picker. You do not have to open Catalog tabs.
 
 ## Related
 

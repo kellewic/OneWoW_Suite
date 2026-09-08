@@ -74,14 +74,12 @@ local DEFAULTS = {
         showGarrisonHearth = true,
         showFlightWhistle = true,
         showHousingPortal = true,
-        escShowZoneNotes = true,
-        escHideZoneNotesWhenEmpty = false,
-        escShowAlerts = true,
+        escShowHere = true,
         escPortalsEnabled = true,
         escShowCharacterInfo = true,
-        escShowEndeavors = true,
         escPanelsSide = "left",
         escPortalsSide = "right",
+        escSkinGameMenu = true,
         allFavorites = {},
         escFavorites = {},
         customItems = {},
@@ -438,6 +436,9 @@ local DEFAULTS = {
         quest = {},
         recipe = {},
     },
+    -- Per-era CatDB topic toggles: [addonName] = { hubs=true, zone=false, ... }.
+    -- Missing keys use CatalogData defaults (hubs on; current two expansions on).
+    catalogTopics = {},
 }
 
 --- Fresh copy of the shipped defaults subtree for one settings tab

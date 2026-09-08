@@ -437,19 +437,10 @@ local function ArmQuestPack()
     if questLoadQueued then
         return
     end
-    local addon = ns.ResolveCatalogPack and ns:ResolveCatalogPack("quests")
-    if not addon then
-        return
-    end
-    if C_AddOns.IsAddOnLoaded(addon) then
-        return
-    end
     questLoadQueued = true
     C_Timer.After(0, function()
         questLoadQueued = false
-        if ns.EnsureLoaded then
-            ns:EnsureLoaded(addon)
-        end
+        ns:EnsureCatalogPack("quests")
     end)
 end
 

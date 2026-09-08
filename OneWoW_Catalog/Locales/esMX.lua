@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
 
     ["JOURNAL_EMPTY"] = "No hay datos de diario cargados.",
     ["JOURNAL_SELECT"] = "Selecciona una entrada para ver los detalles.",
-    ["JOURNAL_NO_DATA"] = "Instala el paquete Base de zonas para ver los datos de instancia.",
+    ["JOURNAL_NO_DATA"] = "Activa una expansion en Catalog en Gestionar funciones para ver los datos de instancia.",
     ["JOURNAL_SEARCH"] = "Buscar instancias...",
     ["JOURNAL_STATS"] = "%d instancias",
     ["JOURNAL_STATS_FILTERED"] = "%d de %d instancias",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Solo pródigas",
 
     ["JOURNAL_GENERAL_LOOT"] = "Botín general",
+    ["JOURNAL_QUEST_LOOT"] = "Relacionado con misión / Botín de misión",
+    ["JOURNAL_WORLD_BOSSES"] = "Jefes de mundo",
+    ["JOURNAL_WORLD_RARES"] = "Raros de mundo",
+    ["JOURNAL_NPC_UNNAMED"] = "PNJ #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Objeto desconocido",
+    ["JOURNAL_UNKNOWN_INST"] = "Mazmorra desconocida",
     ["JOURNAL_ITEMS_COUNT"] = "%d objetos",
 
     ["JOURNAL_QUEST_PREFIX"] = "Misión",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
     ["VENDORS_ITEM_COUNT"] = "Objetos en venta",
     ["VENDORS_LIMITED"] = "Limitado",
     ["VENDORS_PRICE_UNKNOWN"] = "Precio desconocido",
-    ["VENDORS_NO_DATA"] = "Instala el paquete Base de PNJ para recopilar datos de PNJ.",
+    ["VENDORS_NO_DATA"] = "Activa PNJ de una expansion en Gestionar funciones para recopilar datos de PNJ.",
     ["VENDORS_WAYPOINT"] = "Marcador",
     ["VENDORS_WAYPOINT_TT"] = "Coloca un punto de ruta en este PNJ. Abre el mapa del mundo en esa zona. El punto de ruta se borra al llegar. Algunos mapas no permiten un punto de ruta.",
     ["VENDORS_WAYPOINT_FAILED"] = "Este mapa no permite un punto de ruta.",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
 
     ["TRADESKILLS_EMPTY"] = "No hay datos de profesión cargados.",
     ["TRADESKILLS_SELECT"] = "Selecciona una profesión para ver las recetas.",
-    ["TRADESKILLS_NO_DATA"] = "Instala el paquete Base de profesiones para ver los datos de profesion.",
+    ["TRADESKILLS_NO_DATA"] = "Activa Profesiones en Gestionar funciones para ver los datos de profesion.",
     ["TRADESKILLS_SEARCH"] = "Buscar recetas...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Limpiar",
     ["TRADESKILLS_EXPANSION_ALL"] = "Todas las expansiones",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
     ["QUESTS_ZONE_ALL"] = "Todas las zonas",
     ["QUESTS_TYPE_ALL"] = "Todos los tipos",
     ["QUESTS_QTYPE_ALL"] = "Todos los tipos de misión",
-    ["QUESTS_NO_DATA"] = "Instala el paquete Base de misiones para recopilar datos de misiones.",
+    ["QUESTS_NO_DATA"] = "Activa Misiones de una expansion en Gestionar funciones para recopilar datos de misiones.",
     ["QUESTS_NONE_YET"] = "Aún no se han recopilado misiones. Juega para llenar esta base de datos.",
     ["QUESTS_DEFAULT_EMPTY"] = "No hay misiones activas ni favoritas. Busca o elige un filtro para explorar todas las misiones.",
     ["QUESTS_STATUS_COUNT"] = "%d misiones",

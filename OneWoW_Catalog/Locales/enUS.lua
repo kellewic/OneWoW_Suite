@@ -45,7 +45,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
 
     ["JOURNAL_EMPTY"] = "No journal data loaded.",
     ["JOURNAL_SELECT"] = "Select an entry to view details.",
-    ["JOURNAL_NO_DATA"] = "Install the Zone Database pack to view instance data.",
+    ["JOURNAL_NO_DATA"] = "Turn on an expansion under Catalog in Manage Features to view instance data.",
     ["JOURNAL_SEARCH"] = "Search instances...",
     ["JOURNAL_STATS"] = "%d instances",
     ["JOURNAL_STATS_FILTERED"] = "%d of %d instances",
@@ -112,6 +112,12 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Show Bountiful",
 
     ["JOURNAL_GENERAL_LOOT"] = "General Loot",
+    ["JOURNAL_QUEST_LOOT"] = "Quest Related / Quest Drop",
+    ["JOURNAL_WORLD_BOSSES"] = "World Bosses",
+    ["JOURNAL_WORLD_RARES"] = "World Rares",
+    ["JOURNAL_NPC_UNNAMED"] = "NPC #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Unknown Item",
+    ["JOURNAL_UNKNOWN_INST"] = "Unknown Instance",
     ["JOURNAL_ITEMS_COUNT"] = "%d items",
 
     ["JOURNAL_QUEST_PREFIX"] = "Quest",
@@ -182,7 +188,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
     ["VENDORS_ITEM_COUNT"] = "Items for Sale",
     ["VENDORS_LIMITED"] = "Limited",
     ["VENDORS_PRICE_UNKNOWN"] = "Price unknown",
-    ["VENDORS_NO_DATA"] = "Install the NPC Database pack to collect NPC data.",
+    ["VENDORS_NO_DATA"] = "Turn on NPCs for an expansion in Manage Features to collect NPC data.",
     ["VENDORS_WAYPOINT"] = "Pin",
     ["VENDORS_WAYPOINT_TT"] = "Set a live waypoint at this NPC. Opens the world map to that zone. The waypoint clears when you arrive. Some maps do not allow a live waypoint.",
     ["VENDORS_WAYPOINT_FAILED"] = "This map does not allow a live waypoint.",
@@ -244,7 +250,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
 
     ["TRADESKILLS_EMPTY"] = "No tradeskill data loaded.",
     ["TRADESKILLS_SELECT"] = "Select a profession to view recipes.",
-    ["TRADESKILLS_NO_DATA"] = "Install the TradeSkill Database pack to view profession data.",
+    ["TRADESKILLS_NO_DATA"] = "Turn on Tradeskills in Manage Features to view profession data.",
     ["TRADESKILLS_SEARCH"] = "Search recipes...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Clear",
     ["TRADESKILLS_EXPANSION_ALL"] = "All Expansions",
@@ -286,7 +292,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
     ["QUESTS_ZONE_ALL"] = "All Zones",
     ["QUESTS_TYPE_ALL"] = "All Types",
     ["QUESTS_QTYPE_ALL"] = "All Quest Types",
-    ["QUESTS_NO_DATA"] = "Install the Quest Database pack to collect quest data.",
+    ["QUESTS_NO_DATA"] = "Turn on Quests for an expansion in Manage Features to collect quest data.",
     ["QUESTS_NONE_YET"] = "No quests collected yet. Play the game to fill this database.",
     ["QUESTS_DEFAULT_EMPTY"] = "No active or favorited quests. Search or pick a filter to browse all quests.",
     ["QUESTS_STATUS_COUNT"] = "%d quests",

@@ -372,8 +372,6 @@ local DIFF_ID_ABBREV = {
     [33] = "JOURNAL_DIFF_TW",
 }
 
-local COL_DIFF_WIDTH = 64
-
 ---@param name string|nil
 ---@return boolean
 local function IsBlankDisplayName(name)
@@ -1842,19 +1840,6 @@ local function BuildQuestItemRow(parent, item, yOffset, zebraIndex)
     return yOffset - (ITEM_ROW_HEIGHT + 2)
 end
 
-local ACH_DIFF_KEYS = {
-    N   = "JOURNAL_DIFF_N",
-    H   = "JOURNAL_DIFF_H",
-    M   = "JOURNAL_DIFF_M",
-    LFR = "JOURNAL_DIFF_LFR",
-    TW  = "JOURNAL_DIFF_TW",
-    ["M+"] = "JOURNAL_DIFF_M+",
-    ["10N"] = "JOURNAL_DIFF_10N",
-    ["25N"] = "JOURNAL_DIFF_25N",
-    ["10H"] = "JOURNAL_DIFF_10H",
-    ["25H"] = "JOURNAL_DIFF_25H",
-}
-
 -- GetAchievementInfo.completed is Warband-wide. wasEarnedByMe is this character.
 -- There is no separate account flag; Warband is the account progress.
 ---@param completed boolean
@@ -2083,7 +2068,6 @@ local function BuildAchievementsTable(parent, instData, yOffset)
     end
 
     -- Same chrome as the Items column header: plus on the left, labels on one row.
-    local COL_DIFF_RIGHT   = -240
     local COL_POINTS_RIGHT = -170
     local COL_STATUS_RIGHT = -8
     local ACH_STATUS_ICON  = 14
@@ -2103,22 +2087,19 @@ local function BuildAchievementsTable(parent, instData, yOffset)
     expandIcon:SetPoint("LEFT", colHdrFrame, "LEFT", 6, 0)
     expandIcon:SetAtlas(achievementsExpanded and "Gamepad_Rev_Minus_64" or "Gamepad_Rev_Plus_64")
 
-    local hdrName = OneWoW_GUI:CreateFS(colHdrFrame, 10)
-    hdrName:SetPoint("LEFT", expandIcon, "RIGHT", 4, 0)
-    hdrName:SetText(L["ACHIEVEMENT"])
-    hdrName:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
-
-    local hdrDiff = OneWoW_GUI:CreateFS(colHdrFrame, 10)
-    hdrDiff:SetPoint("RIGHT", colHdrFrame, "RIGHT", COL_DIFF_RIGHT, 0)
-    hdrDiff:SetText(L["JOURNAL_COL_HDR_DIFFICULTY"])
-    hdrDiff:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
-    hdrDiff:SetJustifyH("RIGHT")
-
     local hdrPoints = OneWoW_GUI:CreateFS(colHdrFrame, 10)
     hdrPoints:SetPoint("RIGHT", colHdrFrame, "RIGHT", COL_POINTS_RIGHT, 0)
     hdrPoints:SetText(L["JOURNAL_COL_HDR_POINTS"])
     hdrPoints:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
     hdrPoints:SetJustifyH("RIGHT")
+
+    local hdrName = OneWoW_GUI:CreateFS(colHdrFrame, 10)
+    hdrName:SetPoint("LEFT", expandIcon, "RIGHT", 4, 0)
+    hdrName:SetPoint("RIGHT", hdrPoints, "LEFT", -8, 0)
+    hdrName:SetJustifyH("LEFT")
+    hdrName:SetWordWrap(false)
+    hdrName:SetText(L["ACHIEVEMENT"])
+    hdrName:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
 
     local hdrStatus = OneWoW_GUI:CreateFS(colHdrFrame, 10)
     hdrStatus:SetPoint("RIGHT", colHdrFrame, "RIGHT", COL_STATUS_RIGHT, 0)
@@ -2277,15 +2258,6 @@ local function BuildAchievementsTable(parent, instData, yOffset)
             pointsFS:SetText(tostring(points or 0))
             pointsFS:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
 
-            local diffKey = row.diff and ACH_DIFF_KEYS[row.diff]
-            local diffFS = OneWoW_GUI:CreateFS(itemRow, 10)
-            diffFS:SetPoint("RIGHT", itemRow, "RIGHT", COL_DIFF_RIGHT, 0)
-            diffFS:SetJustifyH("RIGHT")
-            diffFS:SetWidth(COL_DIFF_WIDTH)
-            diffFS:SetWordWrap(false)
-            diffFS:SetText(diffKey and L[diffKey] or "")
-            diffFS:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
-
             local nameFS = OneWoW_GUI:CreateFS(itemRow, 12)
             local jumpBtn = AddZoneJumpButton(itemRow, instData, row.zoneMapID)
             if jumpBtn then
@@ -2294,7 +2266,7 @@ local function BuildAchievementsTable(parent, instData, yOffset)
             else
                 nameFS:SetPoint("LEFT", iconFrame, "RIGHT", 8, 0)
             end
-            nameFS:SetPoint("RIGHT", diffFS, "LEFT", -8, 0)
+            nameFS:SetPoint("RIGHT", pointsFS, "LEFT", -8, 0)
             nameFS:SetJustifyH("LEFT")
             nameFS:SetWordWrap(false)
             nameFS:SetText(name)
@@ -2362,28 +2334,87 @@ local function InstanceHasGuidePage(instData)
     return true
 end
 
-local function AppendWrappedDetailText(parent, yOffset, text, fontSize, colorKey, indent)
-    local fs = OneWoW_GUI:CreateFS(parent, fontSize)
-    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", indent, yOffset)
-    fs:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, yOffset)
-    fs:SetJustifyH("LEFT")
-    fs:SetJustifyV("TOP")
-    fs:SetWordWrap(true)
-    fs:SetText(text)
-    fs:SetTextColor(OneWoW_GUI:GetThemeColor(colorKey))
-    table.insert(detailElements, fs)
-    return yOffset - (fs:GetStringHeight() or 0) - 6
+local LORE_PAD = 10
+local LORE_BODY_GAP = 4
+local LORE_TITLE_GAP = 8
+local LORE_LABEL_GAP = 12
+
+local function LorePlain(text)
+    if not text or text == "" then
+        return nil
+    end
+    local plain = StripColorCodes(text)
+    if not plain or plain == "" then
+        return nil
+    end
+    return plain
 end
 
-local function AppendDetailSectionLabel(parent, yOffset, text, indent)
-    local fs = OneWoW_GUI:CreateFS(parent, 11)
-    fs:SetPoint("TOPLEFT", parent, "TOPLEFT", indent or 10, yOffset)
-    fs:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, yOffset)
-    fs:SetJustifyH("LEFT")
-    fs:SetText(text)
-    fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_ACCENT"))
-    table.insert(detailElements, fs)
-    return yOffset - 16
+local function LoreGapBefore(kind, isFirst)
+    if isFirst then
+        return 0
+    end
+    if kind == "label" then
+        return LORE_LABEL_GAP
+    end
+    if kind == "title" then
+        return LORE_TITLE_GAP
+    end
+    return LORE_BODY_GAP
+end
+
+---@param blocks { kind: string, text: string, depth?: number }[]
+---@return number yOffset
+local function AppendLorePanel(parent, yOffset, blocks)
+    if not blocks or #blocks == 0 then
+        return yOffset
+    end
+    local parentW = parent:GetWidth() or 0
+    if parentW < 40 then
+        parentW = 400
+    end
+    local insetW = parentW - 16
+    local inset = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    inset:SetPoint("TOPLEFT", parent, "TOPLEFT", 8, yOffset)
+    inset:SetWidth(insetW)
+    inset:SetBackdrop(BACKDROP_SIMPLE)
+    inset:SetBackdropColor(OneWoW_GUI:GetThemeColor("BG_TERTIARY"))
+    inset:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
+    table.insert(detailElements, inset)
+
+    local prev
+    local prevIndent = LORE_PAD
+    local height = LORE_PAD
+    for i = 1, #blocks do
+        local block = blocks[i]
+        local kind = block.kind
+        local colorKey = "TEXT_SECONDARY"
+        if kind == "label" or kind == "title" then
+            colorKey = "TEXT_ACCENT"
+        end
+        local indent = LORE_PAD + ((block.depth or 0) * 12)
+        local textW = math.max(20, insetW - indent - LORE_PAD)
+        local fs = OneWoW_GUI:CreateFS(inset, 11)
+        fs:SetWidth(textW)
+        fs:SetJustifyH("LEFT")
+        fs:SetJustifyV("TOP")
+        fs:SetWordWrap(true)
+        fs:SetText(block.text)
+        fs:SetTextColor(OneWoW_GUI:GetThemeColor(colorKey))
+        local lineH = fs:GetStringHeight() or 12
+        fs:SetHeight(lineH)
+        local gap = LoreGapBefore(kind, i == 1)
+        if prev then
+            fs:SetPoint("TOPLEFT", prev, "BOTTOMLEFT", indent - prevIndent, -gap)
+        else
+            fs:SetPoint("TOPLEFT", inset, "TOPLEFT", indent, -LORE_PAD)
+        end
+        height = height + gap + lineH
+        prev = fs
+        prevIndent = indent
+    end
+    inset:SetHeight(height + LORE_PAD)
+    return yOffset - (height + LORE_PAD) - 8
 end
 
 local function CollectGuideSections(rootSectionID)
@@ -2409,11 +2440,15 @@ local function CollectGuideSections(rootSectionID)
             if not info then
                 break
             end
-            tinsert(sections, {
-                title = info.title,
-                description = info.description,
-                depth = depth,
-            })
+            local hasTitle = info.title and info.title ~= ""
+            local hasDesc = info.description and info.description ~= ""
+            if hasTitle or hasDesc then
+                tinsert(sections, {
+                    title = info.title,
+                    description = info.description,
+                    depth = depth,
+                })
+            end
             if info.firstChildSectionID and info.firstChildSectionID > 0 then
                 walk(info.firstChildSectionID, depth + 1)
             end
@@ -2451,28 +2486,32 @@ local function AppendLiveEncounterGuide(parent, encounter, yOffset)
         return yOffset
     end
     local _, description, _, rootSectionID = EJ_GetEncounterInfo(encID)
-    if description and description ~= "" then
-        yOffset = AppendWrappedDetailText(parent, yOffset, description, 11, "TEXT_MUTED", 16)
+    local blocks = {}
+    local lore = LorePlain(description)
+    if lore then
+        tinsert(blocks, { kind = "body", text = lore })
     end
-    if not rootSectionID or rootSectionID <= 0 then
+    if rootSectionID and rootSectionID > 0 then
+        local sections = CollectGuideSections(rootSectionID)
+        if #sections > 0 then
+            tinsert(blocks, { kind = "label", text = ABILITIES })
+            for i = 1, #sections do
+                local sec = sections[i]
+                local title = LorePlain(sec.title)
+                local body = LorePlain(sec.description)
+                if title then
+                    tinsert(blocks, { kind = "title", text = title, depth = sec.depth })
+                end
+                if body then
+                    tinsert(blocks, { kind = "body", text = body, depth = sec.depth })
+                end
+            end
+        end
+    end
+    if #blocks == 0 then
         return yOffset
     end
-    local sections = CollectGuideSections(rootSectionID)
-    if #sections == 0 then
-        return yOffset
-    end
-    yOffset = AppendDetailSectionLabel(parent, yOffset, ABILITIES, 16)
-    for i = 1, #sections do
-        local sec = sections[i]
-        local indent = 16 + (sec.depth * 12)
-        if sec.title and sec.title ~= "" then
-            yOffset = AppendWrappedDetailText(parent, yOffset, sec.title, 11, "TEXT_SECONDARY", indent)
-        end
-        if sec.description and sec.description ~= "" then
-            yOffset = AppendWrappedDetailText(parent, yOffset, sec.description, 10, "TEXT_MUTED", indent)
-        end
-    end
-    return yOffset
+    return AppendLorePanel(parent, yOffset, blocks)
 end
 
 RefreshDetailView = function(isSecondRefresh)
@@ -2527,8 +2566,13 @@ RefreshDetailView = function(isSecondRefresh)
     if InstanceHasGuidePage(instData) then
         local instanceLore = LiveInstanceDescription(instData.instanceID)
         if instanceLore then
-            yOffset = AppendDetailSectionLabel(parent, yOffset, OVERVIEW, 10)
-            yOffset = AppendWrappedDetailText(parent, yOffset, instanceLore, 11, "TEXT_MUTED", 10)
+            local lore = LorePlain(instanceLore)
+            if lore then
+                yOffset = AppendLorePanel(parent, yOffset, {
+                    { kind = "label", text = OVERVIEW },
+                    { kind = "body", text = lore },
+                })
+            end
         end
     end
 
@@ -3003,6 +3047,7 @@ end
 -- matches arrive rather than blocking on the whole walk.
 local journalUncollectedJob = nil
 local FinishJournalList
+local FillJournalList
 local StartUncollectedFilter
 
 local function CancelUncollectedFilter()
@@ -3086,9 +3131,8 @@ StartUncollectedFilter = function(panels, candidates)
     })
 end
 
-function RefreshJournalList(panels)
+FillJournalList = function(panels)
     CancelUncollectedFilter()
-    wipe(listResults)
     if panels.listScrollFrame and panels.listScrollFrame.SetVerticalScroll then
         panels.listScrollFrame:SetVerticalScroll(0)
     end
@@ -3125,6 +3169,20 @@ function RefreshJournalList(panels)
     end
 
     FinishJournalList(panels, sorted)
+end
+
+function RefreshJournalList(panels)
+    wipe(listResults)
+    ns.EnsureCatalogPack("journal")
+    OneWoW:EnsureJournalShardsForFilter(expansionFilter, function()
+        local p = panels_ref or panels
+        if not p then
+            return
+        end
+        InvalidateJournalFilterCache()
+        FillJournalList(p)
+    end)
+    FillJournalList(panels)
 end
 
 --- Bountiful filter, favourites hoist, list population and selection restore.
@@ -3247,6 +3305,19 @@ end
 
 ns.UI.RefreshJournalList = RefreshJournalList
 
+local function ExpansionFilterLabel()
+    if expansionFilter == 0 then
+        return L["JOURNAL_EXPANSION_ALL"]
+    end
+    local expansions = OneWoW.CatalogData:GetWantedJournalExpansions()
+    for i = 1, #expansions do
+        if expansions[i].expansionID == expansionFilter then
+            return expansions[i].displayName
+        end
+    end
+    return L["JOURNAL_EXPANSION_ALL"]
+end
+
 local function SnapExpansionToType(panels)
     if instanceTypeFilter ~= "delve" then
         return
@@ -3286,7 +3357,7 @@ local function InitializeDropdowns(panels)
     if not addon then return end
 
     if panels.expDropdown then
-        panels.expText:SetText(L["JOURNAL_EXPANSION_ALL"])
+        panels.expText:SetText(ExpansionFilterLabel())
         -- Tall enough for All + every expansion (default menuHeight clips the last row).
         OneWoW_GUI:AttachFilterMenu(panels.expDropdown, {
             searchable = false,
@@ -3294,10 +3365,9 @@ local function InitializeDropdowns(panels)
             getActiveValue = function() return expansionFilter end,
             buildItems = function()
                 local items = { { value = 0, text = L["JOURNAL_EXPANSION_ALL"] } }
-                local da = GetDataAddon()
-                if da then
-                    local expansions = da.GetAvailableExpansions(instanceTypeFilter)
-                    for _, exp in ipairs(expansions) do
+                local expansions = OneWoW.CatalogData:GetWantedJournalExpansions()
+                for _, exp in ipairs(expansions) do
+                    if instanceTypeFilter ~= "delve" or exp.expansionID == 11 or exp.expansionID == 12 then
                         table.insert(items, {
                             value = exp.expansionID,
                             text  = exp.displayName,
@@ -3480,7 +3550,8 @@ function ns.UI.CreateJournalTab(parent)
 
     -- LEFT HEADER: Expansion dropdown (no label — dropdown text is self-explanatory)
     -- then "Has uncollected" checkbox under it.
-    local expDropdown, expText = OneWoW_GUI:CreateDropdown(leftHeader, { width = LEFT_W - 16, text = L["JOURNAL_EXPANSION_ALL"] })
+    expansionFilter = OneWoW.CatalogData:GetCurrentSuiteExpansionID()
+    local expDropdown, expText = OneWoW_GUI:CreateDropdown(leftHeader, { width = LEFT_W - 16, text = ExpansionFilterLabel() })
     expDropdown:SetPoint("TOPLEFT", leftHeader, "TOPLEFT", 8, -38)
 
     local hasUncollectedChk = OneWoW_GUI:CreateCheckbox(leftHeader, {
@@ -3832,6 +3903,7 @@ function ns.UI.OpenToInstance(spec)
     end
 
     local packName = ns.EnsureCatalogPack("journal")
+    OneWoW:EnsureJournalShards(OneWoW.CatalogData:GetCurrentSuiteExpansionID())
     local journalAPI = GetDataAddon()
     if not journalAPI then
         if packName then
@@ -3842,25 +3914,34 @@ function ns.UI.OpenToInstance(spec)
         return
     end
 
-    local instData
-    if encounterID then
-        local enc = journalAPI.GetEncounter(encounterID)
-        local encInstanceID = enc and tonumber(enc.instanceID)
-        if encInstanceID and encInstanceID > 0 then
-            instData = journalAPI.GetInstanceByInstanceID(encInstanceID)
+    local function FindInstance()
+        local inst
+        if encounterID then
+            local enc = journalAPI.GetEncounter(encounterID)
+            local encInstanceID = enc and tonumber(enc.instanceID)
+            if encInstanceID and encInstanceID > 0 then
+                inst = journalAPI.GetInstanceByInstanceID(encInstanceID)
+            end
         end
-    end
-    if not instData and type(placeKey) == "string" and placeKey ~= "" then
-        instData = journalAPI.GetInstanceByPlaceKey(placeKey)
-    end
-    if not instData and instanceID and instanceID > 0 then
-        instData = journalAPI.GetInstanceByInstanceID(instanceID)
-    end
-    if not instData and mapID then
-        instData = journalAPI.GetInstanceByMapID(mapID)
-        if not instData then
-            instData = journalAPI.GetZoneInstance(nil, mapID)
+        if not inst and type(placeKey) == "string" and placeKey ~= "" then
+            inst = journalAPI.GetInstanceByPlaceKey(placeKey)
         end
+        if not inst and instanceID and instanceID > 0 then
+            inst = journalAPI.GetInstanceByInstanceID(instanceID)
+        end
+        if not inst and mapID then
+            inst = journalAPI.GetInstanceByMapID(mapID)
+            if not inst then
+                inst = journalAPI.GetZoneInstance(nil, mapID)
+            end
+        end
+        return inst
+    end
+
+    local instData = FindInstance()
+    if not instData then
+        OneWoW:EnsureCatalogJournalPlaces()
+        instData = FindInstance()
     end
     if not instData then
         return

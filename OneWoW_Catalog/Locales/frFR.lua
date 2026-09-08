@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
 
     ["JOURNAL_EMPTY"] = "Aucune donnée de journal chargée.",
     ["JOURNAL_SELECT"] = "Sélectionnez une entrée pour voir les détails.",
-    ["JOURNAL_NO_DATA"] = "Installez le pack Base de zones pour voir les donnees d'instance.",
+    ["JOURNAL_NO_DATA"] = "Activez une extension sous Catalog dans Gerer les fonctionnalites pour voir les donnees d'instance.",
     ["JOURNAL_SEARCH"] = "Rechercher des instances...",
     ["JOURNAL_STATS"] = "%d instances",
     ["JOURNAL_STATS_FILTERED"] = "%d sur %d instances",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Gouffres abondants",
 
     ["JOURNAL_GENERAL_LOOT"] = "Butin général",
+    ["JOURNAL_QUEST_LOOT"] = "Lié à une quête / Butin de quête",
+    ["JOURNAL_WORLD_BOSSES"] = "Boss hors instance",
+    ["JOURNAL_WORLD_RARES"] = "Rares hors instance",
+    ["JOURNAL_NPC_UNNAMED"] = "PNJ #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Objet inconnu",
+    ["JOURNAL_UNKNOWN_INST"] = "Instance inconnue",
     ["JOURNAL_ITEMS_COUNT"] = "%d objets",
 
     ["JOURNAL_QUEST_PREFIX"] = "Quête",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
     ["VENDORS_ITEM_COUNT"] = "Objets en vente",
     ["VENDORS_LIMITED"] = "Limité",
     ["VENDORS_PRICE_UNKNOWN"] = "Prix inconnu",
-    ["VENDORS_NO_DATA"] = "Installez le pack Base de PNJ pour collecter les donnees de PNJ.",
+    ["VENDORS_NO_DATA"] = "Activez PNJ pour une extension dans Gerer les fonctionnalites pour collecter les donnees de PNJ.",
     ["VENDORS_WAYPOINT"] = "Repère",
     ["VENDORS_WAYPOINT_TT"] = "Place un point de passage temporaire sur ce PNJ. Ouvre la carte du monde sur cette zone. Le point de passage disparait a l'arrivee. Certaines cartes n'autorisent pas de point de passage.",
     ["VENDORS_WAYPOINT_FAILED"] = "Cette carte n'autorise pas de point de passage.",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
 
     ["TRADESKILLS_EMPTY"] = "Aucune donnée de métier chargée.",
     ["TRADESKILLS_SELECT"] = "Sélectionnez un métier pour voir les recettes.",
-    ["TRADESKILLS_NO_DATA"] = "Installez le pack Base de metiers pour voir les donnees de metiers.",
+    ["TRADESKILLS_NO_DATA"] = "Activez Metiers dans Gerer les fonctionnalites pour voir les donnees de metiers.",
     ["TRADESKILLS_SEARCH"] = "Rechercher des recettes...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Effacer",
     ["TRADESKILLS_EXPANSION_ALL"] = "Toutes les extensions",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
     ["QUESTS_ZONE_ALL"] = "Toutes les zones",
     ["QUESTS_TYPE_ALL"] = "Tous les types",
     ["QUESTS_QTYPE_ALL"] = "Tous les types de quête",
-    ["QUESTS_NO_DATA"] = "Installez le pack Base de quetes pour collecter les donnees de quetes.",
+    ["QUESTS_NO_DATA"] = "Activez Quetes pour une extension dans Gerer les fonctionnalites pour collecter les donnees de quetes.",
     ["QUESTS_NONE_YET"] = "Aucune quête collectée pour l'instant. Jouez pour remplir cette base de données.",
     ["QUESTS_DEFAULT_EMPTY"] = "Aucune quête active ou favorite. Recherchez ou choisissez un filtre pour parcourir toutes les quêtes.",
     ["QUESTS_STATUS_COUNT"] = "%d quêtes",

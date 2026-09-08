@@ -1,28 +1,33 @@
 # OneWoW Suite Changelog
 
 ## Home
-- Catalog data stores on Home and in Manage Features are Zone Database, NPC Database, Item Database, Quest Database, Quest Archive Database, and TradeSkill Database.
+- Catalog data on Home and in Manage Features is one addon per expansion, plus Other and Tradeskills. Turn expansions and topics on or off.
 - Home, Manage Features, and first-run cards use OneWoW feature icons instead of borrowed game art. Ringless sits on the card, not a black square.
 
 ---
 
 # Catalog
 ## Data
-- Catalog data packs are smaller, so those tabs open with less hitching. Item icons and types come from the game when you look at a row. Quest Archive no longer carries a second copy of the same generated tables.
+- Catalog is the encyclopedia for the suite, not only the Catalog window. Turning it off in Manage Features also stops expansion packs, Other, and Tradeskills from loading. ESC and AFK Zone Cards lose zone data, item tooltips lose sources, and profession extras in Shopping List and AltTracker go empty. Use What's affected? on the Catalog row. Apply & Reload drops Catalog from memory if it already loaded this session. After you update, delete a leftover `OneWoW_CatDB` folder in AddOns if Curse left one; keep the expansion folders (Classic, Other, Tradeskills, and the rest).
+- Catalog data is per expansion. Only the expansions and topics you turn on load, so Journal and other tabs use less memory. Other holds rows that are not assigned to an expansion yet.
+- Opening Zones does not walk every completed quest or saved vendor overlay. Those load when you use Quests or NPCs.
+- Catalog data packs are per expansion, so those tabs open with less hitching. Item icons and types come from the game when you look at a row.
+- Items use the expansion from the game files. If that field is empty, Catalog uses the first drop or vendor we know. Other is only items we still cannot place.
 
 ## Item Search
 - Item Search lists items Catalog already has a source for: a drop, a vendor, a quest, a recipe, or an achievement. Typing a name no longer fills the list with items we have nothing to show.
-- Opening Item Search loads the Items pack so the list can fill. Choosing Drops, Vendors, Crafted, Quests, or Owned loads that pack the same way.
+- Opening Item Search loads item data for the expansions you have turned on so the list can fill. Choosing Drops, Vendors, Crafted, Quests, or Owned loads that role the same way.
+- Empty drop, vendor, quest, or crafted lines say Catalog not enabled when that data is not loaded.
 - Collectible details can show achievements for an item when that item is a reward or a criterion.
 
 ## Collectibles and Housing
 - Catalog has Collectibles and Housing tabs next to Item Search. Collectibles lists transmog, mounts, pets, and toys with live collected status. Housing lists decor and owned, stored, and placed counts when the game reports them.
 - Opening those tabs does not stall. The list stops at 50 rows, or 100 when you filter or search, then asks you to narrow it.
-- Details show journal source text plus vendors, drops, quests, and a world rare when we know one. Those extra lines appear when that pack is already loaded. Click a vendor, instance, or quest to open that Catalog tab (that click loads the pack if needed). Achievements appear only when we have an id.
+- Details show journal source text plus vendors, drops, quests, and a world rare when we know one. Extra lines say Catalog not enabled when Catalog or that expansion data is not loaded. Click a vendor, instance, or quest to open that Catalog tab (that click loads the pack if needed). Achievements appear only when we have an id.
 - Collectibles and Housing can show Collected Only or Not Collected Only. Housing uses owned decor for that.
 
 ## NPCs
-- The NPCs tab lists shops, trainers, innkeepers, repair, stables, flight masters, bankers, barbers, quest givers, rares, and bosses. Encounter cards show type, kill quest, related quests, loot, Adventure Guide text when the game has it, and location. Click a quest, View loot, or a location to open Quests, Zones, or the map. Search by name, encounter name, NPC id, encounter id, or quest id. Filter by Encounters or a boss type.
+- The NPCs tab lists shops, trainers, innkeepers, repair, stables, flight masters, bankers, barbers, quest givers, rares, and bosses. Encounter cards show type, kill quest, related quests, loot, Adventure Guide text in a readable inset when the game has it, and location. Click a quest, View loot, or a location to open Quests, Zones, or the map. Search by name, encounter name, NPC id, encounter id, or quest id. Filter by Encounters or a boss type.
 - Encounter NPCs use the instance or zone from that encounter instead of Unknown Location. Current Zone Only lists bosses in this instance or map. Click the location to open that map.
 - Opening an NPC card asks the game for the name and remembers it. The list can still show an id until you open that card.
 
@@ -30,11 +35,15 @@
 - Opening the NPCs tab inside a dungeon or other instance no longer errors.
 - Opening a quest or NPC card no longer errors when the creature name is restricted, or on the location pin row.
 - View loot on an NPC opens that encounter on Zones. It no longer jumps to a city the NPC also visits.
+- Looking up a Battle for Azeroth item no longer errors when that expansion's Journal data loads. Journal cards and drop lines for that expansion work again.
 
 ## Journal
+- Standing in an older dungeon or raid (Skyreach, Timewalking, and the rest) shows that place. Extra floors in the instance load with that expansion.
 - Extra drops that come from a quest or an achievement sit in their own groups again. Click the quest link to open that quest.
+- Opening Zones loads this expansion first so the tab does not hitch. Pick All to load the rest in the background.
 - Encounter rows have See NPC and See Map after the source icon when we know that NPC or a pin.
-- Opening a dungeon or raid card shows the Adventure Guide overview. Expanding a Guide boss shows that encounter's text and abilities.
+- Opening a dungeon or raid card shows the Adventure Guide overview in a readable inset. Expanding a Guide boss shows that encounter's text and abilities the same way. Ability titles sit below the wrapped text, including when you change font size.
+- Zone achievement rows no longer show a Difficulty column, so the name has more room.
 
 ## Quests
 - Show on Map uses the NPC database pin for the giver or turn-in, including object starters.
@@ -64,14 +73,19 @@
 - The enhanced OneWoW row uses the suite feature icons. In collector settings, pick With ring or Ringless. Home and Manage Features follow the same choice. Ringless sits on the panel, not a black square.
 
 ## ESC Menu
-- ESC now has three pieces: Character Card, Zone Card, and Portals. Features only turns those three on or off. Features settings include a picture of each card.
+- ESC now has three pieces: Character Card, Zone Card, and a Travel card. Features only turns those three on or off. Features settings include a picture of each card.
+- Portals sit on a Travel card that matches the other cards, not a floating icon strip. Open Portal Hub is a text button on that card. Icon size still lives in Features.
+- Optional Suite theme paints the Game Menu and wraps the columns in one panel. Turn it off in Features if another UI already skins the Game Menu.
+- When Character/Zone cards and Portals share a side, they stack in that column (cards above Travel).
 - Character Card keeps mail and durability on the top right. Hover either for details; click mail to open Mail, or durability to open the character screen. A shopping-cart icon appears when auctions are expiring, expired, or gold is waiting. Hover it for the list; click it to open Alt Tracker auctions.
 - The separate Alerts card is gone. Auction attention and alt mail sit on those Character Card icons.
 - Zone Card keeps collections and Item Alert icons. Hover Notes for the zone note and OneWay Pins; click Shopping List, Notes, Trackers, or Farming to open that window. The extra zone-notes block under the card is gone.
-- Click the Character Card to open the character screen, or the Zone Card to open this place in Catalog. Left-click still opens that zone when Catalog Journal is not loaded. The card says so, and right-click loads it and refreshes the card.
+- Click the Character Card to open the character screen, or the Zone Card to open this place in Catalog. Left-click still opens that zone when Catalog Journal is not loaded. The card says so, and right-click loads it and refreshes the card. If Catalog is off, the card says Catalog not enabled.
+- Zone Card collection rows stay on the card. Extra rows scroll when this zone has more types than fit.
+- The Zone Card loads the dungeon or zone you are standing in, including older expansions.
 
 ## AFK Panel
-- The AFK overlay uses the same Character Card and Zone Card as the ESC menu, including the portrait with a faction badge, weekly bars, and Item Alert icons. Hover an icon for the list or note; keys and mouse still clear AFK the same way (no click-to-open). If Zones Catalog is not loaded, the Zone Card says so.
+- The AFK overlay uses the same Character Card and Zone Card as the ESC menu, including the portrait with a faction badge, weekly bars, and Item Alert icons. Hover an icon for the list or note; keys and mouse still clear AFK the same way (no click-to-open).
 - Character Card sits on the bottom left. Zone Card and Info stack on the right. Alerts (auctions expiring or expired, gold waiting, and alts with mail) sit on Info, not a center card.
 - Info also shows weekly and daily reset timers, profession weeklies, rested XP, bag space, Hearthstone cooldown, and this week's bonus event. When there are no auction or mail alerts, each AFK session can add one extra line: session time, a collectible count, or a short tip.
 - Info matches Character and Zone: accent title, a summary strip for weekly reset, daily reset, and bag space, then icon rows with progress bars for profession weeklies and rested XP.
@@ -86,20 +100,20 @@
 - Added Mycomancer's Hearthspore, The Schools of Arcane Magic - Mastery, Nature's Beacon, and Dundun's Abundant Travel Method.
 
 ## Instance Toast
-- Zoning into a dungeon or raid shows collectable counts on the instance toast when that expansion's Zones data is loaded. If it is not, the toast says Zones Catalog not loaded.
+- Zoning into a dungeon or raid shows collectable counts on the instance toast when Catalog Journal data is already loaded. If Catalog is off or that expansion is not loaded, the toast says Catalog not enabled.
 
 ## Toast Alerts
 - New Collections toasts when you loot an uncollected collectible, using the same collected status as Catalog, including housing decor and heirlooms. Mounts, pets, and toys still toast when you learn them, without a second popup for the same unlock.
 - Upgrade Alerts now toasts when a gear upgrade for this character appears in your bags, using the same item-level or Pawn rules as the Upgrade overlay.
 
 ## Fixes
-- ESC and AFK no longer load Catalog Journal data just to name this place. That data stays unloaded until you open Catalog Zones (or another tab that needs it), so open-world memory and hitching stay down.
+- Instance toasts and Item Tracker still use Catalog Journal only when that data is already loaded. If it is not, they say Catalog not enabled. The Zone Card and AFK load the dungeon or zone you are standing in.
 
 ## Auto Open
 - Auto Open now opens Torn Sack of Pet Supplies from the Crysa's Flyers daily.
 
 ## Tooltips
-- Item Tracker on item tooltips now has two blocks: Where it is (your copies) and Where to get it (quest, vendor, instance, profession). Those source lines appear when that Catalog pack is already loaded.
+- Item Tracker on item tooltips now has two blocks: Where it is (your copies) and Where to get it (quest, vendor, instance, profession). If Catalog or that expansion data is not loaded, Where to get it says Catalog not enabled.
 
 ## Toggles
 - Toggles matches current Options. Colorblind UI is a checkbox; the color filter and its strength are separate. Anti-aliasing names match the game (None, FXAA Low, FXAA High, CMAA, CMAA 2). Unlimited FPS is Limit Foreground / Background FPS, not 0 on the slider (8 to 200). UI scale goes from 0.65 to 1.15. Particle density is Disabled through Ultra. Friendly nameplates are friendly players.
@@ -131,7 +145,7 @@
 # Shopping List
 ## Farming List
 - The Shopping List window has a Farming tab: one account-wide list grouped by where to get the item.
-- Select a row for item info, where you already have copies, where to get it (when Catalog packs are already loaded), a note, and a quantity. A vendor line and Auction House search show when you can buy instead of farming.
+- Select a row for item info, where you already have copies, where to get it (Catalog not enabled if Catalog or that expansion data is not loaded), a note, and a quantity. A vendor line and Auction House search show when you can buy instead of farming.
 - Send a farm row to a shopping list. Right-click a shopping-list item to send it to Farm.
 - Notes Collectibles Farming intent adds that item to the Farming List when we can resolve an item id. Want stays on the Notes record.
 

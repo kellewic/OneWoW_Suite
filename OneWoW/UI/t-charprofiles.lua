@@ -194,7 +194,7 @@ local ADDON_SETTINGS_MAP = {
     },
     {
         dbName = "OneWoW_CatDB_ZoneDB_DB",
-        displayName = "CatDB ZoneDB",
+        displayName = "CatDB Places",
         acedb = true,
         keys = {"settings"},
     },
@@ -206,19 +206,19 @@ local ADDON_SETTINGS_MAP = {
     },
     {
         dbName = "OneWoW_CatDB_NPCDB_DB",
-        displayName = "CatDB NPCDB",
+        displayName = "CatDB NPCs",
         acedb = true,
         keys = {"settings"},
     },
     {
         dbName = "OneWoW_CatDB_QuestDBCurrent_DB",
-        displayName = "CatDB QuestDB Current",
+        displayName = "CatDB Quests",
         acedb = true,
         keys = {"settings"},
     },
     {
         dbName = "OneWoW_CatDB_ItemDB_DB",
-        displayName = "CatDB ItemDB",
+        displayName = "CatDB Items",
         acedb = true,
         keys = {"settings"},
     },

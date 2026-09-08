@@ -1596,15 +1596,34 @@ local function ShowVendorDetail(panels, vendor)
 
     local flavor = EncounterFlavor(vendor)
     if flavor then
-        local flavorFS = OneWoW_GUI:CreateFS(parent, 11)
-        flavorFS:SetPoint("TOPLEFT", parent, "TOPLEFT", 10, yOffset)
-        flavorFS:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -10, yOffset)
+        flavor = flavor:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|cn.-:", ""):gsub("|r", "")
+        local PAD = 10
+        local parentW = parent:GetWidth() or 0
+        if parentW < 40 then
+            parentW = 400
+        end
+        local insetW = parentW - 16
+        local inset = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+        inset:SetPoint("TOPLEFT", parent, "TOPLEFT", 8, yOffset)
+        inset:SetWidth(insetW)
+        inset:SetBackdrop(BACKDROP_SIMPLE)
+        inset:SetBackdropColor(OneWoW_GUI:GetThemeColor("BG_TERTIARY"))
+        inset:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
+        tinsert(detailElements, inset)
+
+        local flavorFS = OneWoW_GUI:CreateFS(inset, 11)
+        local textW = math.max(20, insetW - PAD * 2)
+        flavorFS:SetWidth(textW)
+        flavorFS:SetPoint("TOPLEFT", inset, "TOPLEFT", PAD, -PAD)
         flavorFS:SetJustifyH("LEFT")
+        flavorFS:SetJustifyV("TOP")
         flavorFS:SetWordWrap(true)
         flavorFS:SetText(flavor)
-        flavorFS:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
-        tinsert(detailElements, flavorFS)
-        yOffset = StepRow(yOffset, flavorFS:GetStringHeight(), 6)
+        flavorFS:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
+        local flavorH = flavorFS:GetStringHeight() or 12
+        flavorFS:SetHeight(flavorH)
+        inset:SetHeight(flavorH + PAD * 2)
+        yOffset = StepRow(yOffset, inset:GetHeight(), 6)
     end
 
     if vendor.locations then

@@ -929,15 +929,20 @@ function UI:SelectModuleTab(moduleName, targetSub)
 end
 
 -- A sub-tab whose content depends on optional data addon(s) can declare
+-- `requiresCatalogRole` (CatDB role: loads runtime + enabled era topics),
 -- `requiresAddon` (single string), `requiresAnyAddon` (array; available when ANY
 -- listed addon is loaded -- for aggregator panels), and/or `isAvailable`
 -- (predicate, highest priority). When unavailable, the sub-tab renders a "Not
 -- loaded" placeholder instead of its content. A tab with none of these is always
 -- available (current behavior).
--- Catalog data packs are lazyStores: opening a `requiresAddon` tab is the load
+-- Catalog data packs are lazyStores: opening a pack-backed tab is the load
 -- trigger (explicit user action), not login BringUp.
 local function EnsureSubTabAddons(tabInfo)
     if not tabInfo then return end
+    if tabInfo.requiresCatalogRole then
+        ns:EnsureCatalogPack(tabInfo.requiresCatalogRole)
+        return
+    end
     if tabInfo.requiresAddon then
         ns:EnsureLoaded(tabInfo.requiresAddon)
     end
@@ -945,6 +950,9 @@ end
 
 local function SubTabContentAvailable(tabInfo)
     if tabInfo.isAvailable then return tabInfo.isAvailable() and true or false end
+    if tabInfo.requiresCatalogRole then
+        return ns:IsCatalogPackAvailable(tabInfo.requiresCatalogRole)
+    end
     if tabInfo.requiresAddon then return C_AddOns.IsAddOnLoaded(tabInfo.requiresAddon) end
     if tabInfo.requiresAnyAddon then
         for _, addon in ipairs(tabInfo.requiresAnyAddon) do

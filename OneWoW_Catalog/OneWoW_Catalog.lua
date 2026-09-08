@@ -13,10 +13,10 @@ local function RegisterWithOneWoW()
         addonName   = ADDON_NAME,
         order       = OneWoW:GetModuleTabOrder("catalog"),
         tabs = {
-            { name = "journal",     displayName = function() return ns.L["TAB_JOURNAL"]     end, requiresAddon = ns.ResolveCatalogPack("journal"),     create = function(p) ns.UI.CreateJournalTab(p)    end },
-            { name = "vendors",     displayName = function() return ns.L["TAB_VENDORS"]     end, requiresAddon = ns.ResolveCatalogPack("vendors"),     create = function(p) ns.UI.CreateVendorsTab(p)    end },
+            { name = "journal",     displayName = function() return ns.L["TAB_JOURNAL"]     end, requiresCatalogRole = "journal", requiresAddon = ns.ResolveCatalogPack("journal"),     create = function(p) ns.UI.CreateJournalTab(p)    end },
+            { name = "vendors",     displayName = function() return ns.L["TAB_VENDORS"]     end, requiresCatalogRole = "vendors", requiresAddon = ns.ResolveCatalogPack("vendors"),     create = function(p) ns.UI.CreateVendorsTab(p)    end },
             { name = "tradeskills", displayName = function() return TRADESKILLS end, requiresAddon = ns.ResolveCatalogPack("tradeskills"), create = function(p) ns.UI.CreateTradeskillsTab(p) end },
-            { name = "quests",      displayName = function() return ns.L["TAB_QUESTS"]      end, requiresAddon = ns.ResolveCatalogPack("quests"),      create = function(p) ns.UI.CreateQuestsTab(p)     end },
+            { name = "quests",      displayName = function() return ns.L["TAB_QUESTS"]      end, requiresCatalogRole = "quests", requiresAddon = ns.ResolveCatalogPack("quests"),      create = function(p) ns.UI.CreateQuestsTab(p)     end },
             { name = "itemsearch",  displayName = function() return ns.L["TAB_ITEMSEARCH"]  end, create = function(p) ns.UI.CreateItemSearchTab(p) end },
             { name = "collectibles", displayName = function() return ns.L["TAB_COLLECTIBLES"] end, create = function(p) ns.UI.CreateCollectiblesTab(p) end },
             { name = "housing",     displayName = function() return ns.L["JOURNAL_FILTER_HOUSING"] end, create = function(p) ns.UI.CreateHousingTab(p) end },
@@ -33,6 +33,7 @@ end
 
 local function OnInitialize()
     ns:InitializeDatabase()
+    ns:InitializeCatDB()
     OneWoW_GUI:MigrateSettings(ns.db.global)
     OneWoW_Catalog:ApplyTheme()
     if ns.ApplyLanguage then ns.ApplyLanguage() end
@@ -89,6 +90,14 @@ function OneWoW_Catalog:SlashCommandHandler()
     OneWoW.UI:Show("catalog")
 end
 
+function OneWoW_Catalog.EnsureCatDBVendorRuntime()
+    ns:EnsureCatDBVendorRuntime()
+end
+
+function OneWoW_Catalog.EnsureCatDBQuestRuntime()
+    ns:EnsureCatDBQuestRuntime()
+end
+
 -- Core-driven init: the suite loader calls _G["OneWoW_Catalog"]:OnAddonLoaded()
 -- right after it force-loads this module (WoW does not deliver our own
 -- ADDON_LOADED when we are loaded during core's ADDON_LOADED dispatch). The
@@ -105,6 +114,7 @@ function OneWoW_Catalog:OnPlayerLogin()
     if didLogin then return end
     didLogin = true
     OnEnable()
+    ns:StartCatDBRuntime()
     if OneWoW_Catalog.FireLoginHandlers then
         OneWoW_Catalog:FireLoginHandlers()
     end

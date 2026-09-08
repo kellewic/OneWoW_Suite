@@ -8,7 +8,7 @@ No. Install **OneWoW** (required) plus the optional features you want. See [Inst
 
 ### Catalog or AltTracker looks empty
 
-Those features need their companion data folders (`OneWoW_CatDB_*` / `OneWoW_AltTracker_*`) present and enabled. Catalog data is the CatDB packs (Zones, NPCs, Items, Quests, Tradeskills). Enable the parent feature in **Manage Features**; companions load with it. See [Catalog](Catalog) and [AltTracker](AltTracker).
+Those features need their companion data folders (`OneWoW_CatDB_*` / `OneWoW_AltTracker_*`) present and enabled. Catalog data is one addon per expansion, plus Other and Tradeskills. Enable the parent feature in **Manage Features**; companions load with it. Turning Catalog off also turns the encyclopedia off (ESC zone cards, item sources, profession extras). After an update, delete a leftover `OneWoW_CatDB` folder in AddOns if Curse left one; keep the expansion folders. See [Catalog](Catalog) and [AltTracker](AltTracker).
 
 ### Where do I get the package?
 

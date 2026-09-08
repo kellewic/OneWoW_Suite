@@ -106,6 +106,7 @@ Core\Database.lua
 Core\ModuleRegistry.lua
 Core\AddonLoader.lua
 Core\PackResolver.lua
+Services\CatalogData.lua
 Core\Lifecycle.lua
 Core\StoreBootstrap.lua
 Core\SettingsFeatureRegistry.lua

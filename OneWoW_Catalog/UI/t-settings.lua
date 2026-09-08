@@ -28,14 +28,13 @@ function ns.UI.CreateSettingsTab(parent)
     yOffset = yOffset - 30
 
     local coreL = OneWoW.Locale:GetTable("OneWoW")
-    -- Reset CatDB SavedVariables listed on Home / Manage Features.
+    -- Reset CatDB learned SavedVariables (runtime overlay) plus TradeSkill.
     local databases = {
         { key = "OneWoW_Catalog",              name = L["SETTINGS_DB_NAME_CATALOG"], desc = L["SETTINGS_DB_DESC_CATALOG"] },
-        { key = "OneWoW_CatDB_ZoneDB",         name = coreL["CAT_MOD_ZONEDB"], desc = coreL["WIZARD_CAT_DATA_JOURNAL_DESC"] },
-        { key = "OneWoW_CatDB_NPCDB",          name = coreL["CAT_MOD_NPCDB"], desc = coreL["WIZARD_CAT_DATA_VENDORS_DESC"] },
-        { key = "OneWoW_CatDB_ItemDB",         name = coreL["CAT_MOD_ITEMDB"], desc = coreL["WIZARD_CAT_DATA_ITEMDB_DESC"] },
-        { key = "OneWoW_CatDB_QuestDBCurrent", name = coreL["CAT_MOD_QUESTDB_CURRENT"], desc = coreL["WIZARD_CAT_DATA_QUESTS_DESC"] },
-        { key = "OneWoW_CatDB_QuestDBArchive", name = coreL["CAT_MOD_QUESTDB_ARCHIVE"], desc = coreL["WIZARD_CAT_DATA_QUESTS_ARCHIVE_DESC"] },
+        { key = "OneWoW_CatDB_ZoneDB",         name = coreL["CAT_MOD_TOPIC_ZONE"], desc = coreL["WIZARD_CAT_DATA_ERA_DESC"] },
+        { key = "OneWoW_CatDB_NPCDB",          name = coreL["CAT_MOD_TOPIC_NPC"], desc = coreL["WIZARD_CAT_DATA_ERA_DESC"] },
+        { key = "OneWoW_CatDB_ItemDB",         name = ITEMS, desc = coreL["WIZARD_CAT_DATA_ERA_DESC"] },
+        { key = "OneWoW_CatDB_QuestDBCurrent", name = coreL["CAT_MOD_TOPIC_QUEST"], desc = coreL["WIZARD_CAT_DATA_ERA_DESC"] },
         { key = "OneWoW_CatDB_TradeSkillDB",   name = coreL["CAT_MOD_TRADESKILLDB"], desc = coreL["WIZARD_CAT_DATA_TRADESKILLS_DESC"] },
     }
 

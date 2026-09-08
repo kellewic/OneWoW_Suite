@@ -45,7 +45,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
 
     ["JOURNAL_EMPTY"] = "불러온 일지 데이터가 없습니다.",
     ["JOURNAL_SELECT"] = "항목을 선택하면 상세 정보를 볼 수 있습니다.",
-    ["JOURNAL_NO_DATA"] = "인스턴스 데이터를 보려면 지역 데이터베이스 팩을 설치하세요.",
+    ["JOURNAL_NO_DATA"] = "기능 관리에서 Catalog 확장팩을 켜면 인스턴스 데이터를 볼 수 있습니다.",
     ["JOURNAL_SEARCH"] = "인스턴스 검색...",
     ["JOURNAL_STATS"] = "인스턴스 %d개",
     ["JOURNAL_STATS_FILTERED"] = "인스턴스 %d/%d개",
@@ -112,6 +112,12 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "풍요로운 구렁만",
 
     ["JOURNAL_GENERAL_LOOT"] = "일반 전리품",
+    ["JOURNAL_QUEST_LOOT"] = "퀘스트 관련 / 퀘스트 전리품",
+    ["JOURNAL_WORLD_BOSSES"] = "야외 우두머리",
+    ["JOURNAL_WORLD_RARES"] = "야외 희귀",
+    ["JOURNAL_NPC_UNNAMED"] = "NPC #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "알 수 없는 아이템",
+    ["JOURNAL_UNKNOWN_INST"] = "알 수 없는 인스턴스",
     ["JOURNAL_ITEMS_COUNT"] = "아이템 %d개",
 
     ["JOURNAL_QUEST_PREFIX"] = "퀘스트",
@@ -182,7 +188,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["VENDORS_ITEM_COUNT"] = "판매 품목",
     ["VENDORS_LIMITED"] = "한정",
     ["VENDORS_PRICE_UNKNOWN"] = "가격 알 수 없음",
-    ["VENDORS_NO_DATA"] = "NPC 데이터를 수집하려면 NPC 데이터베이스 팩을 설치하세요.",
+    ["VENDORS_NO_DATA"] = "기능 관리에서 확장팩 NPC를 켜면 NPC 데이터를 모읍니다.",
     ["VENDORS_WAYPOINT"] = "핀",
     ["VENDORS_WAYPOINT_TT"] = "이 NPC 위치에 실시간 경유지를 설정합니다. 세계 지도를 해당 지역으로 엽니다. 도착하면 경유지가 지워집니다. 일부 지도는 실시간 경유지를 허용하지 않습니다.",
     ["VENDORS_WAYPOINT_FAILED"] = "이 지도는 실시간 경유지를 허용하지 않습니다.",
@@ -244,7 +250,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
 
     ["TRADESKILLS_EMPTY"] = "불러온 전문 기술 데이터가 없습니다.",
     ["TRADESKILLS_SELECT"] = "전문 기술을 선택하면 도안을 볼 수 있습니다.",
-    ["TRADESKILLS_NO_DATA"] = "전문 기술 데이터를 보려면 전문 기술 데이터베이스 팩을 설치하세요.",
+    ["TRADESKILLS_NO_DATA"] = "기능 관리에서 전문 기술을 켜면 전문 기술 데이터를 볼 수 있습니다.",
     ["TRADESKILLS_SEARCH"] = "도안 검색...",
     ["TRADESKILLS_FILTER_CLEAR"] = "지우기",
     ["TRADESKILLS_EXPANSION_ALL"] = "모든 확장팩",
@@ -286,7 +292,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["QUESTS_ZONE_ALL"] = "모든 지역",
     ["QUESTS_TYPE_ALL"] = "모든 유형",
     ["QUESTS_QTYPE_ALL"] = "모든 퀘스트 유형",
-    ["QUESTS_NO_DATA"] = "퀘스트 데이터를 수집하려면 퀘스트 데이터베이스 팩을 설치하세요.",
+    ["QUESTS_NO_DATA"] = "기능 관리에서 확장팩 퀘스트를 켜면 퀘스트 데이터를 모읍니다.",
     ["QUESTS_NONE_YET"] = "아직 수집된 퀘스트가 없습니다. 플레이하면 이 데이터베이스가 채워집니다.",
     ["QUESTS_DEFAULT_EMPTY"] = "진행 중이거나 즐겨찾기한 퀘스트가 없습니다. 검색하거나 필터를 선택하여 모든 퀘스트를 찾아보세요.",
     ["QUESTS_STATUS_CAPPED"] = "%d / %d개 표시 중 (한도 %d)",

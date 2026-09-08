@@ -1,29 +1,31 @@
 # CatDB packs
 
-Six `OneWoW_CatDB_*` load units are the Catalog databases: Zones, NPCs,
-Items, Quests (Current / Archive), and Tradeskills.
-
-`PackResolver` always loads these packs.
+Catalog data is one addon per expansion, plus **Other**, plus
+**Tradeskills**. Query APIs live on `OneWoW_Catalog`. `PackResolver` loads a Catalog **role** (`journal`, `vendors`,
+`quests`, `items`, `tradeskills`); that pulls Catalog and only the
+installed expansions whose topics for that role are on.
 
 **Rule:** one home per fact. Everyone else stores IDs.
 
-| Pack | Catalog role | Docs |
-|------|--------------|------|
-| `OneWoW_CatDB_ZoneDB` | `journal` / `zones` | [ARCHITECTURE](../../OneWoW_CatDB_ZoneDB/Docs/ARCHITECTURE.md) · [ZONE_DATA](../../OneWoW_CatDB_ZoneDB/Docs/ZONE_DATA.md) |
-| `OneWoW_CatDB_NPCDB` | `vendors` / `npcs` | [ARCHITECTURE](../../OneWoW_CatDB_NPCDB/Docs/ARCHITECTURE.md) · [NPC_DATA](../../OneWoW_CatDB_NPCDB/Docs/NPC_DATA.md) |
-| `OneWoW_CatDB_ItemDB` | `items` | [ARCHITECTURE](../../OneWoW_CatDB_ItemDB/Docs/ARCHITECTURE.md) · [ITEM_DATA](../../OneWoW_CatDB_ItemDB/Docs/ITEM_DATA.md) |
-| `OneWoW_CatDB_QuestDBCurrent` | `quests` | [ARCHITECTURE](../../OneWoW_CatDB_QuestDBCurrent/Docs/ARCHITECTURE.md) · [QUEST_DATA](../../OneWoW_CatDB_QuestDBCurrent/Docs/QUEST_DATA.md) |
-| `OneWoW_CatDB_QuestDBArchive` | `archive` | [ARCHITECTURE](../../OneWoW_CatDB_QuestDBArchive/Docs/ARCHITECTURE.md) · [QUEST_DATA](../../OneWoW_CatDB_QuestDBArchive/Docs/QUEST_DATA.md) |
-| `OneWoW_CatDB_TradeSkillDB` | `tradeskills` | [ARCHITECTURE](../../OneWoW_CatDB_TradeSkillDB/Docs/ARCHITECTURE.md) · [TRADESKILL_DATA](../../OneWoW_CatDB_TradeSkillDB/Docs/TRADESKILL_DATA.md) |
+| Pack | Catalog role | Notes |
+|------|--------------|-------|
+| `OneWoW_CatDB_<Expansion>` | `journal` / `vendors` / `quests` / `items` | Suite expansion 1-12. `Data/` is DB2/CSV; `DataExtra/` is other warehouse sources. Topic toggles in Manage Features. |
+| `OneWoW_CatDB_Other` | same roles | `X-OneWoW-CatDB: 99`. Unassigned rows. Distro always ships it. |
+| `OneWoW_CatDB_TradeSkillDB` | `tradeskills` | Not per-expansion. |
 
-Public APIs are `OneWoW_CatDB_<Pack>_API` (`GetPlace`, `GetNPC`, `GetItem`,
-`GetAchievementsForItem`, `GetQuest`, `GetRecipe`, …). `ns` stays private.
+Public APIs stay `OneWoW_CatDB_ZoneDB_API`, `OneWoW_CatDB_NPCDB_API`,
+`OneWoW_CatDB_ItemDB_API`, `OneWoW_CatDB_QuestDBCurrent_API` (archive
+aliases Current), `OneWoW_CatDB_TradeSkillDB_API`. `ns` stays private.
 
-Learned overlays set `sync = true` on facts the player found that we did
-not ship. CompSync Contribute reads only those rows. Contract:
+Learned overlays (`OneWoW_CatDB_ZoneDB_DB`, `NPCDB_DB`, `ItemDB_DB`,
+`QuestDBCurrent_DB`) are runtime SavedVariables, not pack folder names.
+CompSync Contribute reads `sync = true` rows. Contract:
 [CATDB_CONTRIBUTE](../../OneWoW/Docs/CATDB_CONTRIBUTE.md).
 
-Emit and scoreboard live in OneWoW_Workspace (`bin/catdb_*_emit.py`,
-`bin/catdb_status.py`). They write only `OneWoW_CatDB_*` Data files.
-Contribute facts from the site merge into those same shards
+Emit lives in OneWoW_Workspace: `python bin/catdb_emit_base.py` (CSV/DB2
+→ `Data/`), `python bin/catdb_emit_extra.py` (`DataExtra/`), then
+`bin/catdb_era_pack.py`. Intermediates: `.warehouse/Generated/CatDB/`.
+Row counts and file sizes: [CatalogDataStats.md](CatalogDataStats.md)
+(`python bin/catdb_era_stats.py`; pack also rewrites it).
+Contribute facts merge into those same tables
 (`bin/catdb_contribute_merge.py`), not a side pack.

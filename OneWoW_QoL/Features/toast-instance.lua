@@ -128,8 +128,8 @@ function ns.ToastInstance.OnEnteringWorld()
 
         local catalogData = GetCatalogData()
         local packHint
-        if not catalogData and not OneWoW:AreWantedJournalPlacesLoaded() then
-            packHint = OneWoW.L["STATUSCARD_ZONES_NOT_LOADED"]
+        if not catalogData then
+            packHint = OneWoW:GetCatalogUnavailableNotice("journal")
         end
 
         Toasts.FireToast({

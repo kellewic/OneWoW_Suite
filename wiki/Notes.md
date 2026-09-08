@@ -30,7 +30,7 @@ Turn **OneWay Pins** off in **Manage Features** (Settings) under Notes to hide t
 
 * The **OneWay Pins** tab in Notes (`/1wn`)
 * The OneWoW pin button on the world map, next to the map filters
-* The QoL **ESC Menu Panel** lists pins for the map you are in
+* The QoL **ESC Menu Panel** Zone Card Notes icon lists pins for the map you are in (hover for the list; click to open Notes)
 * **Manage Features** under Notes turns OneWay Pins off or on (saved pins stay)
 * **OneWay Pins settings** from Notes settings, the Pins tab, or the world-map pin button
 

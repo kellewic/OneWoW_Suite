@@ -39,11 +39,8 @@ flowchart TB
     OW --> Features
 
     subgraph CatDB["Catalog data stores (CatDB)"]
-        ZoneDB[CatDB_ZoneDB]
-        NPCDB[CatDB_NPCDB]
-        ItemDB[CatDB_ItemDB]
-        QuestCur[CatDB_QuestDBCurrent]
-        QuestArc[CatDB_QuestDBArchive]
+        Era["CatDB expansions"]
+        Other[CatDB_Other]
         Trade[CatDB_TradeSkillDB]
     end
     Catalog --> CatDB
@@ -91,16 +88,13 @@ Shared across the suite: **themes**, **11 locales**, and **SavedVariables** conv
 
 ### Catalog data stores (CatDB)
 
-Companion addons for [OneWoW_Catalog](OneWoW_Catalog/README.md). Enable with Catalog in Manage Features. Pack map: [CATDB.md](OneWoW_Catalog/Docs/CATDB.md).
+Companion addons for [OneWoW_Catalog](OneWoW_Catalog/README.md). Enable with Catalog in Manage Features. Pack map: [CATDB.md](OneWoW_Catalog/Docs/CATDB.md). Turning Catalog off stops these packs from loading.
 
 | Addon | Description |
 |-------|-------------|
-| [OneWoW_CatDB_ZoneDB](OneWoW_CatDB_ZoneDB/Docs/ARCHITECTURE.md) | Zones — dungeons, raids, Delves, World hubs, encounters (Journal tab) |
-| [OneWoW_CatDB_NPCDB](OneWoW_CatDB_NPCDB/Docs/ARCHITECTURE.md) | NPCs — shops, trainers, quest givers, rares, bosses, stock, map pins (NPCs tab) |
-| [OneWoW_CatDB_ItemDB](OneWoW_CatDB_ItemDB/Docs/ARCHITECTURE.md) | Items — names and item rows for Item Search and lookups |
-| [OneWoW_CatDB_QuestDBCurrent](OneWoW_CatDB_QuestDBCurrent/Docs/ARCHITECTURE.md) | Quests — this expansion and the previous one (The War Within and Midnight) |
-| [OneWoW_CatDB_QuestDBArchive](OneWoW_CatDB_QuestDBArchive/Docs/ARCHITECTURE.md) | Quest Archive — Classic through Dragonflight |
-| [OneWoW_CatDB_TradeSkillDB](OneWoW_CatDB_TradeSkillDB/Docs/ARCHITECTURE.md) | Tradeskills — professions and recipes |
+| `OneWoW_CatDB_<Expansion>` | Per-expansion Catalog data (Classic through Midnight). `Data/` and `DataExtra/`. |
+| [OneWoW_CatDB_Other](OneWoW_CatDB_Other/README.md) | Unassigned rows. Distro always includes this folder. |
+| [OneWoW_CatDB_TradeSkillDB](OneWoW_CatDB_TradeSkillDB) | Tradeskills — professions and recipes |
 
 ### AltTracker data stores
 

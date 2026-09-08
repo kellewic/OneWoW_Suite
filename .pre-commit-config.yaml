@@ -307,6 +307,15 @@ repos:
         pass_filenames: false
         always_run: true
 
+      - id: catdb-lua-parse
+        name: CatDB generated Lua parses
+        description: |
+          Parses OneWoW_CatDB_*/Data/*.lua and DataExtra/*.lua shards so a truncated or
+          unclosed table cannot ship. Same parser as bin/catdb_validate.py.
+        entry: python bin/run_devs.py check_catdb_lua.py
+        language: python
+        files: ^OneWoW_CatDB_[^/]+/(Data|DataExtra)/.*\.lua$
+
       - id: locale-parity
         name: Locale key parity, format specifiers, and duplicate keys
         description: |

@@ -46,7 +46,6 @@ local function GetItemIndex()
 end
 
 local function GetVendorData(itemID)
-    OneWoW:EnsureCatalogPack("vendors")
     local api = OneWoW:GetCatalogPackAPI("vendors")
     if not api then
         return {}
@@ -55,10 +54,10 @@ local function GetVendorData(itemID)
 end
 
 -- The Journal store owns the drop index and dedupes per instance+encounter, so
--- this only has to supply the tooltip's display fallback.
+-- this only has to supply the tooltip's display fallback. Do not load Zones
+-- from a tooltip; drop lines appear when that pack is already loaded.
 local function GetInstanceData(itemID)
     local results = {}
-    OneWoW:EnsureCatalogPack("journal")
     local api = OneWoW:GetCatalogPackAPI("journal")
     if not api then
         return results
@@ -70,7 +69,6 @@ local function GetInstanceData(itemID)
 end
 
 local function GetAchievementIDs(itemID)
-    OneWoW:EnsureCatalogPack("journal")
     local api = OneWoW:GetCatalogPackAPI("journal")
     if not api then
         return {}
@@ -80,7 +78,6 @@ end
 
 local function GetCraftData(itemID)
     local results = {}
-    OneWoW:EnsureCatalogPack("tradeskills")
     local api = OneWoW:GetCatalogPackAPI("tradeskills")
     if not api then
         return results
@@ -623,7 +620,6 @@ local function ItemTrackerProvider(_, context)
     end
 
     if showQuests then
-        OneWoW:EnsureCatalogPack("quests")
         local questAPI = OneWoW:GetCatalogPackAPI("quests")
         local questIDs = questAPI and questAPI.GetQuestsRewardingItem(context.itemID, false)
         if questIDs and #questIDs > 0 then
@@ -655,6 +651,33 @@ local function ItemTrackerProvider(_, context)
             text = "  " .. L["TIPS_ITEMTRACKER_WHERE_TO_GET"],
             r = 0.4, g = 0.8, b = 1.0,
         })
+    elseif showVendors or showQuests or showInstances or showCrafted then
+        local roles = {}
+        if showVendors then
+            tinsert(roles, "vendors")
+        end
+        if showQuests then
+            tinsert(roles, "quests")
+        end
+        if showInstances then
+            tinsert(roles, "journal")
+        end
+        if showCrafted then
+            tinsert(roles, "tradeskills")
+        end
+        local notice = OneWoW:GetCatalogUnavailableNotice(roles)
+        if notice then
+            tinsert(lines, {
+                type = "text",
+                text = "  " .. L["TIPS_ITEMTRACKER_WHERE_TO_GET"],
+                r = 0.4, g = 0.8, b = 1.0,
+            })
+            tinsert(lines, {
+                type = "text",
+                text = "  " .. notice,
+                r = 1.0, g = 0.75, b = 0.3,
+            })
+        end
     end
 
     if #lines == 0 then return nil end

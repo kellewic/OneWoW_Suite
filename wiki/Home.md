@@ -36,7 +36,7 @@ This wiki is the **player** reference — install, hub setup, slash commands, an
 | [Direct Deposit](Direct-Deposit) | Warband Bank gold and item transfers |
 | [DevTools](DevTool) | Optional developer inspector (frames, events, errors). Not required to play. |
 
-You do **not** need every folder. Catalog uses companion **CatDB** packs (Zones, NPCs, Items, Quests, Tradeskills). AltTracker uses its `OneWoW_AltTracker_*` stores. Those companions load with their parent when that feature is enabled.
+You do **not** need every folder. Catalog uses companion **CatDB** folders (one per expansion, plus Other and Tradeskills). AltTracker uses its `OneWoW_AltTracker_*` stores. Those companions load with their parent when that feature is enabled.
 
 ## Help
 

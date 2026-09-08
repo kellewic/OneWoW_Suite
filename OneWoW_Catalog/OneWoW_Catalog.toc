@@ -5,12 +5,13 @@
 ## Author: OneWoW Dev Team
 
 ## RequiredDeps: OneWoW
+## OptionalDeps: AllTheThings
 ## LoadOnDemand: 1
 ## Category: OneWoW
 ## Group: OneWoW_Catalog
 ## IconTexture: Interface\AddOns\OneWoW\Media\neutral-mini.png
 
-## SavedVariables: OneWoW_Catalog_DB
+## SavedVariables: OneWoW_Catalog_DB, OneWoW_CatDB_ZoneDB_DB, OneWoW_CatDB_NPCDB_DB, OneWoW_CatDB_ItemDB_DB, OneWoW_CatDB_QuestDBCurrent_DB, OneWoW_CatalogData_Vendors_DB, OneWoW_CatalogData_Quests_DB
 
 ## X-Website: https://onewow.net/
 ## X-Category: |cFFFFD100OneWoW|r
@@ -38,6 +39,30 @@ Core\API.lua
 Core\Favorites.lua
 Core\VendorCategories.lua
 Core\Navigation.lua
+
+# Query runtime (zone / NPC / item / quest APIs and learned overlays)
+CatDB\Core\Database.lua
+CatDB\Zones\Core\DataLoader.lua
+CatDB\NPCs\Core\DataLoader.lua
+CatDB\NPCs\Core\VendorCategoryMap.lua
+CatDB\Items\Core\DataLoader.lua
+CatDB\Quests\Core\DataLoader.lua
+CatDB\Data\Difficulties.lua
+CatDB\Data\TierMembership.lua
+CatDB\Data\ListingOverrides.lua
+CatDB\Data\Currencies.lua
+CatDB\Data\QuestLineMembers.lua
+CatDB\Core\Sinks.lua
+CatDB\Zones\Core\API.lua
+CatDB\NPCs\Core\API.lua
+CatDB\Items\Core\API.lua
+CatDB\Quests\Core\API.lua
+CatDB\Quests\Modules\CompletionTracker.lua
+CatDB\Quests\Modules\QuestScanner.lua
+CatDB\Zones\Modules\JournalCard.lua
+CatDB\Zones\Modules\EJLiveLoot.lua
+CatDB\Zones\Modules\ATTLiveExtras.lua
+CatDB\Core\Core.lua
 
 # Main
 OneWoW_Catalog.lua

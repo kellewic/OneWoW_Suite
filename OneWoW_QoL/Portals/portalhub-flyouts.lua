@@ -28,6 +28,74 @@ function Flyouts:ApplyIconLabel(fs, text)
 	OneWoW_GUI:ApplyFontCapped(fs, ph.escIconFontSize, 0)
 end
 
+local ICON_TRIM_COORDS = { 0.07, 0.93, 0.07, 0.93 }
+local ICON_SKIN_PAD = 1
+local ICON_SKIN_BORDER = 1
+
+--- Apply the CreateSkinnedIcon "clean" look onto an existing button
+--- (SecureActionButtons cannot be wrapped in CreateSkinnedIcon).
+---@param button Button
+function Flyouts:ApplyIconSkin(button)
+	if not button then
+		return
+	end
+	local inset = ICON_SKIN_PAD + ICON_SKIN_BORDER
+
+	if not button._skinBg then
+		local bg = button:CreateTexture(nil, "BACKGROUND")
+		bg:SetAllPoints(button)
+		bg:SetColorTexture(0, 0, 0, 0.9)
+		button._skinBg = bg
+	end
+
+	local icon = button.icon
+	if not icon then
+		icon = button:CreateTexture(nil, "ARTWORK")
+		button.icon = icon
+	end
+	icon:SetDrawLayer("ARTWORK")
+	icon:ClearAllPoints()
+	icon:SetPoint("TOPLEFT", button, "TOPLEFT", inset, -inset)
+	icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -inset, inset)
+	icon:SetTexCoord(ICON_TRIM_COORDS[1], ICON_TRIM_COORDS[2], ICON_TRIM_COORDS[3], ICON_TRIM_COORDS[4])
+
+	if not button._skinBorder then
+		local border = CreateFrame("Frame", nil, button, "BackdropTemplate")
+		border:SetAllPoints(button)
+		border:SetFrameLevel(button:GetFrameLevel() + 1)
+		border:EnableMouse(false)
+		border:SetBackdrop({
+			edgeFile = "Interface\\Buttons\\WHITE8X8",
+			edgeSize = ICON_SKIN_BORDER,
+		})
+		button._skinBorder = border
+	end
+	button._skinBorder:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_DEFAULT"))
+
+	if not button._skinHighlight then
+		local highlight = button:CreateTexture(nil, "HIGHLIGHT")
+		highlight:SetPoint("TOPLEFT", button, "TOPLEFT", inset, -inset)
+		highlight:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -inset, inset)
+		highlight:SetColorTexture(1, 1, 1, 0.3)
+		highlight:SetBlendMode("ADD")
+		button._skinHighlight = highlight
+	end
+
+	if not button._skinHoverWired then
+		button._skinHoverWired = true
+		button:HookScript("OnEnter", function(myself)
+			if myself._skinBorder then
+				myself._skinBorder:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_ACCENT"))
+			end
+		end)
+		button:HookScript("OnLeave", function(myself)
+			if myself._skinBorder then
+				myself._skinBorder:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_DEFAULT"))
+			end
+		end)
+	end
+end
+
 --- Fill a button with an icon that tracks the button size.
 --- SetNormalTexture leaves a default-sized stamp that looks tiny on ESC slots.
 ---@param button Button
@@ -35,13 +103,13 @@ end
 function Flyouts:ApplyButtonIcon(button, texture)
 	local icon = button.icon
 	if not icon then
-		icon = button:CreateTexture(nil, "BACKGROUND")
-		icon:SetAllPoints()
+		icon = button:CreateTexture(nil, "ARTWORK")
 		button.icon = icon
 	end
 	if texture then
 		icon:SetTexture(texture)
 	end
+	self:ApplyIconSkin(button)
 end
 
 local flyoutFramesPool = {}
@@ -99,8 +167,7 @@ function Flyouts:CreateFlyoutButton(flyoutFrame, portalData, xOffset, yOffset, i
 		button.cooldownFrame = CreateFrame("Cooldown", nil, button, "CooldownFrameTemplate")
 		button.cooldownFrame:SetAllPoints()
 
-		button.icon = button:CreateTexture(nil, "BACKGROUND")
-		button.icon:SetAllPoints()
+		button.icon = button:CreateTexture(nil, "ARTWORK")
 
 		button.text = OneWoW_GUI:CreateFS(button, 9)
 		button.text:SetPoint("BOTTOM", button, "BOTTOM", 0, 3)
@@ -187,6 +254,7 @@ function Flyouts:CreateFlyoutButton(flyoutFrame, portalData, xOffset, yOffset, i
 		label = ns.PortalData:GetShortName(portalData.id)
 	end
 	self:ApplyIconLabel(button.text, label)
+	self:ApplyIconSkin(button)
 
 	if isAvailable then
 		button:SetAlpha(1)
@@ -265,12 +333,12 @@ function Flyouts:CreateFlyoutParentButton(parent, iconTexture, iconSize, xOffset
 	if layoutGrowLeft then
 		button:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -xOffset, yOffset)
 	else
-		button:SetPoint("TOPLEFT", parent, "TOPRIGHT", xOffset, yOffset)
+		button:SetPoint("TOPLEFT", parent, "TOPLEFT", xOffset, yOffset)
 	end
 
-	button.icon = button:CreateTexture(nil, "BACKGROUND")
-	button.icon:SetAllPoints()
+	button.icon = button:CreateTexture(nil, "ARTWORK")
 	button.icon:SetTexture(iconTexture)
+	self:ApplyIconSkin(button)
 
 	button.text = OneWoW_GUI:CreateFS(button, 8)
 	button.text:SetPoint("BOTTOM", button, "BOTTOM", 0, 2)
@@ -363,9 +431,9 @@ function Flyouts:CreateNestedFlyoutButton(parent, iconTexture, iconSize, xOffset
 	button:SetSize(iconSize, iconSize)
 	button:SetPoint("TOPLEFT", parent, "TOPLEFT", xOffset, yOffset)
 
-	button.icon = button:CreateTexture(nil, "BACKGROUND")
-	button.icon:SetAllPoints()
+	button.icon = button:CreateTexture(nil, "ARTWORK")
 	button.icon:SetTexture(iconTexture)
+	self:ApplyIconSkin(button)
 
 	button.text = OneWoW_GUI:CreateFS(button, 8)
 	button.text:SetPoint("BOTTOM", button, "BOTTOM", 0, 2)
@@ -415,9 +483,9 @@ function Flyouts:CreateExpansionFlyout(parent, iconTexture, iconSize, xOffset, y
 	button:SetSize(iconSize, iconSize)
 	button:SetPoint("TOPLEFT", parent, "TOPLEFT", xOffset, yOffset)
 
-	button.icon = button:CreateTexture(nil, "BACKGROUND")
-	button.icon:SetAllPoints()
+	button.icon = button:CreateTexture(nil, "ARTWORK")
 	button.icon:SetTexture(iconTexture)
+	self:ApplyIconSkin(button)
 
 	button.text = OneWoW_GUI:CreateFS(button, 8)
 	button.text:SetPoint("BOTTOM", button, "BOTTOM", 0, 2)

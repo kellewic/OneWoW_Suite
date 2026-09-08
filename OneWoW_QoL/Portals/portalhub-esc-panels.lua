@@ -256,10 +256,11 @@ function EscPanels:EnsurePanelsContainer(ph)
 	if gm and gm:IsShown() then
 		if mode == "right" then
 			panelsContainer:SetPoint("TOPLEFT", gm, "TOPRIGHT", MENU_PANEL_H_GAP, 0)
-			panelsContainer:SetPoint("BOTTOMLEFT", gm, "BOTTOMRIGHT", MENU_PANEL_H_GAP, 0)
 		else
 			panelsContainer:SetPoint("TOPRIGHT", gm, "TOPLEFT", -MENU_PANEL_H_GAP, 0)
-			panelsContainer:SetPoint("BOTTOMRIGHT", gm, "BOTTOMLEFT", -MENU_PANEL_H_GAP, 0)
+		end
+		if not panelsContainer:GetHeight() or panelsContainer:GetHeight() < 1 then
+			panelsContainer:SetHeight(1)
 		end
 	else
 		local yTop = UIParent:GetHeight()
@@ -452,7 +453,20 @@ function EscPanels:Build()
 		if panelsContainer then
 			panelsContainer:Hide()
 		end
+	elseif panelsContainer then
+		panelsContainer:SetHeight(math.max(1, usedHeight + gapUsed))
 	end
+end
+
+function EscPanels:GetUsedHeight()
+	if not panelsContainer or not panelsContainer:IsShown() then
+		return 0
+	end
+	return panelsContainer:GetHeight() or 0
+end
+
+function EscPanels:GetMenuGap()
+	return MENU_PANEL_H_GAP
 end
 
 function EscPanels:HasVisiblePanelStack()

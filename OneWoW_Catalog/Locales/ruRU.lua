@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
 
     ["JOURNAL_EMPTY"] = "Данные журнала не загружены.",
     ["JOURNAL_SELECT"] = "Выберите запись, чтобы просмотреть подробности.",
-    ["JOURNAL_NO_DATA"] = "Установите пакет База игровых зон, чтобы просмотреть данные подземелий.",
+    ["JOURNAL_NO_DATA"] = "Включите дополнение в Catalog в Управлении функциями, чтобы просмотреть данные подземелий.",
     ["JOURNAL_SEARCH"] = "Поиск подземелий...",
     ["JOURNAL_STATS"] = "%d подземелий",
     ["JOURNAL_STATS_FILTERED"] = "%d из %d подземелий",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Только многообещающие",
 
     ["JOURNAL_GENERAL_LOOT"] = "Общая добыча",
+    ["JOURNAL_QUEST_LOOT"] = "Связано с заданием / Добыча задания",
+    ["JOURNAL_WORLD_BOSSES"] = "Мировые боссы",
+    ["JOURNAL_WORLD_RARES"] = "Мировые редкие",
+    ["JOURNAL_NPC_UNNAMED"] = "NPC #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Неизвестный предмет",
+    ["JOURNAL_UNKNOWN_INST"] = "Неизвестное подземелье",
     ["JOURNAL_ITEMS_COUNT"] = "%d предметов",
 
     ["JOURNAL_QUEST_PREFIX"] = "Задание",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
     ["VENDORS_ITEM_COUNT"] = "Предметов в продаже",
     ["VENDORS_LIMITED"] = "Ограничено",
     ["VENDORS_PRICE_UNKNOWN"] = "Цена неизвестна",
-    ["VENDORS_NO_DATA"] = "Установите пакет База НИП, чтобы собирать данные о НИП.",
+    ["VENDORS_NO_DATA"] = "Включите НИП дополнения в Управлении функциями, чтобы собирать данные о НИП.",
     ["VENDORS_WAYPOINT"] = "Метка",
     ["VENDORS_WAYPOINT_TT"] = "Ставит путевую точку на этого НИП. Открывает карту мира в этой зоне. Точка исчезает по прибытии. Некоторые карты не разрешают путевые точки.",
     ["VENDORS_WAYPOINT_FAILED"] = "Эта карта не разрешает путевую точку.",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
 
     ["TRADESKILLS_EMPTY"] = "Данные о профессиях не загружены.",
     ["TRADESKILLS_SELECT"] = "Выберите профессию, чтобы просмотреть рецепты.",
-    ["TRADESKILLS_NO_DATA"] = "Установите пакет База профессий, чтобы просмотреть данные о профессиях.",
+    ["TRADESKILLS_NO_DATA"] = "Включите профессии в Управлении функциями, чтобы просмотреть данные о профессиях.",
     ["TRADESKILLS_SEARCH"] = "Поиск рецептов...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Очистить",
     ["TRADESKILLS_EXPANSION_ALL"] = "Все дополнения",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
     ["QUESTS_ZONE_ALL"] = "Все зоны",
     ["QUESTS_TYPE_ALL"] = "Все типы",
     ["QUESTS_QTYPE_ALL"] = "Все типы заданий",
-    ["QUESTS_NO_DATA"] = "Установите пакет База заданий, чтобы собирать данные о заданиях.",
+    ["QUESTS_NO_DATA"] = "Включите задания дополнения в Управлении функциями, чтобы собирать данные о заданиях.",
     ["QUESTS_NONE_YET"] = "Задания еще не собраны. Играйте, чтобы заполнить эту базу данных.",
     ["QUESTS_DEFAULT_EMPTY"] = "Нет активных или избранных заданий. Выполните поиск или выберите фильтр, чтобы просмотреть все задания.",
     ["QUESTS_STATUS_COUNT"] = "%d заданий",

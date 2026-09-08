@@ -4,7 +4,7 @@ This wiki is for **players**. Contributor and integrator documentation lives in 
 
 * **`OneWoW`** is always loaded: hub UI, shared `OneWoW_GUI` toolkit, themes, locales, Manage Features, and shared services (search/predicate engine, collectibles, overlays, and more).
 * **Feature modules** (`OneWoW_Bags`, `OneWoW_QoL`, `OneWoW_Mail`, …) are separate Load-on-Demand addons. Disabling one in Manage Features **unloads** it.
-* **Data stores** (`OneWoW_CatDB_*`, `OneWoW_AltTracker_*`) feed parent features (and some consumers like Shopping List / Mail) without their own player hub. Catalog databases are the CatDB packs (Zones, NPCs, Items, Quests, Tradeskills).
+* **Data stores** (`OneWoW_CatDB_*`, `OneWoW_AltTracker_*`) feed parent features (and some consumers like Shopping List / Mail) without their own player hub. Catalog databases are per-expansion CatDB addons, Other, and Tradeskills. Turning Catalog off stops those Catalog packs from loading.
 * Cross-unit reads go through published `_API` surfaces and core services — not by reaching into another unit’s SavedVariables.
 
 Clone the repo (or browse on GitHub) and start with **CONTRIBUTING** + **ARCHITECTURE** before changing load order, lifecycle hooks, or DB defaults.

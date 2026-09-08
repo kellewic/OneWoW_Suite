@@ -21,7 +21,7 @@ Open **Manage Features** from the hub (Home link or Settings):
 
 * Turn on only what you use (Bags, QoL, AltTracker, Catalog, and so on)
 * A disabled module is **unloaded**, not merely hidden — less overhead, cleaner UI
-* For **Catalog** and **AltTracker**, keep their companion `OneWoW_CatDB_*` / `AltTracker_*` folders installed; they feed the parent feature and have no separate player UI of their own. Catalog packs load when you open that tab, not at login. Catalog data is the CatDB packs (Zones, NPCs, Items, Quests, Tradeskills).
+* For **Catalog** and **AltTracker**, keep their companion `OneWoW_CatDB_*` / `AltTracker_*` folders installed; they feed the parent feature and have no separate player UI of their own. Turning Catalog off also stops those Catalog packs from loading. Catalog expansions load when you open that tab, not at login. Catalog data is one addon per expansion, plus Other and Tradeskills.
 * **Notes** lists **OneWay Pins** under Notes so you can turn that feature off without unloading Notes.
 
 Configure each enabled addon from its hub tab or its [slash command](Slash-Commands).

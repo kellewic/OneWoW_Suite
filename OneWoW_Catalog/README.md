@@ -16,7 +16,7 @@ Browse dungeons, raids, Delves, and World hubs from every expansion:
 - Encounter rows have See NPC (opens that boss on the NPCs tab) and See Map (pins that encounter when we have a location)
 - Instance Type includes World, Zones, Cities, and Delves, with a Show Bountiful checkbox for this week's bountiful doors
 - Delve cards show today's story on the type line (Incomplete color only while you still need that variant) and remaining Stories progress until that achievement is complete. Details list each variant under Stories while it is unfinished
-- A pin on a World-hub rare, boss, or achievement opens that zone or city when we know the map. Cities and outdoor zones for every expansion ship with the Zones pack
+- Cities and outdoor zones for every expansion ship with that expansion's Catalog data
 - Delve cards use official entrance background art. Zones, cities, and other cards without their own art use that expansion's Adventure Guide background
 - Cards use a type-colored border for raid, dungeon, world, zone, city, Delve, and bountiful Delve
 - Achievements sit above loot on the details side (collapsible, same header as Items). Cards show bosses, rares (World), items, and the achievement count. World cards include that expansion's exploration achievements. Status is a check / Warband mark / X
@@ -61,8 +61,8 @@ Universal search across all item data:
 Browse transmog, mounts, pets, and toys from the Collections journals:
 - Filter All, Transmog, Mounts, Pets, or Toys
 - Live collected status from the game (not a separate data pack)
-- Details show journal source text. Vendor, drop, and quest lines appear when those packs are already loaded
-- Click a vendor, instance, or quest to open that Catalog tab (that click loads the pack if needed)
+- Details show journal source text. Vendor, drop, and quest lines appear when those expansion topics are already loaded
+- Click a vendor, instance, or quest to open that Catalog tab (that click loads the data if needed)
 - List stops at 50 rows, or 100 when you filter or search
 
 ### Housing Tab
@@ -76,63 +76,47 @@ Browse housing decor from the game catalog:
 
 ## Data Addons (Optional but Recommended)
 
-Catalog data is the **CatDB** addons (Zones, NPCs, Items, Quests, Tradeskills). Pack map: [CATDB.md](Docs/CATDB.md).
+Catalog data is the **CatDB** addons: one folder per expansion, **Other**, and Tradeskills. Pack map: [CATDB.md](Docs/CATDB.md).
 
-### Data: Zones (OneWoW_CatDB_ZoneDB)
-- Detailed instance and encounter information for the Journal tab
-- Dungeon and raid layouts
-- Boss mechanics and loot tables
-- Expansion history
-- Complete expansion coverage (Classic through Midnight)
+### Expansion data (`OneWoW_CatDB_<Expansion>`)
+- Places, NPCs, quests, and items for that expansion
+- Topic toggles in Manage Features choose what loads
+- Classic through Midnight
 
-### Data: NPCs (OneWoW_CatDB_NPCDB)
-- Shops, trainers, services, quest givers, rares, and bosses for the NPCs tab
-- Item prices and currencies accepted
-- Encounter joins (kill quest, related quests, loot)
-- Seasonal shops
+### Other (`OneWoW_CatDB_Other`)
+- Rows not yet assigned to an expansion
+- Distro always includes this folder
+- Items and achievements are on by default
 
-### Data: Items (OneWoW_CatDB_ItemDB)
-- Item names and item rows for items Catalog already has a source for (drop, vendor, quest, recipe, or achievement)
-
-### Data: Tradeskills (OneWoW_CatDB_TradeSkillDB)
+### Data: Tradeskills (`OneWoW_CatDB_TradeSkillDB`)
 - Complete recipe database for Classic through Midnight (patch 12.1)
 - Material requirements
 - Crafting costs and yields
 - Profession progression guides
 - All 14 professions covered
 
-### Data: Quests (OneWoW_CatDB_QuestDBCurrent)
-- Static quest database with live scanner enrichment
-- Per-character completion tracking
-- This expansion and the previous one (The War Within and Midnight)
-- Classic through Midnight (patch 12.1) lists have the pins and text we have
-
-### Data: Quest Archive (OneWoW_CatDB_QuestDBArchive)
-- Classic through Dragonflight
-- Loads when you browse those expansions, search all quests, or look up quest rewards
-
-Each data pack is optional. Disable any `OneWoW_CatDB_*` addon you do not use to reduce memory and load time — `OneWoW_Catalog` itself keeps running.
+Each expansion folder is optional while Catalog is on. Turn Catalog off in Manage Features to stop every pack from loading.
 
 ---
 
 ## Disabling Data Modules
 
-`OneWoW_Catalog` always loads when enabled. The **CatDB** addons are separate load units; turn one off in the WoW addon list (or via suite feature controls) and only that pack's data disappears. Other Catalog tabs and unrelated suite addons keep working.
+Catalog is the parent. Untick **Catalog** in Manage Features and no encyclopedia data loads (expansions, Other, Tradeskills). Use **What's affected?** on that row. Apply stops new loads this session; **Apply & Reload** drops Catalog from memory if it already ran.
+
+While Catalog stays on, turn an expansion off and only that expansion's data disappears. Other Catalog tabs keep working.
 
 This table is the canonical cross-module reference.
 
 | Disabled module | In Catalog | Elsewhere in the suite |
 | --- | --- | --- |
-| **Zones** (`OneWoW_CatDB_ZoneDB`) | Journal tab empty; Item Search drop filter and drop details; collection status on journal loot; navigate-to-instance from toasts | QoL Item Tracker — no instance/encounter lines on item tooltips; QoL — no collection grid on instance-entry toasts or ESC instance panel |
-| **Quests** (`OneWoW_CatDB_QuestDBCurrent`) | Quests tab empty (including active-quest views); Item Search quest-reward filter and details; open-to-quest navigation | Notes — no associated-quest list on NPCs; Journal — no "View Quest" or quest completion on journal loot *(also needs Quests)*; AltTracker settings — quest completion not listed for character purge |
-| **Quest Archive** (`OneWoW_CatDB_QuestDBArchive`) | Classic through Dragonflight missing from the Quests tab and from all-quest search | Reward lookups for those expansions stay empty until Archive is on |
-| **NPCs** (`OneWoW_CatDB_NPCDB`) | NPCs tab empty; Item Search vendor filter and "sold by" details; open-to-NPC navigation | Core — no Open NPC Details on NPC context menus; QoL Item Tracker — no vendor lines on item tooltips |
-| **Items** (`OneWoW_CatDB_ItemDB`) | Item Search names and item rows thin out (only sourced items ship) | Other tabs that join item identity lose shipped names until live fill |
+| **Catalog** (`OneWoW_Catalog`) | All tabs empty; no expansion, Other, or Tradeskills data loads | ESC and AFK Zone Cards have no zone data; item tooltips lose drop/vendor/quest/recipe sources; QoL Professions Panel has no Catalog recipes; ShoppingList craft detection, orders, and recipe picker are empty; AltTracker profession locations are limited |
+| **An expansion** (`OneWoW_CatDB_<Expansion>`) | That expansion missing from Journal, NPCs, Quests, and Item Search | QoL Item Tracker and ESC zone card lose that expansion's lines |
+| **Other** (`OneWoW_CatDB_Other`) | Unassigned items drop out of Item Search | Same |
 | **Tradeskills** (`OneWoW_CatDB_TradeSkillDB`) | Tradeskills tab empty; Item Search crafted filter and recipe details (including known-by alts) | ShoppingList — no craft detection, craft orders, recipe picker, or crafting-quality inventory rollup; QoL Professions Panel — no supplemental alt recipe data from tradeskill scans |
 
-**Still works with any subset:** Catalog shell, Settings, Item Search (owned items via AltTracker), Collectibles, Housing, and every Catalog tab whose data pack remains enabled. Collectibles and Housing list from the game journals without a CatDB pack; vendor, drop, and quest clicks still need Zones, NPCs, and Quests. ShoppingList profession-window hooks that use Blizzard APIs directly are unaffected by disabling Tradeskills.
+**Still works with Catalog on and a subset of packs:** Catalog shell, Settings, Item Search (owned items via AltTracker), Collectibles, Housing, and every Catalog tab whose expansion topics remain enabled. Collectibles and Housing list from the game journals without a CatDB folder; vendor, drop, and quest clicks still need those topics on. ShoppingList profession-window hooks that use Blizzard APIs directly are unaffected by disabling Tradeskills.
 
-**Cross-dependencies:** Journal quest-loot links and completion badges need **both** Zones and Quests. ShoppingList recipe features need **Tradeskills** only (Catalog hub UI is not required for craft detection).
+**Cross-dependencies:** Journal quest-loot links and completion badges need both Zones and Quests topics. ShoppingList recipe features need Catalog on (so Tradeskills can load). You do not have to open Catalog tabs.
 
 ---
 
@@ -166,12 +150,9 @@ Supports all 11 suite locales via **OneWoW** — see [LOCALES.md](../OneWoW/Docs
 ## Requirements
 
 - **OneWoW** - Core hub addon (required)
-- **OneWoW_CatDB_ZoneDB** - Recommended for instance and encounter data (optional)
-- **OneWoW_CatDB_NPCDB** - Recommended for vendor and NPC data (optional)
-- **OneWoW_CatDB_ItemDB** - Recommended for item names and Item Search (optional)
+- **OneWoW_CatDB_<Expansion>** - Optional per-expansion Catalog data (Classic through Midnight)
+- **OneWoW_CatDB_Other** - Unassigned rows (recommended; Distro always includes it)
 - **OneWoW_CatDB_TradeSkillDB** - Recommended for recipe and profession data (optional)
-- **OneWoW_CatDB_QuestDBCurrent** - Recommended for quest database and completion data (optional)
-- **OneWoW_CatDB_QuestDBArchive** - Classic through Dragonflight quests (optional)
 
 ## Slash Commands
 
@@ -185,10 +166,7 @@ Supports all 11 suite locales — see [LOCALES.md](../OneWoW/Docs/LOCALES.md).
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-Browse-tab data rules (cheap list, Instant-only detail, chunked live-API filters):
-
-- Zones: [ZONE_DATA.md](../OneWoW_CatDB_ZoneDB/Docs/ZONE_DATA.md) (Lazy hydrate)
-- Quests: [QUEST_DATA.md](../OneWoW_CatDB_QuestDBCurrent/Docs/QUEST_DATA.md) (Lazy hydrate)
+Browse-tab data rules (cheap list, Instant-only detail, chunked live-API filters): [CATDB.md](Docs/CATDB.md)
 
 ## Support
 

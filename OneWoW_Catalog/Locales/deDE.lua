@@ -46,7 +46,7 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
 
     ["JOURNAL_EMPTY"] = "Keine Journaldaten geladen.",
     ["JOURNAL_SELECT"] = "Wählt einen Eintrag, um Details anzuzeigen.",
-    ["JOURNAL_NO_DATA"] = "Installiert das Zonendatenbank-Paket, um Instanzdaten anzuzeigen.",
+    ["JOURNAL_NO_DATA"] = "Aktiviert unter Funktionen verwalten eine Erweiterung bei Catalog, um Instanzdaten anzuzeigen.",
     ["JOURNAL_SEARCH"] = "Instanzen suchen...",
     ["JOURNAL_STATS"] = "%d Instanzen",
     ["JOURNAL_STATS_FILTERED"] = "%d von %d Instanzen",
@@ -113,6 +113,12 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Nur großzügige",
 
     ["JOURNAL_GENERAL_LOOT"] = "Allgemeine Beute",
+    ["JOURNAL_QUEST_LOOT"] = "Questbezogen / Questbeute",
+    ["JOURNAL_WORLD_BOSSES"] = "Weltbosse",
+    ["JOURNAL_WORLD_RARES"] = "Weltrare",
+    ["JOURNAL_NPC_UNNAMED"] = "NPC #%d",
+    ["JOURNAL_UNKNOWN_ITEM"] = "Unbekannter Gegenstand",
+    ["JOURNAL_UNKNOWN_INST"] = "Unbekannte Instanz",
     ["JOURNAL_ITEMS_COUNT"] = "%d Gegenstände",
 
     ["JOURNAL_QUEST_PREFIX"] = "Quest",
@@ -183,7 +189,7 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
     ["VENDORS_ITEM_COUNT"] = "Gegenstände im Verkauf",
     ["VENDORS_LIMITED"] = "Begrenzt",
     ["VENDORS_PRICE_UNKNOWN"] = "Preis unbekannt",
-    ["VENDORS_NO_DATA"] = "Installiert das NSC-Datenbank-Paket, um NSC-Daten zu sammeln.",
+    ["VENDORS_NO_DATA"] = "Aktiviert NSCs fuer eine Erweiterung unter Funktionen verwalten, um NSC-Daten zu sammeln.",
     ["VENDORS_WAYPOINT"] = "Marker",
     ["VENDORS_WAYPOINT_TT"] = "Setzt einen Live-Wegpunkt bei diesem NSC. Öffnet die Weltkarte in diesem Gebiet. Der Wegpunkt verschwindet bei Ankunft. Manche Karten erlauben keinen Live-Wegpunkt.",
     ["VENDORS_WAYPOINT_FAILED"] = "Diese Karte erlaubt keinen Live-Wegpunkt.",
@@ -245,7 +251,7 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
 
     ["TRADESKILLS_EMPTY"] = "Keine Berufsdaten geladen.",
     ["TRADESKILLS_SELECT"] = "Wählt einen Beruf, um Rezepte anzuzeigen.",
-    ["TRADESKILLS_NO_DATA"] = "Installiert das Berufsdatenbank-Paket, um Berufsdaten anzuzeigen.",
+    ["TRADESKILLS_NO_DATA"] = "Aktiviert Berufe unter Funktionen verwalten, um Berufsdaten anzuzeigen.",
     ["TRADESKILLS_SEARCH"] = "Rezepte suchen...",
     ["TRADESKILLS_FILTER_CLEAR"] = "Leeren",
     ["TRADESKILLS_EXPANSION_ALL"] = "Alle Erweiterungen",
@@ -287,7 +293,7 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
     ["QUESTS_ZONE_ALL"] = "Alle Zonen",
     ["QUESTS_TYPE_ALL"] = "Alle Typen",
     ["QUESTS_QTYPE_ALL"] = "Alle Questtypen",
-    ["QUESTS_NO_DATA"] = "Installiert das Questdatenbank-Paket, um Questdaten zu sammeln.",
+    ["QUESTS_NO_DATA"] = "Aktiviert Quests fuer eine Erweiterung unter Funktionen verwalten, um Questdaten zu sammeln.",
     ["QUESTS_NONE_YET"] = "Noch keine Quests gesammelt. Spielt, um diese Datenbank zu füllen.",
     ["QUESTS_DEFAULT_EMPTY"] = "Keine aktiven oder favorisierten Quests. Sucht oder wählt einen Filter, um alle Quests zu durchsuchen.",
     ["QUESTS_STATUS_COUNT"] = "%d Quests",
