@@ -23,7 +23,7 @@ Hands-off helpers for repairs, looting, mounts, quests, and cinematics.
 
 UI panels, map tools, bars, and screen customization.
 
-- **AFK Panel** — full-screen AFK overlay with the same Character Card and Zone Card as ESC (portrait + faction, weekly bars, Item Alert icons), plus an Info card in the same style (summary strip, icons, and bars for alerts, reset timers, profession weeklies, and more). Optional dock background.
+- **AFK Panel** — full-screen AFK overlay with the same Character Card and Zone Card as ESC (portrait + faction, weekly bars, Item Alert icons), plus an Info card in the same style (summary strip, icons, and bars for alerts, reset timers, profession weeklies, and more). Optional dock background. If Zones Catalog is not loaded, the Zone Card says so.
 - **Auto Delete** — skip typing DELETE when destroying items
 - **ESC Menu Panel** — Character Card (portrait + faction, mail, durability, auction attention, Great Vault, Trading Post, Housing Endeavors), Zone Card (this place's collections and Item Alert icons), and a portal strip beside the ESC menu. Hover mail, durability, or the cart for details; click to open that window. Item Alert puts hits left of | and the rest on the right. Hover an icon for the list or note; click to open it. Click the Character Card to open the character screen, or the Zone Card to open that zone in Catalog. If Zones Catalog is not loaded, the card says so; left-click still opens that zone, right-click loads the pack and refreshes the card.
 - **Bag Bar** — movable bar of bag items matched by keyword expression
@@ -70,6 +70,7 @@ Clipboard and text tools.
 
 These ship with QoL core code (not separate external modules):
 
+- **Toggles** — searchable list of current game Options (gameplay, interface, nameplates, combat text, camera, chat, audio, graphics). Star a row to keep it at the top.
 - **Toast notifications** — loot, collection, and instance alerts (`Features/`)
 - **Portal hub data** — hearthstones, teleports, and custom portals integrated with ESC Panel and the [OneWoW](../OneWoW/README.md) hub (`Portals/`)
 

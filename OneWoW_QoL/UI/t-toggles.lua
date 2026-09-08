@@ -28,56 +28,73 @@ local CVAR_FAV_RENAMES = {
     cameraDynamicPitch = "test_cameraDynamicPitch",
     gxVSync = "vsync",
     gxMaxFrameLatency = "GxMaxFrameLatency",
+    particleDensity = "graphicsParticleDensity",
 }
 
 local CVAR_DATA = {
     -- GAMEPLAY
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoLootDefault",               name = "TOGGLE_NAME_autoLootDefault",               desc = "TOGGLE_DESC_autoLootDefault" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoSelfCast",                  name = "TOGGLE_NAME_autoSelfCast",                  desc = "TOGGLE_DESC_autoSelfCast" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoDismount",                  name = "TOGGLE_NAME_autoDismount",                  desc = "TOGGLE_DESC_autoDismount" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoDismountFlying",            name = "TOGGLE_NAME_autoDismountFlying",            desc = "TOGGLE_DESC_autoDismountFlying" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoStand",                     name = "TOGGLE_NAME_autoStand",                     desc = "TOGGLE_DESC_autoStand" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoUnshift",                   name = "TOGGLE_NAME_autoUnshift",                   desc = "TOGGLE_DESC_autoUnshift" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "assistAttack",                  name = "TOGGLE_NAME_assistAttack",                  desc = "TOGGLE_DESC_assistAttack" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "ActionButtonUseKeyDown",        name = "TOGGLE_NAME_ActionButtonUseKeyDown",        desc = "TOGGLE_DESC_ActionButtonUseKeyDown" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "deselectOnClick",               name = "TOGGLE_NAME_deselectOnClick",               desc = "TOGGLE_DESC_deselectOnClick" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "stopAutoAttackOnTargetChange",  name = "TOGGLE_NAME_stopAutoAttackOnTargetChange",  desc = "TOGGLE_DESC_stopAutoAttackOnTargetChange" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "lootUnderMouse",                name = "TOGGLE_NAME_lootUnderMouse",                desc = "TOGGLE_DESC_lootUnderMouse" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "interactOnLeftClick",           name = "TOGGLE_NAME_interactOnLeftClick",           desc = "TOGGLE_DESC_interactOnLeftClick" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoInteract",                  name = "TOGGLE_NAME_autointeract",                  desc = "TOGGLE_DESC_autointeract" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoClearAFK",                  name = "TOGGLE_NAME_autoClearAFK",                  desc = "TOGGLE_DESC_autoClearAFK" },
-    { cat = "GAMEPLAY", widget = "checkbox", cvar = "secureAbilityToggle",           name = "TOGGLE_NAME_secureAbilityToggle",           desc = "TOGGLE_DESC_secureAbilityToggle" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoLootDefault",              nameGlobal = "AUTO_LOOT_DEFAULT_TEXT",            desc = "TOGGLE_DESC_autoLootDefault" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoSelfCast",                 nameGlobal = "AUTO_SELF_CAST_TEXT",               desc = "TOGGLE_DESC_autoSelfCast" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoDismount",                 name = "TOGGLE_NAME_autoDismount",                desc = "TOGGLE_DESC_autoDismount" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoDismountFlying",           nameGlobal = "AUTO_DISMOUNT_FLYING_TEXT",         desc = "TOGGLE_DESC_autoDismountFlying" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoStand",                    name = "TOGGLE_NAME_autoStand",                   desc = "TOGGLE_DESC_autoStand" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoUnshift",                  name = "TOGGLE_NAME_autoUnshift",                 desc = "TOGGLE_DESC_autoUnshift" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "assistAttack",                 name = "TOGGLE_NAME_assistAttack",                desc = "TOGGLE_DESC_assistAttack" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "ActionButtonUseKeyDown",       name = "TOGGLE_NAME_ActionButtonUseKeyDown",      desc = "TOGGLE_DESC_ActionButtonUseKeyDown" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "ActionButtonUseKeyHeldSpell",  nameGlobal = "PRESS_AND_HOLD_CASTING_OPTION",     desc = "TOGGLE_DESC_ActionButtonUseKeyHeldSpell" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "enableMouseoverCast",          nameGlobal = "ENABLE_MOUSEOVER_CAST",             desc = "TOGGLE_DESC_enableMouseoverCast" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "deselectOnClick",              name = "TOGGLE_NAME_deselectOnClick",             desc = "TOGGLE_DESC_deselectOnClick" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "stopAutoAttackOnTargetChange", name = "TOGGLE_NAME_stopAutoAttackOnTargetChange", desc = "TOGGLE_DESC_stopAutoAttackOnTargetChange" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "lootUnderMouse",               nameGlobal = "LOOT_UNDER_MOUSE_TEXT",             desc = "TOGGLE_DESC_lootUnderMouse" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "interactOnLeftClick",          nameGlobal = "INTERACT_ON_LEFT_CLICK_TEXT",       desc = "TOGGLE_DESC_interactOnLeftClick" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoInteract",                 nameGlobal = "CLICK_TO_MOVE",                     desc = "TOGGLE_DESC_autointeract" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "autoClearAFK",                 nameGlobal = "CLEAR_AFK",                         desc = "TOGGLE_DESC_autoClearAFK" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "secureAbilityToggle",          name = "TOGGLE_NAME_secureAbilityToggle",         desc = "TOGGLE_DESC_secureAbilityToggle" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "combinedBags",                 nameGlobal = "USE_COMBINED_BAGS_TEXT",            desc = "TOGGLE_DESC_combinedBags" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "arachnophobiaMode",            nameGlobal = "ARACHNOPHOBIA_MODE_CHECKBOX",       desc = "TOGGLE_DESC_arachnophobiaMode" },
+    { cat = "GAMEPLAY", widget = "checkbox", cvar = "assistedCombatHighlight",      nameGlobal = "ASSISTED_COMBAT_HIGHLIGHT_LABEL",   desc = "TOGGLE_DESC_assistedCombatHighlight" },
 
     -- INTERFACE
-    { cat = "INTERFACE", widget = "checkbox", cvar = "countdownForCooldowns",               name = "TOGGLE_NAME_countdownForCooldowns",               desc = "TOGGLE_DESC_countdownForCooldowns" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "displaySpellActivationOverlays",      name = "TOGGLE_NAME_displaySpellActivationOverlays",      desc = "TOGGLE_DESC_displaySpellActivationOverlays" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "lockActionBars",                      name = "TOGGLE_NAME_lockActionBars",                      desc = "TOGGLE_DESC_lockActionBars" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "buffDurations",                       name = "TOGGLE_NAME_buffDurations",                       desc = "TOGGLE_DESC_buffDurations" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "showTargetOfTarget",                  name = "TOGGLE_NAME_showTargetOfTarget",                  desc = "TOGGLE_DESC_showTargetOfTarget" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "showTargetCastbar",                   name = "TOGGLE_NAME_showTargetCastbar",                   desc = "TOGGLE_DESC_showTargetCastbar" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "breakUpLargeNumbers",                 name = "TOGGLE_NAME_breakUpLargeNumbers",                 desc = "TOGGLE_DESC_breakUpLargeNumbers" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "alwaysCompareItems",                  name = "TOGGLE_NAME_alwaysCompareItems",                  desc = "TOGGLE_DESC_alwaysCompareItems" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "countdownForCooldowns",               nameGlobal = "COUNTDOWN_FOR_COOLDOWNS_TEXT", desc = "TOGGLE_DESC_countdownForCooldowns" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "displaySpellActivationOverlays",      name = "TOGGLE_NAME_displaySpellActivationOverlays", desc = "TOGGLE_DESC_displaySpellActivationOverlays" },
+    { cat = "INTERFACE", widget = "slider",   cvar = "spellActivationOverlayOpacity",       nameGlobal = "SPELL_ALERT_OPACITY", desc = "TOGGLE_DESC_spellActivationOverlayOpacity", min = 0, max = 1, step = 0.05 },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "lockActionBars",                      nameGlobal = "LOCK_ACTIONBAR_TEXT", desc = "TOGGLE_DESC_lockActionBars" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "buffDurations",                       nameGlobal = "SHOW_BUFF_DURATION_TEXT", desc = "TOGGLE_DESC_buffDurations" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "showTargetOfTarget",                  nameGlobal = "SHOW_TARGET_OF_TARGET_TEXT", desc = "TOGGLE_DESC_showTargetOfTarget" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "showTargetCastbar",                   name = "TOGGLE_NAME_showTargetCastbar", desc = "TOGGLE_DESC_showTargetCastbar" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "breakUpLargeNumbers",                 name = "TOGGLE_NAME_breakUpLargeNumbers", desc = "TOGGLE_DESC_breakUpLargeNumbers" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "alwaysCompareItems",                  name = "TOGGLE_NAME_alwaysCompareItems", desc = "TOGGLE_DESC_alwaysCompareItems" },
     { cat = "INTERFACE", widget = "checkbox", cvar = "missingTransmogSourceInItemTooltips", name = "TOGGLE_NAME_missingTransmogSourceInItemTooltips", desc = "TOGGLE_DESC_missingTransmogSourceInItemTooltips" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "autoQuestWatch",                      name = "TOGGLE_NAME_autoQuestWatch",                      desc = "TOGGLE_DESC_autoQuestWatch" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "autoQuestProgress",                   name = "TOGGLE_NAME_autoQuestProgress",                   desc = "TOGGLE_DESC_autoQuestProgress" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "mapFade",                             name = "TOGGLE_NAME_mapFade",                             desc = "TOGGLE_DESC_mapFade" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "rotateMinimap",                       name = "TOGGLE_NAME_rotateMinimap",                       desc = "TOGGLE_DESC_rotateMinimap" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "useUiScale",                          name = "TOGGLE_NAME_useUiScale",                          desc = "TOGGLE_DESC_useUiScale" },
-    { cat = "INTERFACE", widget = "slider",   cvar = "uiScale",    name = "TOGGLE_NAME_uiScale",    desc = "TOGGLE_DESC_uiScale",    min = 0.64, max = 1.0,  step = 0.01 },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "noBuffDebuffFilterOnTarget", name = "TOGGLE_NAME_noBuffDebuffFilterOnTarget", desc = "TOGGLE_DESC_noBuffDebuffFilterOnTarget" },
-    { cat = "INTERFACE", widget = "checkbox", cvar = "scriptErrors",               name = "TOGGLE_NAME_scriptErrors",               desc = "TOGGLE_DESC_scriptErrors" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "autoQuestWatch",                      name = "TOGGLE_NAME_autoQuestWatch", desc = "TOGGLE_DESC_autoQuestWatch" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "mapFade",                             nameGlobal = "MAP_FADE_TEXT", desc = "TOGGLE_DESC_mapFade" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "rotateMinimap",                       nameGlobal = "ROTATE_MINIMAP", desc = "TOGGLE_DESC_rotateMinimap" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "useUiScale",                          nameGlobal = "USE_UISCALE", desc = "TOGGLE_DESC_useUiScale" },
+    { cat = "INTERFACE", widget = "slider",   cvar = "uiScale",                             nameGlobal = "UI_SCALE", desc = "TOGGLE_DESC_uiScale", min = 0.65, max = 1.15, step = 0.01 },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "noBuffDebuffFilterOnTarget",          name = "TOGGLE_NAME_noBuffDebuffFilterOnTarget", desc = "TOGGLE_DESC_noBuffDebuffFilterOnTarget" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "scriptErrors",                        name = "TOGGLE_NAME_scriptErrors", desc = "TOGGLE_DESC_scriptErrors" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "occludedSilhouettePlayer",            nameGlobal = "SHOW_SILHOUETTE_OPTION", desc = "TOGGLE_DESC_occludedSilhouettePlayer" },
+    { cat = "INTERFACE", widget = "checkbox", cvar = "lossOfControl",                       nameGlobal = "LOSS_OF_CONTROL", desc = "TOGGLE_DESC_lossOfControl" },
 
     -- NAMEPLATES
-    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowEnemies",              name = "TOGGLE_NAME_nameplateShowEnemies",              desc = "TOGGLE_DESC_nameplateShowEnemies" },
-    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyPlayers",      name = "TOGGLE_NAME_nameplateShowFriends",              desc = "TOGGLE_DESC_nameplateShowFriends" },
-    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowSelf",                 name = "TOGGLE_NAME_nameplateShowSelf",                 desc = "TOGGLE_DESC_nameplateShowSelf" },
-    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowClassColor",           name = "TOGGLE_NAME_ShowClassColorInNameplate",         desc = "TOGGLE_DESC_ShowClassColorInNameplate" },
-    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyClassColor",   name = "TOGGLE_NAME_ShowClassColorInFriendlyNameplate", desc = "TOGGLE_DESC_ShowClassColorInFriendlyNameplate" },
-    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateOtherAtBase",              name = "TOGGLE_NAME_nameplateOtherAtBase",              desc = "TOGGLE_DESC_nameplateOtherAtBase" },
-    { cat = "NAMEPLATES", widget = "slider", cvar = "nameplateMaxDistance",  name = "TOGGLE_NAME_nameplateMaxDistance",  desc = "TOGGLE_DESC_nameplateMaxDistance",  min = 10,  max = 60,  step = 1 },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowAll",                              nameGlobal = "UNIT_NAMEPLATES_AUTOMODE", desc = "TOGGLE_DESC_nameplateShowAll" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowEnemies",                          nameGlobal = "UNIT_NAMEPLATES_SHOW_ENEMIES", desc = "TOGGLE_DESC_nameplateShowEnemies" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowEnemyMinions",                    name = "TOGGLE_NAME_nameplateShowEnemyMinions", desc = "TOGGLE_DESC_nameplateShowEnemyMinions" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowEnemyMinus",                      name = "TOGGLE_NAME_nameplateShowEnemyMinus", desc = "TOGGLE_DESC_nameplateShowEnemyMinus" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyPlayers",                 nameGlobal = "UNIT_NAMEPLATES_SHOW_FRIENDS", desc = "TOGGLE_DESC_nameplateShowFriends" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyPlayerMinions",           name = "TOGGLE_NAME_nameplateShowFriendlyPlayerMinions", desc = "TOGGLE_DESC_nameplateShowFriendlyPlayerMinions" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyNpcs",                    nameGlobal = "UNIT_NAMEPLATES_SHOW_FRIENDLY_NPCS", desc = "TOGGLE_DESC_nameplateShowFriendlyNpcs" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowOnlyNameForFriendlyPlayerUnits",  name = "TOGGLE_NAME_nameplateShowOnlyNameForFriendlyPlayerUnits", desc = "TOGGLE_DESC_nameplateShowOnlyNameForFriendlyPlayerUnits" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateUseClassColorForFriendlyPlayerUnitNames", name = "TOGGLE_NAME_nameplateUseClassColorForFriendlyPlayerUnitNames", desc = "TOGGLE_DESC_nameplateUseClassColorForFriendlyPlayerUnitNames" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyRealmName",               name = "TOGGLE_NAME_nameplateShowFriendlyRealmName", desc = "TOGGLE_DESC_nameplateShowFriendlyRealmName" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowOffscreen",                       nameGlobal = "UNIT_NAMEPLATES_SHOW_OFFSCREEN", desc = "TOGGLE_DESC_nameplateShowOffscreen" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowSelf",                            nameGlobal = "DISPLAY_PERSONAL_RESOURCE", desc = "TOGGLE_DESC_nameplateShowSelf" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowClassColor",                      name = "TOGGLE_NAME_ShowClassColorInNameplate", desc = "TOGGLE_DESC_ShowClassColorInNameplate" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateShowFriendlyClassColor",              name = "TOGGLE_NAME_ShowClassColorInFriendlyNameplate", desc = "TOGGLE_DESC_ShowClassColorInFriendlyNameplate" },
+    { cat = "NAMEPLATES", widget = "checkbox", cvar = "nameplateOtherAtBase",                         name = "TOGGLE_NAME_nameplateOtherAtBase", desc = "TOGGLE_DESC_nameplateOtherAtBase" },
+    { cat = "NAMEPLATES", widget = "slider",   cvar = "nameplateMaxDistance",                         name = "TOGGLE_NAME_nameplateMaxDistance", desc = "TOGGLE_DESC_nameplateMaxDistance", min = 10, max = 60, step = 1 },
 
     -- COMBAT_TEXT
-    { cat = "COMBAT_TEXT", widget = "checkbox", cvar = "enableFloatingCombatText",                      name = "TOGGLE_NAME_enableFloatingCombatText",                      desc = "TOGGLE_DESC_enableFloatingCombatText" },
+    { cat = "COMBAT_TEXT", widget = "checkbox", cvar = "enableFloatingCombatText",                      nameGlobal = "SHOW_COMBAT_TEXT_TEXT",                      desc = "TOGGLE_DESC_enableFloatingCombatText" },
     { cat = "COMBAT_TEXT", widget = "slider",   cvar = "WorldTextScale_v2",                             name = "TOGGLE_NAME_WorldTextScale_v2",                             desc = "TOGGLE_DESC_WorldTextScale_v2", min = 0.5, max = 2.5, step = 0.1 },
     { cat = "COMBAT_TEXT", widget = "dropdown", cvar = "floatingCombatTextFloatMode_v2",
         name = "TOGGLE_NAME_floatingCombatTextFloatMode_v2", desc = "TOGGLE_DESC_floatingCombatTextFloatMode_v2",
@@ -117,56 +134,69 @@ local CVAR_DATA = {
     { cat = "CAMERA", widget = "slider", cvar = "cameraZoomSpeed",             name = "TOGGLE_NAME_cameraZoomSpeed",             desc = "TOGGLE_DESC_cameraZoomSpeed",             min = 1,   max = 50,  step = 1 },
 
     -- CHAT
-    { cat = "CHAT", widget = "checkbox", cvar = "chatBubbles",           name = "TOGGLE_NAME_chatBubbles",           desc = "TOGGLE_DESC_chatBubbles" },
-    { cat = "CHAT", widget = "checkbox", cvar = "chatBubblesParty",      name = "TOGGLE_NAME_chatBubblesParty",      desc = "TOGGLE_DESC_chatBubblesParty" },
+    { cat = "CHAT", widget = "checkbox", cvar = "chatBubbles",           nameGlobal = "CHAT_BUBBLES_TEXT", desc = "TOGGLE_DESC_chatBubbles" },
+    { cat = "CHAT", widget = "checkbox", cvar = "chatBubblesParty",      nameGlobal = "PARTY_CHAT_BUBBLES_TEXT", desc = "TOGGLE_DESC_chatBubblesParty" },
+    { cat = "CHAT", widget = "checkbox", cvar = "chatBubblesRaid",       nameGlobal = "RAID_CHAT_BUBBLES_TEXT", desc = "TOGGLE_DESC_chatBubblesRaid" },
     { cat = "CHAT", widget = "checkbox", cvar = "colorChatNamesByClass", name = "TOGGLE_NAME_colorChatNamesByClass", desc = "TOGGLE_DESC_colorChatNamesByClass" },
-    { cat = "CHAT", widget = "checkbox", cvar = "blockTrades",           name = "TOGGLE_NAME_blockTrades",           desc = "TOGGLE_DESC_blockTrades" },
-    { cat = "CHAT", widget = "checkbox", cvar = "blockChannelInvites",   name = "TOGGLE_NAME_blockChannelInvites",   desc = "TOGGLE_DESC_blockChannelInvites" },
-    { cat = "CHAT", widget = "checkbox", cvar = "guildMemberNotify",     name = "TOGGLE_NAME_guildMemberNotify",     desc = "TOGGLE_DESC_guildMemberNotify" },
-    { cat = "CHAT", widget = "checkbox", cvar = "chatMouseScroll",       name = "TOGGLE_NAME_chatMouseScroll",       desc = "TOGGLE_DESC_chatMouseScroll" },
-    { cat = "CHAT", widget = "checkbox", cvar = "profanityFilter",       name = "TOGGLE_NAME_profanityFilter",       desc = "TOGGLE_DESC_profanityFilter" },
+    { cat = "CHAT", widget = "checkbox", cvar = "blockTrades",           nameGlobal = "BLOCK_TRADES", desc = "TOGGLE_DESC_blockTrades" },
+    { cat = "CHAT", widget = "checkbox", cvar = "blockChannelInvites",   nameGlobal = "BLOCK_CHAT_CHANNEL_INVITE", desc = "TOGGLE_DESC_blockChannelInvites" },
+    { cat = "CHAT", widget = "checkbox", cvar = "guildMemberNotify",     nameGlobal = "GUILDMEMBER_ALERT", desc = "TOGGLE_DESC_guildMemberNotify" },
+    { cat = "CHAT", widget = "checkbox", cvar = "chatMouseScroll",       nameGlobal = "CHAT_MOUSE_WHEEL_SCROLL", desc = "TOGGLE_DESC_chatMouseScroll" },
+    { cat = "CHAT", widget = "checkbox", cvar = "profanityFilter",       nameGlobal = "PROFANITY_FILTER", desc = "TOGGLE_DESC_profanityFilter" },
     { cat = "CHAT", widget = "dropdown", cvar = "chatStyle",
         name = "TOGGLE_NAME_chatStyle", desc = "TOGGLE_DESC_chatStyle",
         options   = { "classic", "im" },
-        optLabels = { "TOGGLE_OPT_chatStyle_classic", "TOGGLE_OPT_chatStyle_im" } },
+        optGlobals = { "CLASSIC_STYLE", "IM_STYLE" } },
 
     -- AUDIO
-    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableAllSound",  name = "TOGGLE_NAME_Sound_EnableAllSound",  desc = "TOGGLE_DESC_Sound_EnableAllSound" },
-    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableMusic",     name = "TOGGLE_NAME_Sound_EnableMusic",     desc = "TOGGLE_DESC_Sound_EnableMusic" },
-    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableSFX",       name = "TOGGLE_NAME_Sound_EnableSFX",       desc = "TOGGLE_DESC_Sound_EnableSFX" },
-    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableDialog",    name = "TOGGLE_NAME_Sound_EnableDialog",    desc = "TOGGLE_DESC_Sound_EnableDialog" },
-    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableAmbience",  name = "TOGGLE_NAME_Sound_EnableAmbience",  desc = "TOGGLE_DESC_Sound_EnableAmbience" },
-    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnablePetSounds", name = "TOGGLE_NAME_Sound_EnablePetSounds", desc = "TOGGLE_DESC_Sound_EnablePetSounds" },
-    { cat = "AUDIO", widget = "checkbox", cvar = "FootstepSounds",        name = "TOGGLE_NAME_FootstepSounds",        desc = "TOGGLE_DESC_FootstepSounds" },
-    { cat = "AUDIO", widget = "slider", cvar = "Sound_MasterVolume", name = "TOGGLE_NAME_Sound_MasterVolume", desc = "TOGGLE_DESC_Sound_MasterVolume", min = 0.0, max = 1.0, step = 0.05 },
+    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableAllSound",  nameGlobal = "ENABLE_SOUND", desc = "TOGGLE_DESC_Sound_EnableAllSound" },
+    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableMusic",     nameGlobal = "ENABLE_MUSIC", desc = "TOGGLE_DESC_Sound_EnableMusic" },
+    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableSFX",       nameGlobal = "ENABLE_SOUNDFX", desc = "TOGGLE_DESC_Sound_EnableSFX" },
+    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableDialog",    nameGlobal = "ENABLE_DIALOG", desc = "TOGGLE_DESC_Sound_EnableDialog" },
+    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnableAmbience",  nameGlobal = "ENABLE_AMBIENCE", desc = "TOGGLE_DESC_Sound_EnableAmbience" },
+    { cat = "AUDIO", widget = "checkbox", cvar = "Sound_EnablePetSounds", nameGlobal = "ENABLE_PET_SOUNDS", desc = "TOGGLE_DESC_Sound_EnablePetSounds" },
+    { cat = "AUDIO", widget = "checkbox", cvar = "FootstepSounds",        name = "TOGGLE_NAME_FootstepSounds", desc = "TOGGLE_DESC_FootstepSounds" },
+    { cat = "AUDIO", widget = "slider", cvar = "Sound_MasterVolume", nameGlobal = "MASTER_VOLUME", desc = "TOGGLE_DESC_Sound_MasterVolume", min = 0.0, max = 1.0, step = 0.05 },
     { cat = "AUDIO", widget = "slider", cvar = "Sound_MusicVolume",  name = "TOGGLE_NAME_Sound_MusicVolume",  desc = "TOGGLE_DESC_Sound_MusicVolume",  min = 0.0, max = 1.0, step = 0.05 },
     { cat = "AUDIO", widget = "slider", cvar = "Sound_SFXVolume",    name = "TOGGLE_NAME_Sound_SFXVolume",    desc = "TOGGLE_DESC_Sound_SFXVolume",    min = 0.0, max = 1.0, step = 0.05 },
+    { cat = "AUDIO", widget = "slider", cvar = "Sound_AmbienceVolume", name = "TOGGLE_NAME_Sound_AmbienceVolume", desc = "TOGGLE_DESC_Sound_AmbienceVolume", min = 0.0, max = 1.0, step = 0.05 },
+    { cat = "AUDIO", widget = "slider", cvar = "Sound_DialogVolume", name = "TOGGLE_NAME_Sound_DialogVolume", desc = "TOGGLE_DESC_Sound_DialogVolume", min = 0.0, max = 1.0, step = 0.05 },
 
     -- GRAPHICS
     { cat = "GRAPHICS", widget = "checkbox", cvar = "ffxDeath",                    name = "TOGGLE_NAME_ffxDeath",                    desc = "TOGGLE_DESC_ffxDeath" },
     { cat = "GRAPHICS", widget = "checkbox", cvar = "ffxGlow",                     name = "TOGGLE_NAME_ffxGlow",                     desc = "TOGGLE_DESC_ffxGlow" },
     { cat = "GRAPHICS", widget = "checkbox", cvar = "ffxNether",                   name = "TOGGLE_NAME_ffxNether",                   desc = "TOGGLE_DESC_ffxNether" },
     { cat = "GRAPHICS", widget = "checkbox", cvar = "emphasizeMySpellEffects",     name = "TOGGLE_NAME_emphasizeMySpellEffects",     desc = "TOGGLE_DESC_emphasizeMySpellEffects" },
-    { cat = "GRAPHICS", widget = "checkbox", cvar = "doNotFlashLowHealthWarning",  name = "TOGGLE_NAME_doNotFlashLowHealthWarning",  desc = "TOGGLE_DESC_doNotFlashLowHealthWarning" },
-    { cat = "GRAPHICS", widget = "checkbox", cvar = "findYourselfAnywhere",        name = "TOGGLE_NAME_findYourselfAnywhere",        desc = "TOGGLE_DESC_findYourselfAnywhere" },
-    { cat = "GRAPHICS", widget = "checkbox", cvar = "vsync",                       name = "TOGGLE_NAME_gxVSync",                     desc = "TOGGLE_DESC_gxVSync" },
-    { cat = "GRAPHICS", widget = "slider", cvar = "particleDensity",   name = "TOGGLE_NAME_particleDensity",   desc = "TOGGLE_DESC_particleDensity",   min = 0,   max = 100, step = 5    },
-    { cat = "GRAPHICS", widget = "slider", cvar = "maxFPS",            name = "TOGGLE_NAME_maxFPS",            desc = "TOGGLE_DESC_maxFPS",            min = 0,   max = 200, step = 10   },
-    { cat = "GRAPHICS", widget = "slider", cvar = "maxFPSBk",          name = "TOGGLE_NAME_maxFPSBk",          desc = "TOGGLE_DESC_maxFPSBk",          min = 0,   max = 60,  step = 5    },
-    { cat = "GRAPHICS", widget = "slider", cvar = "GxMaxFrameLatency", name = "TOGGLE_NAME_gxMaxFrameLatency", desc = "TOGGLE_DESC_gxMaxFrameLatency", min = 1,   max = 6,   step = 1    },
-    { cat = "GRAPHICS", widget = "slider", cvar = "RenderScale",       name = "TOGGLE_NAME_RenderScale",       desc = "TOGGLE_DESC_RenderScale",       min = 0.5, max = 2.0, step = 0.05 },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "doNotFlashLowHealthWarning",  nameGlobal = "FLASH_LOW_HEALTH_WARNING", desc = "TOGGLE_DESC_doNotFlashLowHealthWarning" },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "findYourselfAnywhere",        nameGlobal = "SELF_HIGHLIGHT_OPTION", desc = "TOGGLE_DESC_findYourselfAnywhere" },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "findYourselfModeCircle",      name = "TOGGLE_NAME_findYourselfModeCircle", desc = "TOGGLE_DESC_findYourselfModeCircle" },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "findYourselfModeOutline",     name = "TOGGLE_NAME_findYourselfModeOutline", desc = "TOGGLE_DESC_findYourselfModeOutline" },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "findYourselfModeIcon",        name = "TOGGLE_NAME_findYourselfModeIcon", desc = "TOGGLE_DESC_findYourselfModeIcon" },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "vsync",                       nameGlobal = "VERTICAL_SYNC", desc = "TOGGLE_DESC_gxVSync" },
+    { cat = "GRAPHICS", widget = "dropdown", cvar = "graphicsParticleDensity",
+        nameGlobal = "PARTICLE_DENSITY", desc = "TOGGLE_DESC_graphicsParticleDensity",
+        options    = { "0", "1", "2", "3", "4", "5" },
+        optGlobals = { "VIDEO_OPTIONS_DISABLED", "VIDEO_OPTIONS_LOW", "VIDEO_OPTIONS_FAIR", "VIDEO_OPTIONS_MEDIUM", "VIDEO_OPTIONS_HIGH", "VIDEO_OPTIONS_ULTRA" } },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "useMaxFPS",          name = "TOGGLE_NAME_useMaxFPS", desc = "TOGGLE_DESC_useMaxFPS" },
+    { cat = "GRAPHICS", widget = "slider",   cvar = "maxFPS",             nameGlobal = "MAXFPS", desc = "TOGGLE_DESC_maxFPS", min = 8, max = 200, step = 1 },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "useMaxFPSBk",        name = "TOGGLE_NAME_useMaxFPSBk", desc = "TOGGLE_DESC_useMaxFPSBk" },
+    { cat = "GRAPHICS", widget = "slider",   cvar = "maxFPSBk",           nameGlobal = "MAXFPSBK", desc = "TOGGLE_DESC_maxFPSBk", min = 8, max = 200, step = 1 },
+    { cat = "GRAPHICS", widget = "slider",   cvar = "GxMaxFrameLatency",  name = "TOGGLE_NAME_gxMaxFrameLatency", desc = "TOGGLE_DESC_gxMaxFrameLatency", min = 1, max = 6, step = 1 },
+    { cat = "GRAPHICS", widget = "slider",   cvar = "RenderScale",        nameGlobal = "RENDER_SCALE", desc = "TOGGLE_DESC_RenderScale", min = 0.5, max = 2.0, step = 0.05 },
     { cat = "GRAPHICS", widget = "dropdown", cvar = "graphicsQuality",
-        name = "TOGGLE_NAME_graphicsQuality", desc = "TOGGLE_DESC_graphicsQuality",
+        nameGlobal = "GRAPHICS_QUALITY", desc = "TOGGLE_DESC_graphicsQuality",
         options   = { "1","2","3","4","5","6","7","8","9","10" },
         optLabels = { "TOGGLE_OPT_graphicsQuality_1","TOGGLE_OPT_graphicsQuality_2","TOGGLE_OPT_graphicsQuality_3","TOGGLE_OPT_graphicsQuality_4","TOGGLE_OPT_graphicsQuality_5","TOGGLE_OPT_graphicsQuality_6","TOGGLE_OPT_graphicsQuality_7","TOGGLE_OPT_graphicsQuality_8","TOGGLE_OPT_graphicsQuality_9","TOGGLE_OPT_graphicsQuality_10" } },
     { cat = "GRAPHICS", widget = "dropdown", cvar = "ffxAntiAliasingMode",
-        name = "TOGGLE_NAME_ffxAntiAliasingMode", desc = "TOGGLE_DESC_ffxAntiAliasingMode",
-        options   = { "0","1","2","3" },
-        optLabels = { "TOGGLE_OPT_ffxAntiAliasingMode_0","TOGGLE_OPT_ffxAntiAliasingMode_1","TOGGLE_OPT_ffxAntiAliasingMode_2","TOGGLE_OPT_ffxAntiAliasingMode_3" } },
-    { cat = "GRAPHICS", widget = "dropdown", cvar = "colorblindMode",
-        name = "TOGGLE_NAME_colorblindMode", desc = "TOGGLE_DESC_colorblindMode",
-        options   = { "0","1","2","3" },
-        optLabels = { "TOGGLE_OPT_colorblindMode_0","TOGGLE_OPT_colorblindMode_1","TOGGLE_OPT_colorblindMode_2","TOGGLE_OPT_colorblindMode_3" } },
+        nameGlobal = "ANTIALIASING", desc = "TOGGLE_DESC_ffxAntiAliasingMode",
+        options    = { "0","1","2","3","4" },
+        optGlobals = { "VIDEO_OPTIONS_NONE", "ANTIALIASING_FXAA_LOW", "ANTIALIASING_FXAA_HIGH", "ANTIALIASING_CMAA", "ANTIALIASING_CMAA2" } },
+    { cat = "GRAPHICS", widget = "checkbox", cvar = "colorblindMode",           nameGlobal = "USE_COLORBLIND_MODE", desc = "TOGGLE_DESC_colorblindMode" },
+    { cat = "GRAPHICS", widget = "dropdown", cvar = "colorblindSimulator",
+        nameGlobal = "COLORBLIND_FILTER", desc = "TOGGLE_DESC_colorblindSimulator",
+        options    = { "0","1","2","3" },
+        optGlobals = { "COLORBLIND_OPTION_NONE", "COLORBLIND_OPTION_PROTANOPIA", "COLORBLIND_OPTION_DEUTERANOPIA", "COLORBLIND_OPTION_TRITANOPIA" } },
+    { cat = "GRAPHICS", widget = "slider",   cvar = "colorblindWeaknessFactor", name = "TOGGLE_NAME_colorblindWeaknessFactor", desc = "TOGGLE_DESC_colorblindWeaknessFactor", min = 0, max = 1, step = 0.05 },
 
     -- NETWORK
     { cat = "NETWORK", widget = "checkbox", cvar = "disableServerNagle",  name = "TOGGLE_NAME_disableServerNagle",  desc = "TOGGLE_DESC_disableServerNagle" },
@@ -231,10 +261,28 @@ local function FormatSliderVal(value, step)
     end
 end
 
+local function ToggleName(entry)
+    if entry.nameGlobal then
+        return _G[entry.nameGlobal] or entry.nameGlobal
+    end
+    return L[entry.name]
+end
+
+local function ToggleDesc(entry)
+    return L[entry.desc]
+end
+
+local function ToggleOptLabel(entry, i)
+    if entry.optGlobals and entry.optGlobals[i] then
+        return _G[entry.optGlobals[i]] or entry.optGlobals[i]
+    end
+    return L[entry.optLabels[i]]
+end
+
 --- Match display name or cvar (so "floating" finds floatingCombatText* rows).
 local function ToggleMatchesFilter(entry, filter)
     if not filter then return true end
-    if (L[entry.name]):lower():find(filter, 1, true) then return true end
+    if ToggleName(entry):lower():find(filter, 1, true) then return true end
     if entry.cvar and entry.cvar:lower():find(filter, 1, true) then return true end
     return false
 end
@@ -245,8 +293,33 @@ local function NeedsFCTRefresh(cvar)
         or (type(cvar) == "string" and cvar:find("^floatingCombatText", 1, true) == 1)
 end
 
+local SELF_HIGHLIGHT_MODES = {
+    findYourselfModeCircle = true,
+    findYourselfModeOutline = true,
+    findYourselfModeIcon = true,
+}
+
 local function SetToggleCVar(cvar, value)
     C_CVar.SetCVar(cvar, value)
+    if cvar == "spellActivationOverlayOpacity" then
+        local num = tonumber(value) or 0
+        C_CVar.SetCVar("displaySpellActivationOverlays", num > 0 and "1" or "0")
+    elseif cvar == "maxFPS" then
+        C_CVar.SetCVar("useMaxFPS", "1")
+    elseif cvar == "maxFPSBk" then
+        C_CVar.SetCVar("useMaxFPSBk", "1")
+    elseif SELF_HIGHLIGHT_MODES[cvar] then
+        local any = C_CVar.GetCVarBool("findYourselfModeCircle")
+            or C_CVar.GetCVarBool("findYourselfModeOutline")
+            or C_CVar.GetCVarBool("findYourselfModeIcon")
+        C_CVar.SetCVar("findYourselfAnywhere", any and "1" or "0")
+    elseif cvar == "findYourselfAnywhere" and value == "1" then
+        if not C_CVar.GetCVarBool("findYourselfModeCircle")
+            and not C_CVar.GetCVarBool("findYourselfModeOutline")
+            and not C_CVar.GetCVarBool("findYourselfModeIcon") then
+            C_CVar.SetCVar("findYourselfModeCircle", "1")
+        end
+    end
     if NeedsFCTRefresh(cvar) and C_CVar.GetCVarBool("enableFloatingCombatText") then
         C_CVar.SetCVar("enableFloatingCombatText", "0")
         C_CVar.SetCVar("enableFloatingCombatText", "1")
@@ -263,10 +336,10 @@ local function GetRowDisplay(entry)
         if num then return FormatSliderVal(num, entry.step), nil end
         return val, nil
     elseif entry.widget == "dropdown" then
-        if entry.options and entry.optLabels then
+        if entry.options and (entry.optLabels or entry.optGlobals) then
             for i, opt in ipairs(entry.options) do
                 if val == tostring(opt) then
-                    return L[entry.optLabels[i]] or entry.optLabels[i], nil
+                    return ToggleOptLabel(entry, i), nil
                 end
             end
         end
@@ -307,7 +380,7 @@ local function ShowToggleDetail(split, entry)
     nameLabel:SetPoint("TOPLEFT",  child, "TOPLEFT",  12, yOfs)
     nameLabel:SetPoint("TOPRIGHT", child, "TOPRIGHT", -12, yOfs)
     nameLabel:SetJustifyH("LEFT")
-    nameLabel:SetText(L[entry.name])
+    nameLabel:SetText(ToggleName(entry))
     nameLabel:SetTextColor(OneWoW_GUI:GetThemeColor("ACCENT_PRIMARY"))
     yOfs = yOfs - nameLabel:GetStringHeight() - 6
 
@@ -330,7 +403,7 @@ local function ShowToggleDetail(split, entry)
     descText:SetJustifyH("LEFT")
     descText:SetWordWrap(true)
     descText:SetSpacing(3)
-    descText:SetText(L[entry.desc])
+    descText:SetText(ToggleDesc(entry))
     descText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
     yOfs = yOfs - descText:GetStringHeight() - 12
 
@@ -389,7 +462,7 @@ local function ShowToggleDetail(split, entry)
         local items = {}
         for i, opt in ipairs(entry.options) do
             table.insert(items, {
-                text = L[entry.optLabels[i]] or entry.optLabels[i],
+                text = ToggleOptLabel(entry, i),
                 value = tostring(opt),
                 isActive = (tostring(opt) == tostring(curVal)),
             })
@@ -431,7 +504,7 @@ local function BuildTogglesList(split, filterText)
 
         local rowOptions = {
             height = rowH,
-            label = L[entry.name],
+            label = ToggleName(entry),
             onClick = function(self)
                 if selectedRow and selectedRow ~= self then
                     selectedRow:SetActive(false)
@@ -474,7 +547,7 @@ local function BuildTogglesList(split, filterText)
         end
     end
     table.sort(favEntries, function(a, b)
-        return (L[a.name]) < (L[b.name])
+        return ToggleName(a) < ToggleName(b)
     end)
 
     if #favEntries > 0 then

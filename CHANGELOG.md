@@ -71,7 +71,7 @@
 - Click the Character Card to open the character screen, or the Zone Card to open this place in Catalog. Left-click still opens that zone when Catalog Journal is not loaded. The card says so, and right-click loads it and refreshes the card.
 
 ## AFK Panel
-- The AFK overlay uses the same Character Card and Zone Card as the ESC menu, including the portrait with a faction badge, weekly bars, and Item Alert icons. Hover an icon for the list or note; keys and mouse still clear AFK the same way (no click-to-open).
+- The AFK overlay uses the same Character Card and Zone Card as the ESC menu, including the portrait with a faction badge, weekly bars, and Item Alert icons. Hover an icon for the list or note; keys and mouse still clear AFK the same way (no click-to-open). If Zones Catalog is not loaded, the Zone Card says so.
 - Character Card sits on the bottom left. Zone Card and Info stack on the right. Alerts (auctions expiring or expired, gold waiting, and alts with mail) sit on Info, not a center card.
 - Info also shows weekly and daily reset timers, profession weeklies, rested XP, bag space, Hearthstone cooldown, and this week's bonus event. When there are no auction or mail alerts, each AFK session can add one extra line: session time, a collectible count, or a short tip.
 - Info matches Character and Zone: accent title, a summary strip for weekly reset, daily reset, and bag space, then icon rows with progress bars for profession weeklies and rested XP.
@@ -86,7 +86,7 @@
 - Added Mycomancer's Hearthspore, The Schools of Arcane Magic - Mastery, Nature's Beacon, and Dundun's Abundant Travel Method.
 
 ## Instance Toast
-- Zoning into a dungeon or raid shows real collectable counts on the instance toast and the ESC instance panel again.
+- Zoning into a dungeon or raid shows collectable counts on the instance toast when that expansion's Zones data is loaded. If it is not, the toast says Zones Catalog not loaded.
 
 ## Fixes
 - ESC and AFK no longer load Catalog Journal data just to name this place. That data stays unloaded until you open Catalog Zones (or another tab that needs it), so open-world memory and hitching stay down.
@@ -96,6 +96,11 @@
 
 ## Tooltips
 - Item Tracker on item tooltips now has two blocks: Where it is (your copies) and Where to get it (quest, vendor, instance, profession). Those source lines appear when that Catalog pack is already loaded.
+
+## Toggles
+- Toggles matches current Options. Colorblind UI is a checkbox; the color filter and its strength are separate. Anti-aliasing names match the game (None, FXAA Low, FXAA High, CMAA, CMAA 2). Unlimited FPS is Limit Foreground / Background FPS, not 0 on the slider (8 to 200). UI scale goes from 0.65 to 1.15. Particle density is Disabled through Ultra. Friendly nameplates are friendly players.
+- New rows from current Options: press-and-hold casting, mouseover cast, combined bags, arachnophobia mode, assisted highlight, spell-alert opacity, silhouette when obscured, loss of control alerts, always-on nameplates, minion and minor plates, names-only friendly plates, class color on friendly names, realm names, offscreen plates, raid chat bubbles, ambience and dialog volume, and self-highlight circle, outline, and icon.
+- Quest Progress Popups is gone. The game no longer uses that setting.
 
 ---
 

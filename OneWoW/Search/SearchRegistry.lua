@@ -492,7 +492,12 @@ function reg:RegisterCVarRow(row)
     end
     self:Register({
         id = "cvar:" .. row.cvar,
-        title = row.name,
+        title = function()
+            if row.nameGlobal then
+                return _G[row.nameGlobal] or row.nameGlobal
+            end
+            return ResolveText(row.name, "OneWoW_QoL")
+        end,
         description = row.desc,
         scope = "OneWoW_QoL",
         tags = { row.cvar, strlower(cat) },
@@ -501,7 +506,12 @@ function reg:RegisterCVarRow(row)
             self.ModuleLabel("qol"),
             function() return qolL()["TAB_TOGGLES"] end,
             function() return qolL()["TOGGLE_CAT_" .. cat] end,
-            function() return ResolveText(row.name, "OneWoW_QoL") end,
+            function()
+                if row.nameGlobal then
+                    return _G[row.nameGlobal] or row.nameGlobal
+                end
+                return ResolveText(row.name, "OneWoW_QoL")
+            end,
         },
         nav = { module = "qol", subtab = "toggles" },
     })
