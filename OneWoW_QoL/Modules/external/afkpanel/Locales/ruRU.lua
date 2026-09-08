@@ -5,17 +5,9 @@ local M = ns.ModuleRegistry:Current()
 OneWoW.Locale:Register(M._scope, "ruRU", {
 
     ["AFKPANEL_TITLE"] = "Панель отошёл",
-    ["AFKPANEL_DESC"] = "Полноэкранное наложение AFK с теми же карточками You и Here, что и меню ESC, оповещениями о почте и аукционе, и необязательными Daily/Weekly заметками, если Notes включен.",
+    ["AFKPANEL_DESC"] = "Полноэкранное наложение AFK с теми же карточкой персонажа и карточкой зоны, что и меню ESC, плюс карточка Инфо для оповещений, таймеров сброса, профессий и прочего. Фон панели по желанию.",
     ["AFKPANEL_CAMERA_SPIN"] = "Вращение камеры",
-    ["AFKPANEL_SHOW_DAILY"] = "Показывать ежедневные заметки",
-    ["AFKPANEL_SHOW_WEEKLY"] = "Показывать еженедельные заметки",
+    ["AFKPANEL_SHOW_DOCK"] = "Показывать фон панели",
+    ["AFKPANEL_SHOW_DOCK_DESC"] = "Показывать золотую полосу за карточками AFK. Выключите, чтобы карточки парили над персонажем.",
     ["AFKPANEL_MODE_TITLE"] = "OneWoW QoL - Режим отошёл",
-    ["AFKPANEL_CHARACTER_INFO"] = "ИНФО О ПЕРСОНАЖЕ",
-    ["AFKPANEL_ALERTS"] = "ОПОВЕЩЕНИЯ",
-    ["AFKPANEL_NO_ALERTS"] = "Сейчас нет оповещений",
-    ["AFKPANEL_AFK_TIME"] = "Отошёл: %s",
-    ["AFKPANEL_DAILY_NOTES"] = "ЕЖЕДНЕВНЫЕ ЗАМЕТКИ",
-    ["AFKPANEL_WEEKLY_NOTES"] = "ЕЖЕНЕДЕЛЬНЫЕ ЗАМЕТКИ",
-    ["AFKPANEL_NO_NOTES"] = "Нет заметок для показа",
-    ["AFKPANEL_NO_GUILD"] = "Нет гильдии",
 })

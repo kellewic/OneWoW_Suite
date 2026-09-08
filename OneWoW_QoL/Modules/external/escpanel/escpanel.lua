@@ -4,18 +4,19 @@ if not ESCPanelModule then return end
 
 local OneWoW = OneWoW
 local OneWoW_GUI = OneWoW_GUI
+local math = math
 
 -- Session-only collapse memory (survives tab switches; cleared on /reload)
 local collapsedCards = {}
 
 local TOGGLE_TO_DB = {
-    esc_show_character_info  = "escShowCharacterInfo",
-    esc_show_endeavors       = "escShowEndeavors",
-    esc_show_alerts          = "escShowAlerts",
-    esc_show_zone_notes      = "escShowZoneNotes",
-    esc_hide_zone_when_empty = "escHideZoneNotesWhenEmpty",
-    esc_show_portals         = "escPortalsEnabled",
+    esc_show_character_info = "escShowCharacterInfo",
+    esc_show_here           = "escShowHere",
+    esc_show_portals        = "escPortalsEnabled",
 }
+
+local CARD_PREVIEW_BASE = "Interface\\AddOns\\OneWoW_QoL\\Modules\\external\\escpanel\\Media\\"
+local CARD_PREVIEW_ASPECT = 420 / 517
 
 function ESCPanelModule:OnEnable()
     local ph = OneWoW:GetPortalHub()
@@ -90,13 +91,40 @@ function ESCPanelModule:CreateCustomDetail(detailScrollChild, yOffset, _, regist
         descText:SetText(L["ESCPANEL_LAYOUT_DESC"])
         descText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
 
+        local previewWidth = w
+        if previewWidth < 1 then
+            previewWidth = 280
+        end
+        previewWidth = math.min(previewWidth, 280)
+        local previewHeight = math.floor(previewWidth * CARD_PREVIEW_ASPECT + 0.5)
+
+        local charCaption = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        charCaption:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -gap)
+        charCaption:SetText(L["ESCPANEL_TOGGLE_SHOW_CHARACTER"])
+        charCaption:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+
+        local charImg = content:CreateTexture(nil, "ARTWORK")
+        charImg:SetPoint("TOPLEFT", charCaption, "BOTTOMLEFT", 0, -4)
+        charImg:SetSize(previewWidth, previewHeight)
+        charImg:SetTexture(CARD_PREVIEW_BASE .. "character-card.png")
+
+        local zoneCaption = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        zoneCaption:SetPoint("TOPLEFT", charImg, "BOTTOMLEFT", 0, -gap)
+        zoneCaption:SetText(L["ESCPANEL_TOGGLE_SHOW_HERE"])
+        zoneCaption:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+
+        local zoneImg = content:CreateTexture(nil, "ARTWORK")
+        zoneImg:SetPoint("TOPLEFT", zoneCaption, "BOTTOMLEFT", 0, -4)
+        zoneImg:SetSize(previewWidth, previewHeight)
+        zoneImg:SetTexture(CARD_PREVIEW_BASE .. "zone-card.png")
+
         local ph0 = OneWoW:GetPortalHub()
         local panelsSide = (ph0.escPanelsSide == "right") and "right" or "left"
         local portalsSide = (ph0.escPortalsSide == "left") and "left" or "right"
         local currentIconSize = ph0.escIconSize or 40
 
         local iconSizeLabel = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        iconSizeLabel:SetPoint("TOPLEFT", descText, "BOTTOMLEFT", 0, -gap)
+        iconSizeLabel:SetPoint("TOPLEFT", zoneImg, "BOTTOMLEFT", 0, -14)
         iconSizeLabel:SetText(L["ESCPANEL_ICON_SIZE_LABEL"])
         iconSizeLabel:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
 
@@ -183,12 +211,16 @@ function ESCPanelModule:CreateCustomDetail(detailScrollChild, yOffset, _, regist
         end
 
         local descH = descText:GetStringHeight() or 14
+        local charCaptionH = charCaption:GetStringHeight() or 12
+        local zoneCaptionH = zoneCaption:GetStringHeight() or 12
         local iconLabelH = iconSizeLabel:GetStringHeight() or 12
         local panelsLabelH = panelsRowLabel:GetStringHeight() or 12
         local portalsLabelH = portalsRowLabel:GetStringHeight() or 12
         local sliderH = iconSizeSlider:GetHeight() or 36
         return math.max(1,
             descH + gap
+            + charCaptionH + 4 + previewHeight + gap
+            + zoneCaptionH + 4 + previewHeight + 14
             + iconLabelH + 4 + sliderH + 14
             + panelsLabelH + 4 + 26 + 14
             + portalsLabelH + 4 + 26 + 4)

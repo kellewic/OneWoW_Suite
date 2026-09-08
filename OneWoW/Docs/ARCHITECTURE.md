@@ -942,7 +942,7 @@ files live under `OneWoW/Services/` (a single TOC block; consumers reference the
 | `OneWoW.ChunkedJob` | `Services/ChunkedJob.lua` | Catalog / DevTool time-budgeted walks |
 | `OneWoW.UIParent` | `Services/UIParent.lua` | Cinematic fullscreen overlays (AFK panel): refcounted `Hide`/`Restore` of Blizzard `UIParent`, plus re-sync of fragile FrameXML indicators (minimap mail icon) |
 | `OneWoW.Location` | `Services/Location.lua` | Trackers (steps, pins, exploration), Catalog Navigation waypoints, Notes NPCs, Vendors, AltTracker hearth — player map, 0-100 vs 0-1 conversion, `SetWaypoint` (`CanSetUserWaypointOnMap` + `opts.format` / `openMap` / `superTrack`), map-percent distance, world-yard `GetWorldPos` / `WorldDelta` / `MinimapOffset`. No pin rendering |
-| `OneWoW.StatusCards` | `Services/StatusCards.lua` | ESC Menu Panel and AFK Panel — flagged You / Here / Alerts builders and collectors (mail, vault, Item Alert, AltTracker attention). Portrait+faction and Item Alert row are GUI widgets |
+| `OneWoW.StatusCards` | `Services/StatusCards.lua` | ESC Menu Panel and AFK Panel — flagged You / Here / Alerts / Info builders and collectors (mail, vault, Item Alert, AltTracker attention, AFK digest). Portrait+faction and Item Alert row are GUI widgets |
 | `OneWoW.Locale` | `Services/LocaleService.lua` | Every addon (each registers its own scope, reads back a view) — see Localization below |
 
 Feature content that registers in from QoL: settings catalogs
@@ -1415,7 +1415,7 @@ guild bank is open).
 | `OneWoW/Services/ProfessionRecipe.lua` | Trade-skill recipe scan funnel: single `TRADE_SKILL_*` / `NEW_RECIPE_LEARNED` owner, scan/open/closed callback channels, ephemeral snapshots (§8.7) |
 | `OneWoW/Services/Merchant.lua` | Merchant scan funnel: single `MERCHANT_*` owner, scan/show/closed callback channels, ephemeral vendor snapshots, no SV (§8.8, see [MERCHANT.md](MERCHANT.md)) |
 | `OneWoW/Services/Location.lua` | Player map/position, coordinate conversion, user waypoints, map-percent distance, world-yard helpers (`OneWoW.Location`; no pin rendering) |
-| `OneWoW/Services/StatusCards.lua` | You / Here / Alerts card builders for ESC and AFK (`OneWoW.StatusCards`) |
+| `OneWoW/Services/StatusCards.lua` | You / Here / Alerts / Info card builders for ESC and AFK (`OneWoW.StatusCards`) |
 | `OneWoW/Services/CatDBSync.lua` | Always-loaded CatDB learn queue (NPC / quest / recipe); flush into pack `learned`; `sync` for CompSync Contribute ([CATDB_CONTRIBUTE.md](CATDB_CONTRIBUTE.md)) |
 | `OneWoW/Services/Inventory.lua` | Live bag/bank/guild-bank event funnel + `ForEachSlot` / `GetBagIDs`; `BagTypes`/`BankTypes` via subdir (§8.9, see [INVENTORY.md](INVENTORY.md)) |
 | `OneWoW/Services/GuildBankTransfer.lua` | Bag→guild deposit plan + paced queue (§8.10, see [GUILD_BANK_TRANSFER.md](GUILD_BANK_TRANSFER.md)) |

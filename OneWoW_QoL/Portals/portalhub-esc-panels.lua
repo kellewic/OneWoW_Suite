@@ -3,12 +3,13 @@ local _, ns = ...
 -- ============================================================================
 -- ESC menu side panels
 -- ============================================================================
--- You / Here / Alerts live on OneWoW.StatusCards. This file owns GameMenu
--- chrome (dim overlay, container, catalog/list open).
+-- You / Here live on OneWoW.StatusCards. This file owns GameMenu chrome
+-- (dim overlay, container, catalog/list open).
 -- ============================================================================
 
 local OneWoW = OneWoW
 local OneWoW_GUI = OneWoW_GUI
+local C_Map = C_Map
 local C_Timer = C_Timer
 local CreateFrame = CreateFrame
 local pairs = pairs
@@ -21,7 +22,6 @@ local EscPanels = ns.EscPanels
 local PANEL_WIDTH = 350
 EscPanels.PANEL_WIDTH = PANEL_WIDTH
 local PANEL_GAP = 6
-local SCREEN_PAD = 10
 local MENU_PANEL_H_GAP = 20
 
 local panelFrames = {}
@@ -37,8 +37,20 @@ local function CloseEscMenu()
 	end
 end
 
+local function PlaceOpenSpec(panel)
+	local spec = panel and panel.openSpec
+	if spec then
+		return spec
+	end
+	local mapID = C_Map.GetBestMapForUnit("player")
+	if mapID then
+		return { mapID = mapID }
+	end
+	return nil
+end
+
 local function OpenPlaceInCatalog(panel)
-	local spec = panel.openSpec
+	local spec = PlaceOpenSpec(panel)
 	if not spec then
 		return
 	end
@@ -50,16 +62,63 @@ local function OpenPlaceInCatalog(panel)
 	end)
 end
 
+local function LoadZonesPackForHere()
+	if OneWoW:GetCatalogPackAPI("journal") then
+		return
+	end
+	local addon = OneWoW:ResolveCatalogPack("journal")
+	if not addon then
+		return
+	end
+	OneWoW:WithAddon(addon, function()
+		if GameMenuFrame and GameMenuFrame:IsShown() then
+			EscPanels:Build()
+		end
+	end)
+end
+
 local function OpenShoppingList(listName)
 	CloseEscMenu()
 	C_Timer.After(0.15, function()
 		OneWoW:BringUp("OneWoW_ShoppingList")
 		local api = OneWoW_ShoppingList_API
-		if api and api.ShowList then
+		if api and listName and api.ShowList then
 			api.ShowList(listName)
 		elseif api then
 			api.Show()
 		end
+	end)
+end
+
+local function OpenMailWindow()
+	CloseEscMenu()
+	C_Timer.After(0.15, function()
+		OneWoW:BringUp("OneWoW_Mail")
+		if OneWoW_Mail_API then
+			OneWoW_Mail_API.Show()
+		end
+	end)
+end
+
+local function OpenCharacterScreen()
+	CloseEscMenu()
+	C_Timer.After(0.1, function()
+		ToggleCharacter("PaperDollFrame", true)
+	end)
+end
+
+local function OpenAltTrackerAuctions()
+	CloseEscMenu()
+	C_Timer.After(0.15, function()
+		local global = OneWoW:GetCoreGlobal()
+		if global then
+			if not global.lastSubTabs then
+				global.lastSubTabs = {}
+			end
+			global.lastSubTabs.alttracker = "auctions"
+		end
+		OneWoW:BringUp("OneWoW_AltTracker")
+		OneWoW.UI:Show("alttracker")
 	end)
 end
 
@@ -79,7 +138,7 @@ local function OpenAlertSource(sourceKey, payload)
 	end
 	if sourceKey == "notes" then
 		local first = payload and payload[1]
-		if not first then
+		if not first or not first.id then
 			return
 		end
 		CloseEscMenu()
@@ -93,13 +152,10 @@ local function OpenAlertSource(sourceKey, payload)
 	end
 	if sourceKey == "farming" then
 		local first = payload and payload[1]
-		if not first then
-			return
-		end
 		CloseEscMenu()
 		C_Timer.After(0.15, function()
 			OneWoW:BringUp("OneWoW_Notes")
-			if OneWoW_Notes_API then
+			if first and OneWoW_Notes_API then
 				OneWoW_Notes_API.OpenJournalNote(first.id)
 			end
 		end)
@@ -107,13 +163,10 @@ local function OpenAlertSource(sourceKey, payload)
 	end
 	if sourceKey == "trackers" then
 		local first = payload and payload[1]
-		if not first then
-			return
-		end
 		CloseEscMenu()
 		C_Timer.After(0.15, function()
 			OneWoW:BringUp("OneWoW_Trackers")
-			if OneWoW_Trackers_API then
+			if first and OneWoW_Trackers_API then
 				OneWoW_Trackers_API.ShowList(first.listID)
 			end
 		end)
@@ -269,7 +322,7 @@ local function WireEndeavorEvents()
 	end)
 end
 
-local function BuildYou(container, anchorPanel, hMode, ph)
+local function BuildYou(container, anchorPanel, hMode)
 	if not panelFrames.charInfo then
 		panelFrames.charInfo = OneWoW.StatusCards:CreateYou(container, {
 			name = "OneWoWEscPanelCharInfo",
@@ -281,65 +334,50 @@ local function BuildYou(container, anchorPanel, hMode, ph)
 			cache = true,
 			endeavors = true,
 			timer = false,
-			onYouClick = function()
-				CloseEscMenu()
-				C_Timer.After(0.1, function()
-					ToggleCharacter("PaperDollFrame", true)
-				end)
-			end,
+			onYouClick = OpenCharacterScreen,
+			onMailClick = OpenMailWindow,
+			onDurabilityClick = OpenCharacterScreen,
+			onAuctionsClick = OpenAltTrackerAuctions,
 		})
 	end
 	local panel = panelFrames.charInfo
 	AnchorBelow(panel, anchorPanel, hMode, 0)
-	local showEndeavors = ph.escShowEndeavors ~= false
-	panel.showEndeavors = showEndeavors
-	if showEndeavors then
-		WireEndeavorEvents()
-	end
+	panel.showEndeavors = true
+	WireEndeavorEvents()
 	OneWoW.StatusCards:RefreshYou(panel, OneWoW.StatusCards:CollectYou({
 		vault = true,
 		cache = true,
-		endeavors = showEndeavors,
+		endeavors = true,
 		requestEndeavors = not skipEndeavorRequest,
 	}))
 	return panel
 end
 
-local function BuildAlerts(container, anchorPanel, hMode)
-	if not panelFrames.alerts then
-		panelFrames.alerts = OneWoW.StatusCards:CreateAlerts(container, {
-			name = "OneWoWEscPanelAlerts",
-			width = PANEL_WIDTH,
-		})
+local function OpenHereAlert(sourceKey, hits)
+	if sourceKey == "notes" and (not hits or not hits[1] or not hits[1].id) then
+		OpenZoneNotesFromPanel(panelFrames.place)
+		return
 	end
-	local panel = panelFrames.alerts
-	AnchorBelow(panel, anchorPanel, hMode, PANEL_GAP)
-	return OneWoW.StatusCards:RefreshAlerts(panel, OneWoW.StatusCards:CollectAlerts())
+	OpenAlertSource(sourceKey, hits)
 end
 
-local function BuildHere(container, anchorPanel, hMode, flexHeight, showNotes, data)
+local function BuildHere(container, anchorPanel, hMode, data)
 	if not panelFrames.place then
 		panelFrames.place = OneWoW.StatusCards:CreateHere(container, {
 			name = "OneWoWEscPanelPlace",
 			width = PANEL_WIDTH,
 			interactive = true,
 			collections = true,
-			zoneNotes = true,
+			zoneNotes = false,
 			onHereClick = OpenPlaceInCatalog,
-			onAlertClick = OpenAlertSource,
-			onManageZone = OpenZoneNotesFromPanel,
+			onHereRightClick = LoadZonesPackForHere,
+			onAlertClick = OpenHereAlert,
 		})
 	end
 	local panel = panelFrames.place
-	panel.showZoneNotes = showNotes
-	panel.flexHeight = flexHeight
+	panel.showZoneNotes = false
+	panel.flexHeight = nil
 	AnchorBelow(panel, anchorPanel, hMode, PANEL_GAP)
-	local zoneHasContent = data.zoneData and ((data.zoneData.content and data.zoneData.content ~= "") or (data.zoneData.todos and #data.zoneData.todos > 0))
-	local hasWayPins = data.pins and #data.pins > 0
-	if not showNotes and not OneWoW.StatusCards:HereHasContent(data) and not zoneHasContent and not hasWayPins then
-		panel:Hide()
-		return nil
-	end
 	return OneWoW.StatusCards:RefreshHere(panel, data)
 end
 
@@ -368,14 +406,6 @@ function EscPanels:Build()
 	local hMode = GetPanelsHorizontalMode(ph)
 
 	local hereData = OneWoW.StatusCards:CollectHere()
-	local zoneHasContent = hereData.zoneData and ((hereData.zoneData.content and hereData.zoneData.content ~= "") or (hereData.zoneData.todos and #hereData.zoneData.todos > 0))
-	local hasWayPins = hereData.pins and #hereData.pins > 0
-	local showNotes = ph.escShowZoneNotes and (not ph.escHideZoneNotesWhenEmpty or zoneHasContent or hasWayPins)
-
-	local availH = container:GetHeight()
-	if (not availH) or availH < 80 then
-		availH = GameMenuFrame and GameMenuFrame.GetHeight and GameMenuFrame:GetHeight() or UIParent:GetHeight()
-	end
 
 	local lastPanel = EnsureStackBase(container)
 	local usedHeight = 0
@@ -393,26 +423,23 @@ function EscPanels:Build()
 	end
 
 	if ph.escShowCharacterInfo ~= false then
-		Consume(BuildYou(container, lastPanel, hMode, ph), false)
+		Consume(BuildYou(container, lastPanel, hMode), false)
 	elseif panelFrames.charInfo then
 		panelFrames.charInfo:Hide()
 	end
 
-	if ph.escShowAlerts ~= false then
-		local alertsPanel = BuildAlerts(container, lastPanel, hMode)
-		if alertsPanel then
-			Consume(alertsPanel, lastPanel and lastPanel.GetHeight and lastPanel:GetHeight() > 1)
-		end
-	elseif panelFrames.alerts then
+	if panelFrames.alerts then
 		panelFrames.alerts:Hide()
 	end
 
-	local remain = availH - usedHeight - gapUsed - PANEL_GAP - SCREEN_PAD
-	local flexHeight = math.max(80, math.min(300, math.floor(remain)))
-	local placePanel = BuildHere(container, lastPanel, hMode, flexHeight, showNotes, hereData)
-	if placePanel then
-		local hadPrior = lastPanel and lastPanel.GetHeight and lastPanel:GetHeight() > 1
-		Consume(placePanel, hadPrior)
+	if ph.escShowHere ~= false then
+		local placePanel = BuildHere(container, lastPanel, hMode, hereData)
+		if placePanel then
+			local hadPrior = lastPanel and lastPanel.GetHeight and lastPanel:GetHeight() > 1
+			Consume(placePanel, hadPrior)
+		end
+	elseif panelFrames.place then
+		panelFrames.place:Hide()
 	end
 
 	if panelFrames.instanceToast then

@@ -14,6 +14,8 @@ local _, ns = ...
 
 ns.WhatsNewData = {
     highlights = {
+        { titleKey = "WHATS_NEW_H_ESC_TITLE", bodyKey = "WHATS_NEW_H_ESC_BODY" },
+        { titleKey = "WHATS_NEW_H_AFK_TITLE", bodyKey = "WHATS_NEW_H_AFK_BODY" },
         { titleKey = "WHATS_NEW_H_CATALOG_TABS_TITLE", bodyKey = "WHATS_NEW_H_CATALOG_TABS_BODY" },
         { titleKey = "WHATS_NEW_H_CATALOG_NPCS_TITLE", bodyKey = "WHATS_NEW_H_CATALOG_NPCS_BODY" },
         { titleKey = "WHATS_NEW_H_FARMING_LIST_TITLE", bodyKey = "WHATS_NEW_H_FARMING_LIST_BODY" },

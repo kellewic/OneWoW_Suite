@@ -874,7 +874,7 @@ end
 
 function EscMenu:Reload()
 	-- Only refresh when ESC menu is actually open; otherwise ShowPortalFrames would display
-	-- panels (CHARACTER INFO, ALERTS, ZONE NOTES) as stray UI outside the menu
+	-- cards (You, Here) as stray UI outside the menu
 	if GameMenuFrame and GameMenuFrame:IsShown() then
 		self:ShowPortalFrames()
 	end

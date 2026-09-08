@@ -3,6 +3,14 @@ local _, ns = ...
 local OneWoW_GUI = OneWoW_GUI
 local C_Item = C_Item
 local C_Map = C_Map
+local C_Container = C_Container
+local C_Calendar = C_Calendar
+local C_DateAndTime = C_DateAndTime
+local C_QuestLog = C_QuestLog
+local C_MountJournal = C_MountJournal
+local C_PetJournal = C_PetJournal
+local C_ToyBox = C_ToyBox
+local C_TradeSkillUI = C_TradeSkillUI
 local C_WeeklyRewards = C_WeeklyRewards
 local C_PerksActivities = C_PerksActivities
 local C_PerksProgram = C_PerksProgram
@@ -20,7 +28,8 @@ ns.StatusCards = StatusCards
 
 local PANEL_PADDING = GUI.PADDING
 local PORTRAIT_SIZE = 56
-local CHIP_RESERVE = 78
+local CHIP_RESERVE = 110
+local CHIP_ICON = 16
 local DURABILITY_ALERT_PCT = 25
 local COLLECT_ROW_H = 22
 local STAT_BAR_H = C.PROGRESS_BAR.HEIGHT
@@ -28,6 +37,28 @@ local VAULT_TRACK_GAP = 6
 local LIST_HIT_TOOLTIP_MAX = 8
 local ZONE_NOTES_HEADER_GAP = 8
 local CHARINFO_MIN_HEIGHT = 240
+local INFO_MIN_H = 200
+local INFO_MAX_H = 280
+local INFO_ROW_ICON = 16
+local INFO_LABEL_W = 130
+local IDLE_TIP_KEYS = {
+    "STATUSCARD_TIP_VENDOR_REPAIR",
+    "STATUSCARD_TIP_HEARTH_BIND",
+    "STATUSCARD_TIP_MAIL_WAIT",
+    "STATUSCARD_TIP_BANK_GEAR",
+}
+
+-- Parent skill line -> Artisan's Consortium "Services Requested" weeklies.
+-- current always counts toward X/Y; prior (TWW leftover) only if on the quest or flagged completed.
+local PROFESSION_WEEKLY_QUESTS = {
+    [171] = { current = { 93690 }, prior = { 84133 } }, -- Alchemy
+    [164] = { current = { 93691 }, prior = { 84127 } }, -- Blacksmithing
+    [202] = { current = { 93692 }, prior = { 84128 } }, -- Engineering
+    [773] = { current = { 93693 }, prior = { 84129 } }, -- Inscription
+    [755] = { current = { 93694 }, prior = { 84130 } }, -- Jewelcrafting
+    [165] = { current = { 93695 }, prior = { 84131 } }, -- Leatherworking
+    [197] = { current = { 93696 }, prior = { 84132 } }, -- Tailoring
+}
 
 local COLLECT_DEFS = {
     { key = "tmogs",   special = "TMog",    fmt = "STATUSCARD_TMOGS_FORMAT",   icon = "lootroll-icon-transmog", atlas = true },
@@ -70,8 +101,14 @@ local function CreateThemedCard(parent, opts)
     panel.interactive = asButton
 
     if asButton then
-        panel:RegisterForClicks("LeftButtonUp")
-        panel:SetScript("OnClick", function()
+        panel:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        panel:SetScript("OnClick", function(_, button)
+            if button == "RightButton" then
+                if panel.onCardRightClick then
+                    panel.onCardRightClick(panel)
+                end
+                return
+            end
             if panel.onCardClick then
                 panel.onCardClick(panel)
             end
@@ -84,7 +121,14 @@ local function CreateThemedCard(parent, opts)
             if myself.clickTooltip then
                 GameTooltip:SetOwner(myself, "ANCHOR_LEFT")
                 local r, g, b = OneWoW_GUI:GetThemeColor("TEXT_PRIMARY")
+                local sr, sg, sb = OneWoW_GUI:GetThemeColor("TEXT_SECONDARY")
                 GameTooltip:SetText(myself.clickTooltip, r, g, b)
+                local extra = myself.clickTooltipLines
+                if extra then
+                    for i = 1, #extra do
+                        GameTooltip:AddLine(extra[i], sr, sg, sb, true)
+                    end
+                end
                 GameTooltip:Show()
             end
         end)
@@ -221,6 +265,23 @@ local function CollectEndeavor(request)
     return { current = current, maximum = maximum }
 end
 
+local function CollectAttention()
+    local empty = { expiring = 0, expired = 0, goldWaiting = 0, altsWithMail = 0 }
+    if not OneWoW:IsAddonEnabled("OneWoW_AltTracker") then
+        return empty
+    end
+    OneWoW:BringUp("OneWoW_AltTracker")
+    local api = OneWoW_AltTracker_API
+    if not api or not api.GetAttentionSummary then
+        return empty
+    end
+    return api.GetAttentionSummary()
+end
+
+local function HasAuctionAttention(attention)
+    return attention and (attention.expiring > 0 or attention.expired > 0 or attention.goldWaiting > 0)
+end
+
 function StatusCards:CollectYou(opts)
     opts = opts or {}
     local name = UnitName("player")
@@ -233,6 +294,7 @@ function StatusCards:CollectYou(opts)
     end
     local guild, _, guildRank = GetGuildInfo("player")
     local _, itemLevelEquipped = GetAverageItemLevel()
+    local attention = CollectAttention()
     return {
         name = name,
         realm = realm,
@@ -248,6 +310,7 @@ function StatusCards:CollectYou(opts)
         money = GetMoney(),
         hasMail = HasNewMail() and true or false,
         durability = EquippedDurabilityPercent(),
+        attention = attention,
         vault = opts.vault ~= false and CollectVault() or nil,
         trading = opts.cache ~= false and CollectTradingPost() or nil,
         endeavor = opts.endeavors and CollectEndeavor(opts.requestEndeavors ~= false) or nil,
@@ -256,42 +319,313 @@ end
 
 function StatusCards:CollectAlerts()
     local rows = {}
-    if OneWoW:IsAddonEnabled("OneWoW_AltTracker") then
-        OneWoW:BringUp("OneWoW_AltTracker")
-        local api = OneWoW_AltTracker_API
-        if api and api.GetAttentionSummary then
-            local sum = api.GetAttentionSummary()
-            if sum.expiring > 0 then
-                rows[#rows + 1] = {
-                    key = "ah_expiring",
-                    icon = "Interface\\Icons\\INV_Misc_Coin_01",
-                    text = string.format(L["STATUSCARD_AUCTIONS_EXPIRING_FORMAT"], sum.expiring),
-                }
+    local sum = CollectAttention()
+    if sum.expiring > 0 then
+        rows[#rows + 1] = {
+            key = "ah_expiring",
+            icon = "Interface\\Icons\\INV_Misc_Coin_01",
+            overlay = "Perks-ShoppingCart",
+            text = string.format(L["STATUSCARD_AUCTIONS_EXPIRING_FORMAT"], sum.expiring),
+            colorKey = "TEXT_PRIMARY",
+        }
+    end
+    if sum.expired > 0 then
+        rows[#rows + 1] = {
+            key = "ah_expired",
+            icon = "Interface\\Icons\\INV_Misc_Coin_01",
+            overlay = "Perks-ShoppingCart",
+            text = string.format(L["STATUSCARD_AUCTIONS_EXPIRED_FORMAT"], sum.expired),
+            colorKey = "TEXT_WARNING",
+        }
+    end
+    if sum.goldWaiting > 0 then
+        rows[#rows + 1] = {
+            key = "ah_gold",
+            icon = "Interface\\Icons\\INV_Misc_Coin_01",
+            overlay = "Perks-ShoppingCart",
+            text = string.format(L["STATUSCARD_AUCTIONS_GOLD_FORMAT"], ns.Format.FormatGold(sum.goldWaiting)),
+            colorKey = "TEXT_ACCENT",
+        }
+    end
+    if sum.altsWithMail > 0 then
+        rows[#rows + 1] = {
+            key = "alts_mail",
+            icon = "Interface\\Minimap\\Tracking\\Mailbox",
+            overlay = "Mailbox",
+            text = string.format(L["STATUSCARD_ALTS_MAIL_FORMAT"], sum.altsWithMail),
+            colorKey = "TEXT_PRIMARY",
+        }
+    end
+    return rows
+end
+
+local function CompactDuration(seconds)
+    seconds = math.max(0, math.floor(seconds + 0.5))
+    local d = math.floor(seconds / 86400)
+    local h = math.floor((seconds % 86400) / 3600)
+    local m = math.floor((seconds % 3600) / 60)
+    local parts = {}
+    if d > 0 then
+        parts[#parts + 1] = DAY_ONELETTER_ABBR:format(d)
+        parts[#parts + 1] = HOUR_ONELETTER_ABBR:format(h)
+    elseif h > 0 then
+        parts[#parts + 1] = HOUR_ONELETTER_ABBR:format(h)
+        parts[#parts + 1] = MINUTE_ONELETTER_ABBR:format(m)
+    else
+        parts[#parts + 1] = MINUTE_ONELETTER_ABBR:format(m)
+    end
+    return table.concat(parts, TIME_UNIT_DELIMITER)
+end
+
+local function ParentProfessionSkillLine(skillLine)
+    local info = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLine)
+    if info and info.parentProfessionID and info.parentProfessionID > 0 then
+        return info.parentProfessionID
+    end
+    return skillLine
+end
+
+local function SkillLineMatchesProfession(tagLine, parentSkillLine)
+    if not tagLine then
+        return false
+    end
+    if tagLine == parentSkillLine then
+        return true
+    end
+    return ParentProfessionSkillLine(tagLine) == parentSkillLine
+end
+
+local function QuestWeeklyState(questID)
+    local onQuest = C_QuestLog.IsOnQuest(questID)
+    local flagged = C_QuestLog.IsQuestFlaggedCompleted(questID)
+    local done = flagged or (onQuest and C_QuestLog.ReadyForTurnIn(questID))
+    return onQuest, done
+end
+
+local function LogWeeklyQuestIDs(parentSkillLine, seen)
+    local extra = {}
+    local num = C_QuestLog.GetNumQuestLogEntries()
+    for i = 1, num do
+        local info = C_QuestLog.GetInfo(i)
+        if info and not info.isHeader and info.questID and info.frequency == Enum.QuestFrequency.Weekly then
+            local tag = C_QuestLog.GetQuestTagInfo(info.questID)
+            local line = tag and tag.tradeskillLineID
+            if SkillLineMatchesProfession(line, parentSkillLine) and not seen[info.questID] then
+                extra[#extra + 1] = info.questID
             end
-            if sum.expired > 0 then
+        end
+    end
+    return extra
+end
+
+local function CollectProfessionWeeklyRows()
+    local rows = {}
+    local prof1, prof2 = GetProfessions()
+    local slots = { prof1, prof2 }
+    for i = 1, #slots do
+        local idx = slots[i]
+        if idx then
+            local name, iconFile, _, _, _, _, skillLine = GetProfessionInfo(idx)
+            if name and skillLine then
+                local parent = ParentProfessionSkillLine(skillLine)
+                local spec = PROFESSION_WEEKLY_QUESTS[parent]
+                local seen = {}
+                local ids = {}
+                if spec then
+                    for j = 1, #spec.current do
+                        local qid = spec.current[j]
+                        ids[#ids + 1] = qid
+                        seen[qid] = true
+                    end
+                    for j = 1, #spec.prior do
+                        local qid = spec.prior[j]
+                        local onQuest, done = QuestWeeklyState(qid)
+                        if onQuest or done then
+                            ids[#ids + 1] = qid
+                            seen[qid] = true
+                        end
+                    end
+                end
+                local extras = LogWeeklyQuestIDs(parent, seen)
+                for j = 1, #extras do
+                    ids[#ids + 1] = extras[j]
+                end
+                local total = #ids
+                local doneCount, onCount = 0, 0
+                for j = 1, total do
+                    local onQuest, done = QuestWeeklyState(ids[j])
+                    if done then
+                        doneCount = doneCount + 1
+                    elseif onQuest then
+                        onCount = onCount + 1
+                    end
+                end
+                local status
+                if total == 0 then
+                    status = L["STATUSCARD_NOT_YET_ACCEPTED"]
+                elseif doneCount >= total then
+                    status = COMPLETE
+                elseif doneCount > 0 or onCount > 0 then
+                    status = IN_PROGRESS
+                else
+                    status = L["STATUSCARD_NOT_YET_ACCEPTED"]
+                end
                 rows[#rows + 1] = {
-                    key = "ah_expired",
-                    icon = "Interface\\Icons\\INV_Misc_Coin_01",
-                    text = string.format(L["STATUSCARD_AUCTIONS_EXPIRED_FORMAT"], sum.expired),
-                }
-            end
-            if sum.goldWaiting > 0 then
-                rows[#rows + 1] = {
-                    key = "ah_gold",
-                    icon = "Interface\\Icons\\INV_Misc_Coin_01",
-                    text = string.format(L["STATUSCARD_AUCTIONS_GOLD_FORMAT"], ns.Format.FormatGold(sum.goldWaiting)),
-                }
-            end
-            if sum.altsWithMail > 0 then
-                rows[#rows + 1] = {
-                    key = "alts_mail",
-                    icon = "Interface\\Minimap\\Tracking\\Mailbox",
-                    text = string.format(L["STATUSCARD_ALTS_MAIL_FORMAT"], sum.altsWithMail),
+                    name = name,
+                    icon = iconFile,
+                    done = doneCount,
+                    total = total,
+                    status = status,
                 }
             end
         end
     end
     return rows
+end
+
+local function CollectRested()
+    if UnitLevel("player") >= GetMaxLevelForPlayerExpansion() then
+        return nil
+    end
+    local exhaust = GetXPExhaustion()
+    if not exhaust or exhaust <= 0 or OneWoW.Restriction.IsSecret(exhaust) then
+        return nil
+    end
+    local maxXP = UnitXPMax("player")
+    if not maxXP or maxXP <= 0 or OneWoW.Restriction.IsSecret(maxXP) then
+        return nil
+    end
+    local cap = maxXP * 1.5
+    if exhaust >= cap then
+        return { pct = 100, full = true }
+    end
+    local pct = math.floor((exhaust / cap) * 100 + 0.5)
+    if pct > 100 then
+        pct = 100
+    end
+    return { pct = pct, full = false }
+end
+
+local function CollectHearth()
+    local hsName = C_Item.GetItemNameByID(HEARTHSTONE_ITEM_ID)
+    if not hsName then
+        return nil
+    end
+    local start, duration = C_Item.GetItemCooldown(HEARTHSTONE_ITEM_ID)
+    if OneWoW.Restriction.IsSecret(start) or OneWoW.Restriction.IsSecret(duration) then
+        return nil
+    end
+    local remaining = (start + duration) - GetTime()
+    local ready = duration == 0 or remaining <= 0
+    return {
+        name = hsName,
+        value = ready and READY or CompactDuration(remaining),
+        ready = ready,
+        icon = C_Item.GetItemIconByID(HEARTHSTONE_ITEM_ID),
+    }
+end
+
+local function CollectBonusEventLine()
+    local now = C_DateAndTime.GetCurrentCalendarTime()
+    if not now or not now.monthDay then
+        return nil
+    end
+    local monthInfo = C_Calendar.GetMonthInfo(0)
+    local monthOffset = 0
+    if monthInfo then
+        monthOffset = (now.year - monthInfo.year) * 12 + (now.month - monthInfo.month)
+    end
+    local num = C_Calendar.GetNumDayEvents(monthOffset, now.monthDay)
+    local titles = {}
+    local seen = {}
+    for i = 1, num do
+        local event = C_Calendar.GetDayEvent(monthOffset, now.monthDay, i)
+        if event and event.calendarType == "HOLIDAY" and not event.dontDisplayBanner then
+            local seq = event.sequenceType
+            if (seq == "ONGOING" or seq == "START") and event.title and event.title ~= "" and not seen[event.title] then
+                seen[event.title] = true
+                titles[#titles + 1] = event.title
+                if #titles >= 2 then
+                    break
+                end
+            end
+        end
+    end
+    if #titles == 0 then
+        return nil
+    end
+    if titles[2] then
+        return titles[1] .. " | " .. titles[2]
+    end
+    return titles[1]
+end
+
+local function CountCollectedMounts()
+    local n = 0
+    local ids = C_MountJournal.GetMountIDs()
+    for i = 1, #ids do
+        if select(11, C_MountJournal.GetMountInfoByID(ids[i])) then
+            n = n + 1
+        end
+    end
+    return n
+end
+
+local function CollectIdleLine(opts)
+    if not opts or not opts.idleKind then
+        return nil
+    end
+    local kind = opts.idleKind
+    if kind == "session" then
+        return string.format(L["STATUSCARD_LABELED_VALUE"], TIME_PLAYED_MSG, CompactDuration(GetTime()))
+    elseif kind == "mounts" then
+        return string.format(L["STATUSCARD_LABELED_VALUE"], MOUNTS, tostring(CountCollectedMounts()))
+    elseif kind == "pets" then
+        local _, owned = C_PetJournal.GetNumPets()
+        return string.format(L["STATUSCARD_LABELED_VALUE"], PETS, tostring(owned or 0))
+    elseif kind == "toys" then
+        return string.format(L["STATUSCARD_LABELED_VALUE"], TOY_BOX, tostring(C_ToyBox.GetNumLearnedDisplayedToys()))
+    elseif kind == "tip" then
+        local idx = opts.idleTipIndex or 1
+        if idx < 1 or idx > #IDLE_TIP_KEYS then
+            idx = 1
+        end
+        return L[IDLE_TIP_KEYS[idx]]
+    end
+    return nil
+end
+
+--- AFK Info digest: alerts, reset timers, profession weeklies, rest, bags, hearth, calendar.
+--- idleKind is session, mounts, pets, toys, or tip (one pick per AFK session).
+--- Idle line is omitted when any alert row is present.
+---@param opts { idleKind: string|nil, idleTipIndex: number|nil }|nil
+---@return table
+function StatusCards:CollectInfo(opts)
+    opts = opts or {}
+    local bagIDs = OneWoW.Inventory.GetBagIDs("player")
+    local free = 0
+    for i = 1, #bagIDs do
+        local bagID = bagIDs[i]
+        if not OneWoW.Inventory.BagTypes:IsReagentBag(bagID) then
+            free = free + (C_Container.GetContainerNumFreeSlots(bagID) or 0)
+        end
+    end
+    local alerts = self:CollectAlerts()
+    local idle
+    if #alerts == 0 then
+        idle = CollectIdleLine(opts)
+    end
+    return {
+        alerts = alerts,
+        meta = CollectBonusEventLine(),
+        weekly = CompactDuration(C_DateAndTime.GetSecondsUntilWeeklyReset()),
+        daily = CompactDuration(C_DateAndTime.GetSecondsUntilDailyReset()),
+        bags = free,
+        professions = CollectProfessionWeeklyRows(),
+        rested = CollectRested(),
+        hearth = CollectHearth(),
+        idle = idle,
+    }
 end
 
 local function MapParent(mapID)
@@ -376,9 +710,6 @@ local function CollectShoppingHits(place)
     if #needed == 0 then
         return hits
     end
-    if OneWoW:IsCatalogPackAvailable("vendors") then
-        OneWoW:EnsureCatalogPack("vendors")
-    end
     local npcAPI = OneWoW:GetCatalogPackAPI("vendors")
     if not npcAPI then
         return hits
@@ -411,14 +742,26 @@ local function NoteSnippet(text)
         return ""
     end
     text = text:gsub("%s+", " ")
-    if #text > 80 then
-        return text:sub(1, 77) .. "..."
+    if #text > 400 then
+        return text:sub(1, 397) .. "..."
     end
     return text
 end
 
-local function CollectZoneNoteAlerts(matches)
+local function PinTitles(pins)
+    local titles = {}
+    for i = 1, #(pins or {}) do
+        local title = pins[i].title
+        if title and title ~= "" then
+            titles[#titles + 1] = title
+        end
+    end
+    return titles
+end
+
+local function CollectZoneNoteAlerts(matches, pins)
     local hits = {}
+    local pinTitles = PinTitles(pins)
     for i = 1, #(matches or {}) do
         local row = matches[i]
         local data = row and row.data
@@ -430,7 +773,7 @@ local function CollectZoneNoteAlerts(matches)
                     todos[#todos + 1] = todo.text
                 end
             end
-            if hasBody or #todos > 0 then
+            if hasBody or #todos > 0 or #pinTitles > 0 then
                 local title = data.zone or ""
                 if data.subzone and data.subzone ~= "" then
                     title = title .. " - " .. data.subzone
@@ -440,9 +783,22 @@ local function CollectZoneNoteAlerts(matches)
                     title = title,
                     snippet = NoteSnippet(data.content),
                     todos = todos,
+                    pins = pinTitles,
                 }
+                pinTitles = {}
             end
         end
+    end
+    if #hits == 0 and #pinTitles > 0 then
+        local first = matches and matches[1]
+        local title = first and first.data and first.data.zone or ""
+        hits[1] = {
+            id = first and first.id,
+            title = title,
+            snippet = "",
+            todos = {},
+            pins = pinTitles,
+        }
     end
     return hits
 end
@@ -511,8 +867,6 @@ local function CollectTrackerAlerts(place)
 end
 
 local function ResolveCurrentPlace()
-    OneWoW:EnsureCatalogPack("items")
-    OneWoW:EnsureCatalogPack("journal")
     local api = OneWoW:GetCatalogPackAPI("journal")
     if not api then
         return nil
@@ -520,20 +874,19 @@ local function ResolveCurrentPlace()
     local instName, instanceType, _, diffName, _, _, _, instanceMapID = GetInstanceInfo()
     local uiMapID = C_Map.GetBestMapForUnit("player")
     local instData
-    if instanceMapID and instanceType and instanceType ~= "none" and api.GetInstanceByMapID then
-        instData = api.GetInstanceByMapID(instanceMapID)
+    if instanceMapID and instanceType and instanceType ~= "none" and api.GetInstancesByMapID then
+        local all = api.GetInstancesByMapID(instanceMapID)
+        instData = all[#all]
     end
     if not instData and uiMapID and api.GetZoneInstance then
         instData = api.GetZoneInstance(nil, uiMapID)
     end
-    if not instData and instanceMapID and api.GetInstanceByMapID then
-        instData = api.GetInstanceByMapID(instanceMapID)
+    if not instData and instanceMapID and api.GetInstancesByMapID then
+        local all = api.GetInstancesByMapID(instanceMapID)
+        instData = all[#all]
     end
     if not instData then
         return nil
-    end
-    if api.EnsureEncounters then
-        api.EnsureEncounters(instData)
     end
     return {
         data = instData,
@@ -571,16 +924,11 @@ local function CountPlaceCollections(instData, api)
         counts[COLLECT_DEFS[i].key] = { current = 0, total = 0 }
         keyMap[COLLECT_DEFS[i].special] = COLLECT_DEFS[i].key
     end
-    for _, enc in ipairs(instData.encounters or {}) do
-        for _, item in ipairs(enc.items or {}) do
-            local key = keyMap[item.special]
-            if key then
-                local row = counts[key]
-                row.total = row.total + 1
-                if api.IsItemCollected(item.itemID, item.itemData, item.special) then
-                    row.current = row.current + 1
-                end
-            end
+    local raw = api.CountPlaceCollectibles(instData)
+    for special, row in pairs(raw) do
+        local key = keyMap[special]
+        if key then
+            counts[key] = row
         end
     end
     return counts
@@ -612,9 +960,11 @@ function StatusCards:CollectHere(opts)
     return {
         place = place,
         displayZone = displayZone,
+        journalReady = OneWoW:GetCatalogPackAPI("journal") ~= nil,
+        journalAvailable = OneWoW:IsCatalogPackAvailable("journal"),
         alerts = {
             shopping = CollectShoppingHits(place),
-            notes = CollectZoneNoteAlerts(zoneMatches),
+            notes = CollectZoneNoteAlerts(zoneMatches, pins),
             farming = CollectFarmingAlerts(place),
             trackers = CollectTrackerAlerts(place),
         },
@@ -646,72 +996,77 @@ local function ShowItemAlertTooltip(btn, interactive)
     local hits = btn.hits
     if not hits or #hits == 0 then
         GameTooltip:AddLine(L["STATUSCARD_SOURCE_EMPTY"], sr, sg, sb, true)
-        GameTooltip:Show()
-        return
-    end
-    local shown = 0
-    if btn.sourceKey == "shopping" then
-        local listsSeen = {}
-        for i = 1, #hits do
-            for _, listName in ipairs(hits[i].lists or {}) do
-                if listName ~= "" and not listsSeen[listName] then
-                    listsSeen[listName] = true
-                    GameTooltip:AddLine(listName, r, g, b)
+    else
+        local shown = 0
+        if btn.sourceKey == "shopping" then
+            local listsSeen = {}
+            for i = 1, #hits do
+                for _, listName in ipairs(hits[i].lists or {}) do
+                    if listName ~= "" and not listsSeen[listName] then
+                        listsSeen[listName] = true
+                        GameTooltip:AddLine(listName, r, g, b)
+                    end
                 end
             end
-        end
-        for i = 1, #hits do
-            if shown >= LIST_HIT_TOOLTIP_MAX then
-                GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
-                break
+            for i = 1, #hits do
+                if shown >= LIST_HIT_TOOLTIP_MAX then
+                    GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
+                    break
+                end
+                GameTooltip:AddLine(hits[i].name, sr, sg, sb)
+                shown = shown + 1
             end
-            GameTooltip:AddLine(hits[i].name, sr, sg, sb)
-            shown = shown + 1
-        end
-    elseif btn.sourceKey == "notes" then
-        for i = 1, #hits do
-            if shown >= LIST_HIT_TOOLTIP_MAX then
-                GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
-                break
+        elseif btn.sourceKey == "notes" then
+            for i = 1, #hits do
+                if shown >= LIST_HIT_TOOLTIP_MAX then
+                    GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
+                    break
+                end
+                local row = hits[i]
+                GameTooltip:AddLine(row.title, r, g, b)
+                if row.snippet ~= "" then
+                    GameTooltip:AddLine(row.snippet, sr, sg, sb, true)
+                end
+                for t = 1, #row.todos do
+                    GameTooltip:AddLine("  - " .. row.todos[t], sr, sg, sb)
+                end
+                if row.pins and #row.pins > 0 then
+                    GameTooltip:AddLine(L["STATUSCARD_WAYPINS"], r, g, b)
+                    for p = 1, #row.pins do
+                        GameTooltip:AddLine("  - " .. row.pins[p], sr, sg, sb)
+                    end
+                end
+                shown = shown + 1
             end
-            local row = hits[i]
-            GameTooltip:AddLine(row.title, r, g, b)
-            if row.snippet ~= "" then
-                GameTooltip:AddLine(row.snippet, sr, sg, sb, true)
+        elseif btn.sourceKey == "farming" then
+            for i = 1, #hits do
+                if shown >= LIST_HIT_TOOLTIP_MAX then
+                    GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
+                    break
+                end
+                local row = hits[i]
+                GameTooltip:AddLine(row.title, r, g, b)
+                if row.itemName ~= "" then
+                    GameTooltip:AddLine(row.itemName, sr, sg, sb)
+                end
+                if row.snippet ~= "" then
+                    GameTooltip:AddLine(row.snippet, sr, sg, sb, true)
+                end
+                shown = shown + 1
             end
-            for t = 1, #row.todos do
-                GameTooltip:AddLine("  - " .. row.todos[t], sr, sg, sb)
+        else
+            for i = 1, #hits do
+                if shown >= LIST_HIT_TOOLTIP_MAX then
+                    GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
+                    break
+                end
+                local row = hits[i]
+                GameTooltip:AddLine(row.title, r, g, b)
+                for s = 1, #row.steps do
+                    GameTooltip:AddLine(row.steps[s], sr, sg, sb)
+                end
+                shown = shown + 1
             end
-            shown = shown + 1
-        end
-    elseif btn.sourceKey == "farming" then
-        for i = 1, #hits do
-            if shown >= LIST_HIT_TOOLTIP_MAX then
-                GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
-                break
-            end
-            local row = hits[i]
-            GameTooltip:AddLine(row.title, r, g, b)
-            if row.itemName ~= "" then
-                GameTooltip:AddLine(row.itemName, sr, sg, sb)
-            end
-            if row.snippet ~= "" then
-                GameTooltip:AddLine(row.snippet, sr, sg, sb, true)
-            end
-            shown = shown + 1
-        end
-    else
-        for i = 1, #hits do
-            if shown >= LIST_HIT_TOOLTIP_MAX then
-                GameTooltip:AddLine(string.format(L["STATUSCARD_LISTS_MORE_FORMAT"], #hits - shown), sr, sg, sb)
-                break
-            end
-            local row = hits[i]
-            GameTooltip:AddLine(row.title, r, g, b)
-            for s = 1, #row.steps do
-                GameTooltip:AddLine(row.steps[s], sr, sg, sb)
-            end
-            shown = shown + 1
         end
     end
     if interactive then
@@ -833,6 +1188,9 @@ function StatusCards:CreateYou(parent, opts)
     panel.showCache = opts.cache ~= false
     panel.showEndeavors = opts.endeavors ~= false
     panel.showTimer = opts.timer == true
+    panel.onMailClick = opts.onMailClick
+    panel.onDurabilityClick = opts.onDurabilityClick
+    panel.onAuctionsClick = opts.onAuctionsClick
 
     local chips = CreateFrame("Frame", nil, panel)
     chips:SetSize(CHIP_RESERVE, 36)
@@ -840,22 +1198,129 @@ function StatusCards:CreateYou(parent, opts)
     chips:EnableMouse(false)
     panel.chips = chips
 
-    local duraText = OneWoW_GUI:CreateFS(chips, 11)
-    duraText:SetPoint("TOPRIGHT", chips, "TOPRIGHT", 0, 0)
+    local function WireYouChip(btn, buildTooltip, onClick)
+        btn:RegisterForClicks("LeftButtonUp")
+        btn:SetScript("OnEnter", function(myself)
+            panel.suppressCardTooltip = true
+            GameTooltip:Hide()
+            GameTooltip:SetOwner(myself, "ANCHOR_LEFT")
+            buildTooltip(myself)
+            GameTooltip:Show()
+        end)
+        btn:SetScript("OnLeave", function()
+            panel.suppressCardTooltip = false
+            GameTooltip:Hide()
+        end)
+        btn:SetScript("OnClick", function()
+            if not panel.interactive then
+                return
+            end
+            if onClick then
+                onClick(panel)
+            end
+        end)
+    end
+
+    local function ChipTooltipColors()
+        local r, g, b = OneWoW_GUI:GetThemeColor("TEXT_PRIMARY")
+        local sr, sg, sb = OneWoW_GUI:GetThemeColor("TEXT_SECONDARY")
+        return r, g, b, sr, sg, sb
+    end
+
+    local duraBtn = CreateFrame("Button", nil, chips)
+    duraBtn:SetSize(36, CHIP_ICON)
+    duraBtn:SetPoint("TOPRIGHT", chips, "TOPRIGHT", 0, 0)
+    local duraText = OneWoW_GUI:CreateFS(duraBtn, 11)
+    duraText:SetAllPoints()
     duraText:SetJustifyH("RIGHT")
     duraText:SetWordWrap(false)
+    panel.duraBtn = duraBtn
     panel.duraText = duraText
+    WireYouChip(duraBtn, function()
+        local data = panel.youData
+        local r, g, b, sr, sg, sb = ChipTooltipColors()
+        GameTooltip:SetText(DURABILITY, r, g, b)
+        if data and data.durability then
+            GameTooltip:AddLine(string.format(L["STATUSCARD_DURABILITY_FORMAT"], data.durability), sr, sg, sb)
+            if data.durability <= DURABILITY_ALERT_PCT then
+                local wr, wg, wb = OneWoW_GUI:GetThemeColor("TEXT_WARNING")
+                GameTooltip:AddLine(string.format(L["STATUSCARD_DURABILITY_LOW"], data.durability), wr, wg, wb, true)
+            end
+        end
+        if panel.interactive then
+            GameTooltip:AddLine(L["STATUSCARD_CLICK_CHARACTER"], sr, sg, sb, true)
+        end
+    end, function()
+        if panel.onDurabilityClick then
+            panel.onDurabilityClick()
+        end
+    end)
 
-    local mailIcon = chips:CreateTexture(nil, "ARTWORK")
-    mailIcon:SetSize(16, 16)
-    mailIcon:SetPoint("TOPRIGHT", duraText, "TOPLEFT", -6, 1)
+    local mailBtn = CreateFrame("Button", nil, chips)
+    mailBtn:SetSize(CHIP_ICON, CHIP_ICON)
+    mailBtn:SetPoint("TOPRIGHT", duraBtn, "TOPLEFT", -6, 1)
+    local mailIcon = mailBtn:CreateTexture(nil, "ARTWORK")
+    mailIcon:SetAllPoints()
     mailIcon:SetTexture("Interface\\Minimap\\Tracking\\Mailbox")
-    mailIcon:Hide()
+    panel.mailBtn = mailBtn
     panel.mailIcon = mailIcon
+    WireYouChip(mailBtn, function()
+        local data = panel.youData
+        local r, g, b, sr, sg, sb = ChipTooltipColors()
+        GameTooltip:SetText(MAIL_LABEL, r, g, b)
+        if data and data.hasMail then
+            GameTooltip:AddLine(HAVE_MAIL, sr, sg, sb, true)
+        else
+            GameTooltip:AddLine(L["STATUSCARD_NO_MAIL"], sr, sg, sb, true)
+        end
+        local alts = data and data.attention and data.attention.altsWithMail or 0
+        if alts > 0 then
+            GameTooltip:AddLine(string.format(L["STATUSCARD_ALTS_MAIL_FORMAT"], alts), sr, sg, sb)
+        end
+        if panel.interactive then
+            GameTooltip:AddLine(string.format(L["STATUSCARD_CLICK_OPEN_FORMAT"], MAIL_LABEL), sr, sg, sb, true)
+        end
+    end, function()
+        if panel.onMailClick then
+            panel.onMailClick()
+        end
+    end)
+
+    local auctionBtn = CreateFrame("Button", nil, chips)
+    auctionBtn:SetSize(CHIP_ICON, CHIP_ICON)
+    auctionBtn:SetPoint("TOPRIGHT", mailBtn, "TOPLEFT", -6, 0)
+    local auctionIcon = auctionBtn:CreateTexture(nil, "ARTWORK")
+    auctionIcon:SetAllPoints()
+    OneWoW.OverlayIcons:ApplyToTexture(auctionIcon, "Perks-ShoppingCart")
+    panel.auctionBtn = auctionBtn
+    WireYouChip(auctionBtn, function()
+        local data = panel.youData
+        local attention = data and data.attention
+        local r, g, b, sr, sg, sb = ChipTooltipColors()
+        GameTooltip:SetText(AUCTIONS, r, g, b)
+        if attention then
+            if attention.expiring > 0 then
+                GameTooltip:AddLine(string.format(L["STATUSCARD_AUCTIONS_EXPIRING_FORMAT"], attention.expiring), sr, sg, sb)
+            end
+            if attention.expired > 0 then
+                GameTooltip:AddLine(string.format(L["STATUSCARD_AUCTIONS_EXPIRED_FORMAT"], attention.expired), sr, sg, sb)
+            end
+            if attention.goldWaiting > 0 then
+                GameTooltip:AddLine(string.format(L["STATUSCARD_AUCTIONS_GOLD_FORMAT"], ns.Format.FormatGold(attention.goldWaiting)), sr, sg, sb)
+            end
+        end
+        if panel.interactive then
+            GameTooltip:AddLine(string.format(L["STATUSCARD_CLICK_OPEN_FORMAT"], AUCTIONS), sr, sg, sb, true)
+        end
+    end, function()
+        if panel.onAuctionsClick then
+            panel.onAuctionsClick()
+        end
+    end)
 
     if panel.showTimer then
         local timerText = OneWoW_GUI:CreateFS(chips, 11)
-        timerText:SetPoint("TOPRIGHT", duraText, "BOTTOMRIGHT", 0, -4)
+        timerText:SetPoint("TOPRIGHT", duraBtn, "BOTTOMRIGHT", 0, -4)
         timerText:SetJustifyH("RIGHT")
         timerText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_ACCENT"))
         panel.timerText = timerText
@@ -912,15 +1377,23 @@ end
 
 function StatusCards:RefreshYou(panel, data)
     PaintCard(panel, false)
+    panel.youData = data
     panel.portraitFrame:SetUnit("player")
     panel.portraitFrame:SetFaction(data.faction)
     panel.portraitFrame:SetClassBorder(data.classFile)
 
     local classColor = (data.classFile and RAID_CLASS_COLORS[data.classFile]) or { r = 1, g = 1, b = 1 }
-    if panel.showMail and data.hasMail then
-        panel.mailIcon:Show()
+    if panel.showMail then
+        panel.mailBtn:Show()
+        if data.hasMail or (data.attention and data.attention.altsWithMail > 0) then
+            panel.mailIcon:SetAlpha(1)
+            panel.mailIcon:SetVertexColor(1, 1, 1)
+        else
+            panel.mailIcon:SetAlpha(1)
+            panel.mailIcon:SetVertexColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+        end
     else
-        panel.mailIcon:Hide()
+        panel.mailBtn:Hide()
     end
 
     if panel.showDurability and data.durability then
@@ -930,9 +1403,45 @@ function StatusCards:RefreshYou(panel, data)
         else
             panel.duraText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
         end
-        panel.duraText:Show()
+        local duraW = math.max(CHIP_ICON, math.ceil(panel.duraText:GetStringWidth() or 28))
+        panel.duraBtn:SetWidth(duraW)
+        panel.duraBtn:Show()
     else
-        panel.duraText:Hide()
+        panel.duraBtn:Hide()
+    end
+
+    local showAuctions = HasAuctionAttention(data.attention)
+    if showAuctions then
+        panel.auctionBtn:Show()
+    else
+        panel.auctionBtn:Hide()
+    end
+
+    panel.duraBtn:ClearAllPoints()
+    panel.mailBtn:ClearAllPoints()
+    panel.auctionBtn:ClearAllPoints()
+    local chips = panel.chips
+    local rightAnchor = chips
+    local rightRel = "TOPRIGHT"
+    local rightX, rightY = 0, 0
+    if panel.duraBtn:IsShown() then
+        panel.duraBtn:SetPoint("TOPRIGHT", chips, "TOPRIGHT", 0, 0)
+        rightAnchor = panel.duraBtn
+        rightRel = "TOPLEFT"
+        rightX, rightY = -6, 1
+    else
+        rightAnchor = chips
+        rightRel = "TOPRIGHT"
+        rightX, rightY = 0, 0
+    end
+    if panel.mailBtn:IsShown() then
+        panel.mailBtn:SetPoint("TOPRIGHT", rightAnchor, rightRel, rightX, rightY)
+        rightAnchor = panel.mailBtn
+        rightRel = "TOPLEFT"
+        rightX, rightY = -6, 0
+    end
+    if panel.auctionBtn:IsShown() then
+        panel.auctionBtn:SetPoint("TOPRIGHT", rightAnchor, rightRel, rightX, rightY)
     end
 
     panel.nameText:SetFormattedText("%s-%s", data.name, data.realm)
@@ -1133,6 +1642,306 @@ function StatusCards:RefreshAlerts(panel, rows)
     return panel
 end
 
+local function ApplyInfoIcon(texture, spec)
+    if not spec or (not spec.overlay and not spec.fileID and not spec.texture) then
+        texture:Hide()
+        return
+    end
+    texture:Show()
+    if spec.overlay then
+        OneWoW.OverlayIcons:ApplyToTexture(texture, spec.overlay)
+    elseif spec.fileID then
+        texture:SetAtlas("")
+        texture:SetTexture(spec.fileID)
+    else
+        texture:SetAtlas("")
+        texture:SetTexture(spec.texture)
+    end
+end
+
+local function AcquireInfoRow(panel, index)
+    local row = panel.rows[index]
+    if row then
+        return row
+    end
+    row = CreateFrame("Frame", nil, panel.scrollChild)
+    row:SetHeight(COLLECT_ROW_H)
+    local icon = row:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(INFO_ROW_ICON, INFO_ROW_ICON)
+    icon:SetPoint("LEFT", row, "LEFT", 0, 0)
+    row.icon = icon
+    local label = OneWoW_GUI:CreateFS(row, 11)
+    label:SetJustifyH("LEFT")
+    label:SetWordWrap(false)
+    row.label = label
+    local value = OneWoW_GUI:CreateFS(row, 11)
+    value:SetJustifyH("RIGHT")
+    value:SetWordWrap(false)
+    row.value = value
+    local bar = OneWoW_GUI:CreateProgressBar(row, { height = 8, min = 0, max = 1, value = 0 })
+    bar:EnableMouse(false)
+    row.bar = bar
+    panel.rows[index] = row
+    return row
+end
+
+local function FitInfoCard(panel, chromeH, contentH)
+    local total = chromeH + math.max(22, contentH) + 8
+    if panel.fixedHeight then
+        panel:SetHeight(math.max(panel.fixedHeight, total))
+        return
+    end
+    local maxH = panel.maxHeight or INFO_MAX_H
+    local minH = panel.minHeight or INFO_MIN_H
+    panel:SetHeight(math.min(maxH, math.max(minH, total)))
+end
+
+--- Info card for AFK (alerts + digest + one idle line).
+---@param parent Frame
+---@param opts table|nil
+---@return Frame
+function StatusCards:CreateInfo(parent, opts)
+    opts = opts or {}
+    local panel = CreateThemedCard(parent, {
+        name = opts.name,
+        width = opts.width,
+        height = opts.height or INFO_MIN_H,
+        interactive = false,
+    })
+    panel.maxHeight = opts.maxHeight or INFO_MAX_H
+    panel.minHeight = opts.minHeight or INFO_MIN_H
+    panel.fixedHeight = opts.fixedHeight
+    local header = OneWoW_GUI:CreateFS(panel, 16)
+    header:SetPoint("TOPLEFT", panel, "TOPLEFT", PANEL_PADDING + 4, -PANEL_PADDING)
+    header:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -PANEL_PADDING, -PANEL_PADDING)
+    header:SetJustifyH("LEFT")
+    header:SetWordWrap(false)
+    header:SetText(INFO)
+    header:SetTextColor(OneWoW_GUI:GetThemeColor("ACCENT_PRIMARY"))
+    panel.header = header
+    local meta = OneWoW_GUI:CreateFS(panel, 11)
+    meta:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -4)
+    meta:SetPoint("TOPRIGHT", header, "BOTTOMRIGHT", 0, -4)
+    meta:SetJustifyH("LEFT")
+    meta:SetWordWrap(false)
+    panel.metaText = meta
+    local strip = OneWoW_GUI:CreateSummaryStrip(panel, {
+        height = GUI.SUMMARY_STRIP_HEIGHT,
+        insetX = PANEL_PADDING,
+        yOffset = -(PANEL_PADDING + 40),
+        items = {
+            { value = "", label = L["STATUSCARD_WEEKLY_RESET"], valueColor = "TEXT_ACCENT" },
+            { value = "", label = L["STATUSCARD_DAILY_RESET"], valueColor = "TEXT_ACCENT" },
+            { value = "", label = BAGSLOT, valueColor = "TEXT_ACCENT" },
+        },
+    })
+    strip:EnableMouse(false)
+    panel.statStrip = strip
+    panel.rows = {}
+    local scrollFrame, scrollChild = OneWoW_GUI:CreateScrollFrame(panel, { width = opts.width or 350 })
+    panel.scrollFrame = scrollFrame
+    panel.scrollChild = scrollChild
+    return panel
+end
+
+--- Fill an Info card from CollectInfo.
+---@param panel Frame
+---@param data table
+---@return Frame
+function StatusCards:RefreshInfo(panel, data)
+    PaintCard(panel, false)
+    data = data or { alerts = {}, professions = {} }
+    for i = 1, #panel.rows do
+        panel.rows[i]:Hide()
+    end
+    panel.header:SetTextColor(OneWoW_GUI:GetThemeColor("ACCENT_PRIMARY"))
+    if data.meta and data.meta ~= "" then
+        panel.metaText:SetText(data.meta)
+        panel.metaText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
+        panel.metaText:Show()
+    else
+        panel.metaText:SetText("")
+        panel.metaText:Hide()
+    end
+
+    local y = PANEL_PADDING + (panel.header:GetStringHeight() or 16)
+    if panel.metaText:IsShown() then
+        y = y + 4 + (panel.metaText:GetStringHeight() or 12)
+    end
+    panel.statStrip:ClearAllPoints()
+    panel.statStrip:SetPoint("TOPLEFT", panel, "TOPLEFT", PANEL_PADDING, -(y + 8))
+    panel.statStrip:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -PANEL_PADDING, -(y + 8))
+    panel.statStrip:SetItemValue(1, data.weekly or "")
+    panel.statStrip:SetItemValue(2, data.daily or "")
+    panel.statStrip:SetItemValue(3, tostring(data.bags or 0))
+    if panel.statStrip._relayout then
+        panel.statStrip._relayout()
+    end
+    local stripH = panel.statStrip.GetMeasuredHeight and panel.statStrip:GetMeasuredHeight() or GUI.SUMMARY_STRIP_HEIGHT
+    y = y + 8 + stripH + 6
+
+    panel.scrollFrame:ClearAllPoints()
+    panel.scrollFrame:SetPoint("TOPLEFT", panel, "TOPLEFT", PANEL_PADDING, -y)
+    panel.scrollFrame:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", -14, 8)
+
+    local width = panel._width - 50
+    panel.scrollChild:SetWidth(width)
+    local contentY = -2
+    local rowIndex = 1
+    local labelW = math.min(INFO_LABEL_W, math.floor(width * 0.38))
+
+    local function PlaceRow()
+        local row = AcquireInfoRow(panel, rowIndex)
+        row.label:SetWordWrap(false)
+        row:ClearAllPoints()
+        row:SetPoint("TOPLEFT", panel.scrollChild, "TOPLEFT", 5, contentY)
+        row:SetWidth(width)
+        rowIndex = rowIndex + 1
+        return row
+    end
+
+    local function FinishRow(row, rowH)
+        row:SetHeight(rowH)
+        row:Show()
+        contentY = contentY - rowH - 4
+    end
+
+    local alerts = data.alerts or {}
+    for i = 1, #alerts do
+        local row = PlaceRow()
+        if alerts[i].overlay then
+            ApplyInfoIcon(row.icon, { overlay = alerts[i].overlay })
+        else
+            ApplyInfoIcon(row.icon, { texture = alerts[i].icon })
+        end
+        row.bar:Hide()
+        row.value:Hide()
+        row.label:ClearAllPoints()
+        row.label:SetPoint("LEFT", row.icon, "RIGHT", 8, 0)
+        row.label:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+        row.label:SetText(alerts[i].text)
+        row.label:SetTextColor(OneWoW_GUI:GetThemeColor(alerts[i].colorKey or "TEXT_PRIMARY"))
+        FinishRow(row, math.max(INFO_ROW_ICON, row.label:GetStringHeight() or 12))
+    end
+    if #alerts > 0 then
+        contentY = contentY - 4
+    end
+
+    local professions = data.professions or {}
+    for i = 1, #professions do
+        local prof = professions[i]
+        local row = PlaceRow()
+        if prof.icon then
+            ApplyInfoIcon(row.icon, { fileID = prof.icon })
+        else
+            ApplyInfoIcon(row.icon, { overlay = "Profession" })
+        end
+        row.label:ClearAllPoints()
+        row.label:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
+        row.label:SetWidth(labelW)
+        row.label:SetText(prof.name)
+        if prof.total > 0 and prof.done >= prof.total then
+            row.label:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_FEATURES_ENABLED"))
+        else
+            row.label:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+        end
+        if prof.total > 0 then
+            row.value:Hide()
+            row.bar:Show()
+            row.bar:ClearAllPoints()
+            row.bar:SetPoint("LEFT", row, "LEFT", INFO_ROW_ICON + 8 + labelW + 8, 0)
+            row.bar:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+            row.bar:UpdateProgress(prof.done, prof.total)
+            if row.bar._text then
+                row.bar._text:Show()
+            end
+        else
+            row.bar:Hide()
+            row.value:Show()
+            row.value:ClearAllPoints()
+            row.value:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+            row.value:SetText(prof.status)
+            row.value:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+        end
+        FinishRow(row, COLLECT_ROW_H)
+    end
+
+    if data.rested then
+        local row = PlaceRow()
+        ApplyInfoIcon(row.icon, { overlay = "Innkeeper" })
+        row.label:ClearAllPoints()
+        row.label:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
+        row.label:SetWidth(labelW)
+        row.label:SetText(L["STATUSCARD_RESTED"])
+        row.label:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+        if data.rested.full then
+            row.bar:Hide()
+            row.value:Show()
+            row.value:ClearAllPoints()
+            row.value:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+            row.value:SetText(L["STATUSCARD_FULLY_RESTED"])
+            row.value:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_FEATURES_ENABLED"))
+        else
+            row.value:Hide()
+            row.bar:Show()
+            row.bar:ClearAllPoints()
+            row.bar:SetPoint("LEFT", row, "LEFT", INFO_ROW_ICON + 8 + labelW + 8, 0)
+            row.bar:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+            row.bar:UpdateProgress(data.rested.pct, 100)
+            if row.bar._text then
+                row.bar._text:SetFormattedText(PERCENTAGE_STRING, data.rested.pct)
+                row.bar._text:Show()
+            end
+        end
+        FinishRow(row, COLLECT_ROW_H)
+    end
+
+    if data.hearth then
+        local row = PlaceRow()
+        ApplyInfoIcon(row.icon, { fileID = data.hearth.icon })
+        row.bar:Hide()
+        row.value:Show()
+        row.value:ClearAllPoints()
+        row.value:SetPoint("RIGHT", row, "RIGHT", 0, 0)
+        row.value:SetText(data.hearth.value)
+        if data.hearth.ready then
+            row.value:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_FEATURES_ENABLED"))
+        else
+            row.value:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_ACCENT"))
+        end
+        row.label:ClearAllPoints()
+        if row.icon:IsShown() then
+            row.label:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
+        else
+            row.label:SetPoint("LEFT", row, "LEFT", 0, 0)
+        end
+        row.label:SetPoint("RIGHT", row.value, "LEFT", -8, 0)
+        row.label:SetText(data.hearth.name)
+        row.label:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+        FinishRow(row, COLLECT_ROW_H)
+    end
+
+    if data.idle then
+        local row = PlaceRow()
+        row.icon:Hide()
+        row.bar:Hide()
+        row.value:Hide()
+        row.label:ClearAllPoints()
+        row.label:SetPoint("TOPLEFT", row, "TOPLEFT", 0, 0)
+        row.label:SetWidth(width)
+        row.label:SetWordWrap(true)
+        row.label:SetText(data.idle)
+        row.label:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+        FinishRow(row, row.label:GetStringHeight() or 12)
+    end
+
+    local contentH = math.abs(contentY) + 6
+    panel.scrollChild:SetHeight(contentH)
+    FitInfoCard(panel, y, contentH)
+    panel:Show()
+    return panel
+end
+
 local function ApplyCollectIcon(texture, def)
     if def.atlas then
         texture:SetTexture(nil)
@@ -1180,6 +1989,7 @@ function StatusCards:CreateHere(parent, opts)
         interactive = opts.interactive,
     })
     panel.onCardClick = opts.onHereClick
+    panel.onCardRightClick = opts.onHereRightClick
     panel.onAlertClick = opts.onAlertClick
     panel.onManageZone = opts.onManageZone
     panel.clickTooltip = opts.interactive and L["STATUSCARD_CLICK_CATALOG"] or nil
@@ -1382,26 +2192,6 @@ local function FillZoneNotes(panel, zoneData, pins)
     panel.scrollChild:SetHeight(math.abs(contentY) + 10)
 end
 
-function StatusCards:HereHasContent(data)
-    if data.place then
-        return true
-    end
-    local alerts = data.alerts
-    if alerts.shopping and #alerts.shopping > 0 then
-        return true
-    end
-    if alerts.notes and #alerts.notes > 0 then
-        return true
-    end
-    if alerts.farming and #alerts.farming > 0 then
-        return true
-    end
-    if alerts.trackers and #alerts.trackers > 0 then
-        return true
-    end
-    return false
-end
-
 function StatusCards:RefreshHere(panel, data)
     PaintCard(panel, false)
     local place = data.place
@@ -1426,6 +2216,22 @@ function StatusCards:RefreshHere(panel, data)
             instanceID = instData.instanceID,
             placeKey = instData.placeKey,
         }
+    else
+        local mapID = C_Map.GetBestMapForUnit("player")
+        if mapID then
+            panel.openSpec = { mapID = mapID }
+        end
+    end
+    if panel.interactive then
+        panel.clickTooltip = L["STATUSCARD_CLICK_CATALOG"]
+        if not data.journalReady and data.journalAvailable then
+            panel.clickTooltipLines = {
+                L["STATUSCARD_ZONES_NOT_LOADED"],
+                L["STATUSCARD_CLICK_LOAD_ZONES"],
+            }
+        else
+            panel.clickTooltipLines = nil
+        end
     end
 
     if instData then
@@ -1543,6 +2349,18 @@ function StatusCards:RefreshHere(panel, data)
             panel.emptyText:SetPoint("TOPLEFT", panel, "TOPLEFT", PANEL_PADDING + 4, -(y + 8))
             panel.emptyText:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -PANEL_PADDING, -(y + 8))
             panel.emptyText:SetText(L["STATUSCARD_NO_COLLECTIONS"])
+            panel.emptyText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+            y = y + 8 + (panel.emptyText:GetStringHeight() or 12)
+        elseif panel.showCollections and not data.journalReady then
+            panel.emptyText:Show()
+            panel.emptyText:ClearAllPoints()
+            panel.emptyText:SetPoint("TOPLEFT", panel, "TOPLEFT", PANEL_PADDING + 4, -(y + 8))
+            panel.emptyText:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -PANEL_PADDING, -(y + 8))
+            if data.journalAvailable and panel.interactive then
+                panel.emptyText:SetText(L["STATUSCARD_ZONES_NOT_LOADED"] .. ". " .. L["STATUSCARD_CLICK_LOAD_ZONES"])
+            else
+                panel.emptyText:SetText(L["STATUSCARD_ZONES_NOT_LOADED"])
+            end
             panel.emptyText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
             y = y + 8 + (panel.emptyText:GetStringHeight() or 12)
         else

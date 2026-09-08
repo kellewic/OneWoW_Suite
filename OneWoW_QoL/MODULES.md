@@ -63,7 +63,7 @@ Automatically scans for and untracks already-completed achievements when you log
 
 ### AFK Panel
 
-Full-screen AFK overlay with the same You and Here cards as the ESC menu, live mail and auction alerts, and optional Daily/Weekly notes when Notes is enabled.
+Full-screen AFK overlay with the same Character Card and Zone Card as the ESC menu, plus an Info card in the same style (summary strip, icons, and bars for alerts, reset timers, professions, and more). Optional dock background.
 
 - **Module id:** `afkpanel` · **Folder:** `Modules/external/afkpanel/`
 
@@ -101,7 +101,7 @@ swipes, and situation-based visibility (place × combat cards).
 
 ### ESC Menu Panel
 
-Display a You card, Alerts, this place's collections and notes, and a portal strip alongside the ESC menu. The You card shows a portrait with a faction badge, mail, durability, Great Vault, and Trading Post, with optional Housing Endeavors. Alerts list mail and auction attention when something needs a look. The place card has Item Alert icons for Shopping List, notes, Trackers, and Farming. Hits sit left of |, the rest sit right. Hover an icon for details; click a hit to open it. Click the character card to open the character screen, or the place card to open that zone in Catalog. Choose which side each uses below.
+Display a Character Card, a Zone Card, and a portal strip alongside the ESC menu. Character Card shows a portrait with a faction badge, mail, durability, auction attention, Great Vault, Trading Post, and Housing Endeavors. Hover mail, durability, or the cart for details; click to open that window. Zone Card has this place's collections and Item Alert icons for Shopping List, notes, Trackers, and Farming. Hits sit left of |, the rest sit right. Hover an icon for details; click to open it. Click the Character Card to open the character screen, or the Zone Card to open that zone in Catalog. If Zones Catalog is not loaded, the card says so; left-click still opens that zone, right-click loads the pack and refreshes the card.
 
 - **Module id:** `escpanel` · **Folder:** `Modules/external/escpanel/`
 

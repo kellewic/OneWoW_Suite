@@ -12,12 +12,14 @@ local CreateFrame = CreateFrame
 local math = math
 
 local CAMERA_SPEED = 0.035
-local CARD_WIDTH = 360
 local DOCK_PAD = 16
 local CARD_GAP = 8
-local ALERTS_H = 120
 local HERE_H = 120
-local NOTES_H = 160
+local MODEL_GAP = 500
+local COL_MIN = 320
+local IDLE_KINDS = { "session", "mounts", "pets", "toys", "tip" }
+-- Must match #IDLE_TIP_KEYS in OneWoW StatusCards.
+local IDLE_TIP_COUNT = 4
 
 -- Intentional cinematic palette; not tied to suite theme.
 local PALETTE = {
@@ -66,8 +68,47 @@ local function CreateTopBar(parent)
     return topBar
 end
 
-local function NotesEnabled()
-    return OneWoW:IsAddonEnabled("OneWoW_Notes")
+function AFKPanelModule:ApplyDockBackground()
+    local parent = self._bottomPanel
+    if ns.ModuleRegistry:GetToggleValue("afkpanel", "show_dock_bg") then
+        parent:SetBackdrop(backdrop)
+        parent:SetBackdropColor(unpack(PALETTE.BAR_DARK_BG))
+        parent:SetBackdropBorderColor(unpack(PALETTE.BAR_GOLD_BORDER))
+    else
+        parent:SetBackdrop(nil)
+    end
+end
+
+local function ColumnWidth()
+    local inner = UIParent:GetWidth() - 2 * DOCK_PAD
+    local minPair = COL_MIN * 2
+    if inner < minPair + CARD_GAP then
+        return math.max(200, math.floor((inner - CARD_GAP) / 2))
+    end
+    local gap = MODEL_GAP
+    if inner < minPair + gap then
+        gap = inner - minPair
+    end
+    return math.floor((inner - gap) / 2)
+end
+
+function AFKPanelModule:ApplyCardWidths()
+    local w = ColumnWidth()
+    local cards = { self._youPanel, self._herePanel, self._infoPanel }
+    for i = 1, #cards do
+        local panel = cards[i]
+        panel:SetWidth(w)
+        panel._width = w
+    end
+end
+
+function AFKPanelModule:PickIdleLine()
+    self._idleKind = IDLE_KINDS[math.random(#IDLE_KINDS)]
+    if self._idleKind == "tip" then
+        self._idleTipIndex = math.random(IDLE_TIP_COUNT)
+    else
+        self._idleTipIndex = nil
+    end
 end
 
 function AFKPanelModule:SetupFrames()
@@ -83,6 +124,9 @@ function AFKPanelModule:SetupFrames()
     afkFrame:SetScript("OnKeyDown", function(_, key)
         AFKPanelModule:OnKeyDown(key)
     end)
+    afkFrame:SetScript("OnSizeChanged", function()
+        AFKPanelModule:OnDisplaySizeChanged()
+    end)
     afkFrame:Hide()
     self._afkFrame = afkFrame
 
@@ -92,15 +136,13 @@ function AFKPanelModule:SetupFrames()
     bottomPanel:SetFrameLevel(2)
     bottomPanel:SetPoint("BOTTOMLEFT", afkFrame, "BOTTOMLEFT", 0, 0)
     bottomPanel:SetPoint("BOTTOMRIGHT", afkFrame, "BOTTOMRIGHT", 0, 0)
-    bottomPanel:SetHeight(ALERTS_H + 2 * DOCK_PAD)
-    bottomPanel:SetBackdrop(backdrop)
-    bottomPanel:SetBackdropColor(unpack(PALETTE.BAR_DARK_BG))
-    bottomPanel:SetBackdropBorderColor(unpack(PALETTE.BAR_GOLD_BORDER))
+    bottomPanel:SetHeight(HERE_H + 2 * DOCK_PAD)
     self._bottomPanel = bottomPanel
+    self:ApplyDockBackground()
     OneWoW_GUI:RegisterFontRoot(bottomPanel)
 
     local modelHolder = CreateFrame("Frame", nil, afkFrame)
-    modelHolder:SetSize(500, 500)
+    modelHolder:SetSize(MODEL_GAP, MODEL_GAP)
     modelHolder:SetPoint("CENTER", afkFrame, "CENTER", 0, 50)
 
     local model = CreateFrame("PlayerModel", "OneWoW_QoL_AFKPlayerModel", modelHolder)
@@ -110,9 +152,10 @@ function AFKPanelModule:SetupFrames()
     model:SetFacing(6)
     self._model = model
 
-    self._infoPanel = OneWoW.StatusCards:CreateYou(bottomPanel, {
+    local colW = ColumnWidth()
+    self._youPanel = OneWoW.StatusCards:CreateYou(bottomPanel, {
         name = "OneWoWAFKYou",
-        width = CARD_WIDTH,
+        width = colW,
         interactive = false,
         mail = true,
         durability = true,
@@ -121,29 +164,19 @@ function AFKPanelModule:SetupFrames()
         endeavors = true,
         timer = true,
     })
-    self._infoPanel:SetPoint("BOTTOMLEFT", bottomPanel, "BOTTOMLEFT", DOCK_PAD, DOCK_PAD)
+    self._youPanel:SetPoint("BOTTOMLEFT", bottomPanel, "BOTTOMLEFT", DOCK_PAD, DOCK_PAD)
 
-    self._alertsPanel = OneWoW.StatusCards:CreateAlerts(bottomPanel, {
-        name = "OneWoWAFKAlerts",
-        width = CARD_WIDTH,
-        keepVisible = true,
-        fixedHeight = ALERTS_H,
-        height = ALERTS_H,
-    })
     self._herePanel = OneWoW.StatusCards:CreateHere(bottomPanel, {
         name = "OneWoWAFKHere",
-        width = CARD_WIDTH,
+        width = colW,
         interactive = false,
         collections = false,
         zoneNotes = false,
         fixedHeight = HERE_H,
     })
-    self._notesPanel = OneWoW.StatusCards:CreateTaskList(bottomPanel, {
-        name = "OneWoWAFKNotes",
-        width = CARD_WIDTH,
-        height = NOTES_H,
-        header = "",
-        fixedHeight = NOTES_H,
+    self._infoPanel = OneWoW.StatusCards:CreateInfo(bottomPanel, {
+        name = "OneWoWAFKInfo",
+        width = colW,
     })
     self:LayoutDock()
 end
@@ -158,80 +191,57 @@ end
 
 function AFKPanelModule:LayoutDock()
     local parent = self._bottomPanel
-    local rightH = self._herePanel:GetHeight()
-    if self._notesPanel:IsShown() then
-        rightH = rightH + CARD_GAP + self._notesPanel:GetHeight()
-    end
-    parent:SetHeight(math.max(
-        self._infoPanel:GetHeight(),
-        self._alertsPanel:GetHeight(),
-        rightH
-    ) + 2 * DOCK_PAD)
+    local youH = self._youPanel:GetHeight()
+    local rightH = self._herePanel:GetHeight() + CARD_GAP + self._infoPanel:GetHeight()
+    local innerH = math.max(youH, rightH)
+    parent:SetHeight(innerH + 2 * DOCK_PAD)
+
+    -- Character keeps its content minimum, then stretches so a taller
+    -- Zone+Info stack does not leave an empty band above it in the dock.
+    self._youPanel:ClearAllPoints()
+    self._youPanel:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", DOCK_PAD, DOCK_PAD)
+    self._youPanel:SetPoint("TOPLEFT", parent, "TOPLEFT", DOCK_PAD, -DOCK_PAD)
 
     self._infoPanel:ClearAllPoints()
-    self._infoPanel:SetPoint("BOTTOMLEFT", parent, "BOTTOMLEFT", DOCK_PAD, DOCK_PAD)
-
-    self._alertsPanel:ClearAllPoints()
-    self._alertsPanel:SetPoint("BOTTOM", parent, "BOTTOM", 0, DOCK_PAD)
-
-    local rightBottom = parent
-    local rightRel = "BOTTOMRIGHT"
-    local rightX, rightY = -DOCK_PAD, DOCK_PAD
-    if self._notesPanel:IsShown() then
-        self._notesPanel:ClearAllPoints()
-        self._notesPanel:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -DOCK_PAD, DOCK_PAD)
-        rightBottom = self._notesPanel
-        rightRel = "TOPRIGHT"
-        rightX, rightY = 0, CARD_GAP
-    end
+    self._infoPanel:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -DOCK_PAD, DOCK_PAD)
 
     self._herePanel:ClearAllPoints()
-    self._herePanel:SetPoint("BOTTOMRIGHT", rightBottom, rightRel, rightX, rightY)
+    self._herePanel:SetPoint("BOTTOMRIGHT", self._infoPanel, "TOPRIGHT", 0, CARD_GAP)
+end
+
+function AFKPanelModule:OnDisplaySizeChanged()
+    if self._sizeQueued or not self._infoPanel then
+        return
+    end
+    self._sizeQueued = true
+    C_Timer.After(0, function()
+        AFKPanelModule._sizeQueued = false
+        if not AFKPanelModule._infoPanel then
+            return
+        end
+        if AFKPanelModule.isAFK then
+            AFKPanelModule:RefreshCards()
+        else
+            AFKPanelModule:ApplyCardWidths()
+            AFKPanelModule:LayoutDock()
+        end
+    end)
 end
 
 function AFKPanelModule:RefreshCards()
-    OneWoW.StatusCards:RefreshYou(self._infoPanel, OneWoW.StatusCards:CollectYou({
+    self:ApplyCardWidths()
+    OneWoW.StatusCards:RefreshYou(self._youPanel, OneWoW.StatusCards:CollectYou({
         vault = true,
         cache = true,
         endeavors = true,
         requestEndeavors = true,
     }))
-    OneWoW.StatusCards:SetYouTimer(self._infoPanel, 0)
-
-    OneWoW.StatusCards:RefreshAlerts(self._alertsPanel, OneWoW.StatusCards:CollectAlerts())
+    OneWoW.StatusCards:SetYouTimer(self._youPanel, 0)
     OneWoW.StatusCards:RefreshHere(self._herePanel, OneWoW.StatusCards:CollectHere())
-
-    local notesOn = NotesEnabled()
-    local showDaily = notesOn and ns.ModuleRegistry:GetToggleValue("afkpanel", "show_daily")
-    local showWeekly = notesOn and ns.ModuleRegistry:GetToggleValue("afkpanel", "show_weekly")
-    if notesOn then
-        OneWoW:BringUp("OneWoW_Notes")
-    end
-    local api = OneWoW_Notes_API
-    local groups = {}
-    if showDaily then
-        groups[#groups + 1] = {
-            header = L["AFKPANEL_DAILY_NOTES"],
-            notes = (api and api.GetIncompleteJournalNotes) and api.GetIncompleteJournalNotes("daily") or {},
-        }
-    end
-    if showWeekly then
-        groups[#groups + 1] = {
-            header = L["AFKPANEL_WEEKLY_NOTES"],
-            notes = (api and api.GetIncompleteJournalNotes) and api.GetIncompleteJournalNotes("weekly") or {},
-        }
-    end
-    if notesOn then
-        if #groups > 0 then
-            OneWoW.StatusCards:RefreshGroupedTaskList(self._notesPanel, groups)
-        else
-            OneWoW.StatusCards:RefreshTaskList(self._notesPanel, {})
-        end
-        self._notesPanel:Show()
-    else
-        self._notesPanel:Hide()
-    end
-
+    OneWoW.StatusCards:RefreshInfo(self._infoPanel, OneWoW.StatusCards:CollectInfo({
+        idleKind = self._idleKind,
+        idleTipIndex = self._idleTipIndex,
+    }))
     self:LayoutDock()
 end
 
@@ -239,6 +249,10 @@ function AFKPanelModule:SetAFK(status)
     if status then
         self:CameraSpin(true)
         CloseAllWindows()
+
+        if not self._idleKind then
+            self:PickIdleLine()
+        end
 
         self._afkFrame:Show()
         OneWoW.UIParent:Hide()
@@ -256,9 +270,13 @@ function AFKPanelModule:SetAFK(status)
             AFKPanelModule:Model_OnUpdate(myself)
         end)
 
+        if self._timer then
+            self._timer:Cancel()
+            self._timer = nil
+        end
         self._startTime = GetTime()
         self._timer = C_Timer.NewTicker(1, function()
-            OneWoW.StatusCards:SetYouTimer(self._infoPanel, GetTime() - self._startTime)
+            OneWoW.StatusCards:SetYouTimer(self._youPanel, GetTime() - self._startTime)
         end)
 
         self.isAFK = true
@@ -282,7 +300,9 @@ function AFKPanelModule:SetAFK(status)
             self._animTimer = nil
         end
 
-        OneWoW.StatusCards:SetYouTimer(self._infoPanel, 0)
+        OneWoW.StatusCards:SetYouTimer(self._youPanel, 0)
+        self._idleKind = nil
+        self._idleTipIndex = nil
         self.isAFK = false
     end
 end
@@ -435,7 +455,9 @@ function AFKPanelModule:OnToggle(toggleId, value)
         if self.isAFK then
             self:CameraSpin(value)
         end
-    elseif self.isAFK and (toggleId == "show_daily" or toggleId == "show_weekly") then
-        self:RefreshCards()
+    elseif toggleId == "show_dock_bg" then
+        if self._bottomPanel then
+            self:ApplyDockBackground()
+        end
     end
 end

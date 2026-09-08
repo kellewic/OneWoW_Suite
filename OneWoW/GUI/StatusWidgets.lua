@@ -86,11 +86,8 @@ function OneWoW_GUI:CreateItemAlertRow(parent, options)
             if not row.interactive then
                 return
             end
-            if not myself.hits or #myself.hits == 0 then
-                return
-            end
             if row.onClick then
-                row.onClick(myself.sourceKey, myself.hits)
+                row.onClick(myself.sourceKey, myself.hits or {})
             end
         end)
         btn:EnableMouse(true)

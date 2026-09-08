@@ -64,15 +64,19 @@
 - The enhanced OneWoW row uses the suite feature icons. In collector settings, pick With ring or Ringless. Home and Manage Features follow the same choice. Ringless sits on the panel, not a black square.
 
 ## ESC Menu
-- Turning off ESC Menu Panel now hides the character info, notes, and portal strips. Character Info, Zone Notes, and left/right side choices apply when you open the game menu.
-- Character info is a themed card with your portrait, a faction badge, spec, item level, Mythic+ rating, and gold. Mail and durability sit on the top right. Great Vault shows Raid, Dungeon, and World bars, and says Claim Reward when last week's chest is waiting. Trading Post travel points use a progress bar and say Cache Available when the Collector's Cache is waiting. Housing Endeavors can sit under that; turn them off on the ESC Menu Panel Features tab. Click the card to close the menu and open the character screen.
-- Alerts sit under You when something needs a look: mail on this character, auctions expiring or expired, auction gold waiting, or mail on other alts. The card hides when the list is empty. Turn it off on the ESC Menu Panel Features tab.
-- This place is one card: collections, an Item Alert row, and zone notes. Item Alert uses icons for Shopping List, zone notes, Trackers, and Farming notes. The row shows a count, then hits left of | and the rest on the right. None means no hits; Many means every source has one. Hover an icon for the list or note text. Click a hit to open that list or note. Click the card to open Catalog Zones.
+- ESC now has three pieces: Character Card, Zone Card, and Portals. Features only turns those three on or off. Features settings include a picture of each card.
+- Character Card keeps mail and durability on the top right. Hover either for details; click mail to open Mail, or durability to open the character screen. A shopping-cart icon appears when auctions are expiring, expired, or gold is waiting. Hover it for the list; click it to open Alt Tracker auctions.
+- The separate Alerts card is gone. Auction attention and alt mail sit on those Character Card icons.
+- Zone Card keeps collections and Item Alert icons. Hover Notes for the zone note and OneWay Pins; click Shopping List, Notes, Trackers, or Farming to open that window. The extra zone-notes block under the card is gone.
+- Click the Character Card to open the character screen, or the Zone Card to open this place in Catalog. Left-click still opens that zone when Catalog Journal is not loaded. The card says so, and right-click loads it and refreshes the card.
 
 ## AFK Panel
-- The AFK overlay uses the same You and Here cards as the ESC menu, including the portrait with a faction badge, weekly bars, and Item Alert icons. Hover an icon for the list or note; keys and mouse still clear AFK the same way (no click-to-open).
-- Alerts sit in the center column (auction attention and gold waiting). Mail stays on the You card only.
-- Daily and Weekly notes stay optional and share one card. They only appear when Notes is enabled. You sits on the bottom left; Alerts in the center; Here and notes stack up from the bottom right. Each card keeps its full size when empty.
+- The AFK overlay uses the same Character Card and Zone Card as the ESC menu, including the portrait with a faction badge, weekly bars, and Item Alert icons. Hover an icon for the list or note; keys and mouse still clear AFK the same way (no click-to-open).
+- Character Card sits on the bottom left. Zone Card and Info stack on the right. Alerts (auctions expiring or expired, gold waiting, and alts with mail) sit on Info, not a center card.
+- Info also shows weekly and daily reset timers, profession weeklies, rested XP, bag space, Hearthstone cooldown, and this week's bonus event. When there are no auction or mail alerts, each AFK session can add one extra line: session time, a collectible count, or a short tip.
+- Info matches Character and Zone: accent title, a summary strip for weekly reset, daily reset, and bag space, then icon rows with progress bars for profession weeklies and rested XP.
+- Daily and Weekly notes stay in Notes. They no longer appear on AFK. You can hide the gold dock behind the cards. Character, Zone, and Info cards grow with the game window and leave space in the middle for your character.
+- Character Card fills the dock. If Zone and Info are taller, Character grows to that height so there is no empty space above it.
 
 ## Portals
 - Mage Teleports and Mage Portals are separate ESC flyouts. Show or hide each set in Portals settings. Class & Racial Abilities uses the same split.
@@ -83,6 +87,9 @@
 
 ## Instance Toast
 - Zoning into a dungeon or raid shows real collectable counts on the instance toast and the ESC instance panel again.
+
+## Fixes
+- ESC and AFK no longer load Catalog Journal data just to name this place. That data stays unloaded until you open Catalog Zones (or another tab that needs it), so open-world memory and hitching stay down.
 
 ## Auto Open
 - Auto Open now opens Torn Sack of Pet Supplies from the Crysa's Flyers daily.

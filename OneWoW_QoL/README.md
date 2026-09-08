@@ -23,9 +23,9 @@ Hands-off helpers for repairs, looting, mounts, quests, and cinematics.
 
 UI panels, map tools, bars, and screen customization.
 
-- **AFK Panel** — full-screen AFK overlay with the same You and Here cards as ESC (portrait + faction, weekly bars, Item Alert icons), live mail and auction alerts, and optional Daily/Weekly notes when Notes is on
+- **AFK Panel** — full-screen AFK overlay with the same Character Card and Zone Card as ESC (portrait + faction, weekly bars, Item Alert icons), plus an Info card in the same style (summary strip, icons, and bars for alerts, reset timers, profession weeklies, and more). Optional dock background.
 - **Auto Delete** — skip typing DELETE when destroying items
-- **ESC Menu Panel** — You card (portrait + faction, mail, durability, Great Vault, Trading Post, optional Housing Endeavors), Alerts when mail or auctions need a look, this place's collections, Item Alert icons, zone notes, and a portal strip beside the ESC menu. Item Alert puts hits left of | and the rest on the right. Hover an icon for the list or note; click a hit to open it. Click the character card to open the character screen, or the place card to open that zone in Catalog.
+- **ESC Menu Panel** — Character Card (portrait + faction, mail, durability, auction attention, Great Vault, Trading Post, Housing Endeavors), Zone Card (this place's collections and Item Alert icons), and a portal strip beside the ESC menu. Hover mail, durability, or the cart for details; click to open that window. Item Alert puts hits left of | and the rest on the right. Hover an icon for the list or note; click to open it. Click the Character Card to open the character screen, or the Zone Card to open that zone in Catalog. If Zones Catalog is not loaded, the card says so; left-click still opens that zone, right-click loads the pack and refreshes the card.
 - **Bag Bar** — movable bar of bag items matched by keyword expression
 - **Quest Item Bar** — clickable quest-item buttons with sorting and filters ([details](Modules/external/questitembar/README.md))
 - **Professions Panel** — expansion skills, recipe counts, and first-craft tracking beside the profession window
