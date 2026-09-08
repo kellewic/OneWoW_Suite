@@ -13,7 +13,6 @@ local TOGGLE_TO_DB = {
     esc_show_character_info = "escShowCharacterInfo",
     esc_show_here           = "escShowHere",
     esc_show_portals        = "escPortalsEnabled",
-    esc_skin_game_menu      = "escSkinGameMenu",
 }
 
 local CARD_PREVIEW_BASE = "Interface\\AddOns\\OneWoW_QoL\\Modules\\external\\escpanel\\Media\\"

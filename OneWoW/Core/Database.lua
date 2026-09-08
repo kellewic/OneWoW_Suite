@@ -79,7 +79,6 @@ local DEFAULTS = {
         escShowCharacterInfo = true,
         escPanelsSide = "left",
         escPortalsSide = "right",
-        escSkinGameMenu = true,
         allFavorites = {},
         escFavorites = {},
         customItems = {},

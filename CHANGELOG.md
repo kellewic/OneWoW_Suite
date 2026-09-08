@@ -73,10 +73,7 @@
 - The enhanced OneWoW row uses the suite feature icons. In collector settings, pick With ring or Ringless. Home and Manage Features follow the same choice. Ringless sits on the panel, not a black square.
 
 ## ESC Menu
-- ESC now has three pieces: Character Card, Zone Card, and a Travel card. Features only turns those three on or off. Features settings include a picture of each card.
-- Portals sit on a Travel card that matches the other cards, not a floating icon strip. Open Portal Hub is a text button on that card. Icon size still lives in Features.
-- Optional Suite theme paints the Game Menu and wraps the columns in one panel. Turn it off in Features if another UI already skins the Game Menu.
-- When Character/Zone cards and Portals share a side, they stack in that column (cards above Travel).
+- ESC now has three pieces: Character Card, Zone Card, and Portals. Features only turns those three on or off. Features settings include a picture of each card.
 - Character Card keeps mail and durability on the top right. Hover either for details; click mail to open Mail, or durability to open the character screen. A shopping-cart icon appears when auctions are expiring, expired, or gold is waiting. Hover it for the list; click it to open Alt Tracker auctions.
 - The separate Alerts card is gone. Auction attention and alt mail sit on those Character Card icons.
 - Zone Card keeps collections and Item Alert icons. Hover Notes for the zone note and OneWay Pins; click Shopping List, Notes, Trackers, or Farming to open that window. The extra zone-notes block under the card is gone.

@@ -143,21 +143,6 @@ local function CreateThemedCard(parent, opts)
     return panel
 end
 
---- Shared card chrome used by ESC You/Here and the ESC Travel card.
----@param parent Frame
----@param opts table|nil
----@return Frame
-function StatusCards:CreateShell(parent, opts)
-    return CreateThemedCard(parent, opts)
-end
-
---- Re-paint shell backdrop, border, and accent after a theme change.
----@param panel Frame
----@param hover boolean|nil
-function StatusCards:PaintShell(panel, hover)
-    PaintCard(panel, hover)
-end
-
 local function EquippedDurabilityPercent()
     local cur, max = 0, 0
     for slot = 1, 19 do

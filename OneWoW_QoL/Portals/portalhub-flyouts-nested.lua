@@ -17,7 +17,6 @@ local function CreateInstanceButton(_, parent, iconSize, yOffset, expansions, co
 		mainButton:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, yOffset)
 	end
 	ns.PortalHubFlyouts:ApplyButtonIcon(mainButton, config.icon)
-	ns.PortalHubFlyouts:ApplyIconSkin(mainButton)
 
 	mainButton.text = OneWoW_GUI:CreateFS(mainButton, 8)
 	mainButton.text:SetPoint("BOTTOM", mainButton, "BOTTOM", 0, 2)
@@ -52,7 +51,6 @@ local function CreateInstanceButton(_, parent, iconSize, yOffset, expansions, co
 		local xPad = (growLeft and (#validExpansions - i) or (i - 1)) * iconSize
 		expButton:SetPoint("TOPLEFT", expFlyout, "TOPLEFT", xPad, 0)
 		ns.PortalHubFlyouts:ApplyButtonIcon(expButton, expData.icon)
-		ns.PortalHubFlyouts:ApplyIconSkin(expButton)
 
 		expButton.text = OneWoW_GUI:CreateFS(expButton, 8)
 		expButton.text:SetPoint("BOTTOM", expButton, "BOTTOM", 0, 2)
