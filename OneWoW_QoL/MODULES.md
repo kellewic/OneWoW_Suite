@@ -63,7 +63,7 @@ Automatically scans for and untracks already-completed achievements when you log
 
 ### AFK Panel
 
-Full-screen AFK overlay with the same Character Card and Zone Card as the ESC menu, plus an Info card in the same style (summary strip, icons, and bars for alerts, reset timers, professions, and more). Optional dock background.
+Full-screen AFK overlay with the same Character Card and Zone Card as the ESC menu, plus an Info card in the same style (summary strip, icons, and bars for alerts, reset timers, professions, and more). Optional dock background. If Zones Catalog is not loaded, the Zone Card says so.
 
 - **Module id:** `afkpanel` · **Folder:** `Modules/external/afkpanel/`
 

@@ -86,6 +86,16 @@ function ns:EnsureCatalogPack(roleOrName)
     return addon
 end
 
+--- Load Journal places. Explicit user actions only.
+function ns:EnsureCatalogJournalPlaces()
+    self:EnsureCatalogPack("journal")
+end
+
+--- True when Journal place data is loaded and can answer this-place lookups.
+function ns:AreWantedJournalPlacesLoaded()
+    return self:GetCatalogPackAPI("journal") ~= nil
+end
+
 --- True if the resolved CatDB pack exists and is enabled (not necessarily loaded).
 ---@param roleOrName string
 ---@return boolean

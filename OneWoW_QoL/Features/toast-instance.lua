@@ -25,14 +25,13 @@ local function InstanceEnabled()
     return OneWoW.SettingsFeatureRegistry:IsEnabled("toastalerts", "instances")
 end
 
-local function GetCatalogData(mapID)
-    OneWoW:EnsureCatalogPack("items")
-    OneWoW:EnsureCatalogPack("journal")
+local function GetCatalogData()
     local api = OneWoW:GetCatalogPackAPI("journal")
-    if not api then return nil end
-
-    local instData = api.GetInstanceByMapID(mapID)
-    if not instData then return nil end
+    local place = OneWoW.StatusCards:LookupPlace(api)
+    local instData = place and place.data
+    if not instData then
+        return nil
+    end
 
     local keyMap = {
         TMog    = "tmogs",
@@ -53,16 +52,11 @@ local function GetCatalogData(mapID)
         housing = { current = 0, total = 0 },
     }
 
-    for _, enc in ipairs(instData.encounters or {}) do
-        for _, item in ipairs(enc.items or {}) do
-            local key = keyMap[item.special]
-            if key then
-                counts[key].total = counts[key].total + 1
-                local collected = api.IsItemCollected(item.itemID, item.itemData, item.special)
-                if collected then
-                    counts[key].current = counts[key].current + 1
-                end
-            end
+    local raw = place.api.CountPlaceCollectibles(instData)
+    for special, row in pairs(raw) do
+        local key = keyMap[special]
+        if key then
+            counts[key] = row
         end
     end
 
@@ -132,12 +126,19 @@ function ns.ToastInstance.OnEnteringWorld()
             diffName = C_HousingNeighborhood.GetNeighborhoodName()
         end
 
+        local catalogData = GetCatalogData()
+        local packHint
+        if not catalogData and not OneWoW:AreWantedJournalPlacesLoaded() then
+            packHint = OneWoW.L["STATUSCARD_ZONES_NOT_LOADED"]
+        end
+
         Toasts.FireToast({
             toastType     = "instance",
             title         = name,
             subtitle      = diffName or "",
             icon          = EJ_INSTANCES[name],
-            grid          = BuildGrid(GetCatalogData(instanceID)),
+            grid          = BuildGrid(catalogData),
+            packHint      = packHint,
             instanceMapID = instanceID,
         })
     end)

@@ -394,7 +394,19 @@ local function ShowLargeToast(data)
     toast._subtitle:SetText(data.subtitle or "")
 
     local grid = data.grid
+    if data.packHint and not grid then
+        local cell = toast._statCells[1]
+        cell:SetWidth(INST_WIDTH - 16)
+        cell:SetText(data.packHint)
+        cell:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+        cell:Show()
+        for i = 2, #toast._statCells do
+            toast._statCells[i]:SetText("")
+            toast._statCells[i]:Hide()
+        end
+    else
     for i, cell in ipairs(toast._statCells) do
+        cell:SetWidth(STAT_COL_W - 2)
         local entry = grid and grid[i]
         if entry then
             local current = entry.current or 0
@@ -420,6 +432,7 @@ local function ShowLargeToast(data)
             cell:SetText("")
             cell:Hide()
         end
+    end
     end
 
     toast:SetAlpha(0)

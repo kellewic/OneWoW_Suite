@@ -866,8 +866,7 @@ local function CollectTrackerAlerts(place)
     return api.GetIncompleteHitsForMap(mapIDs)
 end
 
-local function ResolveCurrentPlace()
-    local api = OneWoW:GetCatalogPackAPI("journal")
+local function LookupCurrentPlace(api)
     if not api then
         return nil
     end
@@ -880,6 +879,10 @@ local function ResolveCurrentPlace()
     end
     if not instData and uiMapID and api.GetZoneInstance then
         instData = api.GetZoneInstance(nil, uiMapID)
+    end
+    if not instData and uiMapID and api.GetInstancesByMapID then
+        local all = api.GetInstancesByMapID(uiMapID)
+        instData = all[#all]
     end
     if not instData and instanceMapID and api.GetInstancesByMapID then
         local all = api.GetInstancesByMapID(instanceMapID)
@@ -896,6 +899,14 @@ local function ResolveCurrentPlace()
         diffName = diffName,
         mapID = instData.mapID or instData.uiMapID or uiMapID or instanceMapID,
     }
+end
+
+local function ResolveCurrentPlace()
+    return LookupCurrentPlace(OneWoW:GetCatalogPackAPI("journal"))
+end
+
+function StatusCards:LookupPlace(api)
+    return LookupCurrentPlace(api)
 end
 
 local function PlaceTypeLabel(instData)
@@ -940,6 +951,7 @@ function StatusCards:CollectHere(opts)
         OneWoW:BringUp("OneWoW_Notes")
     end
     local place = ResolveCurrentPlace()
+    local journalReady = place ~= nil or OneWoW:AreWantedJournalPlacesLoaded()
     local zoneText = GetZoneText() or ""
     local subZoneText = GetSubZoneText() or ""
     if subZoneText == zoneText then
@@ -960,7 +972,7 @@ function StatusCards:CollectHere(opts)
     return {
         place = place,
         displayZone = displayZone,
-        journalReady = OneWoW:GetCatalogPackAPI("journal") ~= nil,
+        journalReady = journalReady,
         journalAvailable = OneWoW:IsCatalogPackAvailable("journal"),
         alerts = {
             shopping = CollectShoppingHits(place),
@@ -2351,7 +2363,7 @@ function StatusCards:RefreshHere(panel, data)
             panel.emptyText:SetText(L["STATUSCARD_NO_COLLECTIONS"])
             panel.emptyText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
             y = y + 8 + (panel.emptyText:GetStringHeight() or 12)
-        elseif panel.showCollections and not data.journalReady then
+        elseif not data.journalReady then
             panel.emptyText:Show()
             panel.emptyText:ClearAllPoints()
             panel.emptyText:SetPoint("TOPLEFT", panel, "TOPLEFT", PANEL_PADDING + 4, -(y + 8))

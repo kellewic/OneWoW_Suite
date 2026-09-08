@@ -63,18 +63,11 @@ local function OpenPlaceInCatalog(panel)
 end
 
 local function LoadZonesPackForHere()
-	if OneWoW:GetCatalogPackAPI("journal") then
-		return
+	OneWoW:EnsureCatalogPack("journal")
+	OneWoW:EnsureCatalogJournalPlaces()
+	if GameMenuFrame and GameMenuFrame:IsShown() then
+		EscPanels:Build()
 	end
-	local addon = OneWoW:ResolveCatalogPack("journal")
-	if not addon then
-		return
-	end
-	OneWoW:WithAddon(addon, function()
-		if GameMenuFrame and GameMenuFrame:IsShown() then
-			EscPanels:Build()
-		end
-	end)
 end
 
 local function OpenShoppingList(listName)

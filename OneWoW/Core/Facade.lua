@@ -80,6 +80,8 @@ local COLON_METHODS = {
     "ResolveCatalogPack",
     "GetCatalogPackAPI",
     "EnsureCatalogPack",
+    "EnsureCatalogJournalPlaces",
+    "AreWantedJournalPlacesLoaded",
     "IsCatalogPackAvailable",
     "IsManifestUnit",
     "BringUp",
