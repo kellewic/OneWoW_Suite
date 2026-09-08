@@ -246,12 +246,18 @@ end
 function OneWoW_GUI:SkinIconFrame(frame, options)
     options = options or {}
     local preset = options.preset and ICON_STYLE_PRESETS[options.preset] or ICON_STYLE_PRESETS.clean
-    local borderSize = options.borderSize or preset.borderSize
+    local borderSize = preset.borderSize
+    if options.borderSize ~= nil then
+        borderSize = options.borderSize
+    end
     local padding = options.padding or preset.padding
     local trimIcon = options.trimIcon ~= nil and options.trimIcon or preset.trimIcon
     local showHighlight = options.showHighlight ~= nil and options.showHighlight or preset.showHighlight
     local highlightAlpha = options.highlightAlpha or preset.highlightAlpha
-    local bgAlpha = options.bgAlpha or preset.bgAlpha
+    local bgAlpha = preset.bgAlpha
+    if options.bgAlpha ~= nil then
+        bgAlpha = options.bgAlpha
+    end
     local quality = options.quality
     local borderColorKey = options.borderColorKey or "BORDER_DEFAULT"
     local hoverBorderColorKey = options.hoverBorderColorKey or "BORDER_ACCENT"
@@ -288,9 +294,12 @@ function OneWoW_GUI:SkinIconFrame(frame, options)
     if not frame._skinBg then
         frame._skinBg = frame:CreateTexture(nil, "BORDER")
         frame._skinBg:SetAllPoints(frame)
-        frame._skinBg:SetColorTexture(0, 0, 0, bgAlpha)
+    end
+    frame._skinBg:SetColorTexture(0, 0, 0, bgAlpha)
+    if bgAlpha > 0 then
+        frame._skinBg:Show()
     else
-        frame._skinBg:SetColorTexture(0, 0, 0, bgAlpha)
+        frame._skinBg:Hide()
     end
 
     if borderSize > 0 then

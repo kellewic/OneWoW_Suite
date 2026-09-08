@@ -21,6 +21,10 @@ OneWoW.Locale:Register(M._scope, "zhTW", {
     ["MMBTNS_ENHANCED_MENU"] = "增強的 OneWoW 選單",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "新增一列 OneWoW 快速啟動圖示。在下方選擇要顯示的圖示。",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "列出全部 OneWoW 圖示。取消勾選你不想出現在該列的圖示。僅在對應插件已載入時顯示。",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "增強圖示樣式",
+    ["MMBTNS_FEATURE_ICON_RING"] = "帶圓環",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "無圓環",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "圓環保留金色外圈。無圓環只顯示中間的符號。首頁和管理功能使用同一選擇。",
 
     ["MMBTNS_MAX_COLUMNS"] = "最大欄數",
     ["MMBTNS_MAX_ROWS"] = "最大列數",

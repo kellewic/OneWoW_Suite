@@ -32,7 +32,7 @@ Start, pause, and filter a live event log. Optional firehose (all events — noi
 
 ### Errors
 
-Session Lua errors with stack traces and copy. Optional DEVMODE floating list (`/1wdev`) with **Copy All** for every distinct error this session (same button on the Errors tab). If **!BugGrabber** is installed, the same captures show here.
+Session Lua errors with stack traces and copy. Optional DEVMODE floating list (`/1wdev`) with **Copy All** for every distinct error this session (same button on the Errors tab). If **!BugGrabber** is installed, the same captures show here. When this session has an error, the DevTools icon on Home and in the OneWoW collector row turns red. Click it to open this tab.
 
 ### Monitor
 
@@ -61,6 +61,7 @@ Theme, language (all 11 suite locales), and minimap button.
 * Enable it only when you need it. It is a utility, not part of the default player set.
 * The window will not stay open in combat.
 * Errors and frame details are safer to copy from here than from chat spam.
+* A red DevTools icon means this session has an error. Click it to open Errors. Clearing the log turns the icon gold again.
 
 ## Related
 

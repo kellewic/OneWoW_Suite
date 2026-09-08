@@ -33,7 +33,7 @@ function OneWoW_Utility_DevTool_API.OpenDevToolErrorsTab()
     end
 end
 
---- Whether the error logger has errors in the current session (minimap badge).
+--- Whether the error logger has errors in the current session (feature-icon tint).
 ---@return boolean
 function OneWoW_Utility_DevTool_API.HasCurrentSessionErrors()
     if ns.ErrorLogger and ns.ErrorLogger.HasCurrentSessionErrors then

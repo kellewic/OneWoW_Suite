@@ -54,6 +54,7 @@ All ecosystem addons read/write through GUI. No more duplicate theme/language/mi
 - `fontSizeOffset` - global font size adjustment, -3 to +5 (default: 0)
 - `minimap.hide` - minimap button visibility (default: false)
 - `minimap.theme` - faction icon: "horde", "alliance", or "neutral" (default: "horde")
+- `featureIcons.style` - suite feature faces: `"ring"` or `"ringless"` (default: `"ring"`). Ringless files are gold on transparent; `GetFeatureIcon` returns `plate = false` so Home, Manage Features, and collector skip the icon well. DevTools session errors tint that face red (`OneWoW:ApplyFeatureIconAlert`); click opens the Errors tab (`OneWoW:ResolveFeatureIconClick`). The logger fires `OneWoW_DevTool.ErrorAlert` when that state changes.
 
 ### Get a setting
 ```lua
@@ -63,6 +64,7 @@ local font   = OneWoW_GUI:GetSetting("font")            -- "default", "expresswa
 local offset = OneWoW_GUI:GetSetting("fontSizeOffset")  -- -3 to +5 (default 0)
 local hide   = OneWoW_GUI:GetSetting("minimap.hide")    -- true/false
 local icon   = OneWoW_GUI:GetSetting("minimap.theme")   -- "horde"/"alliance"/"neutral"
+local faces  = OneWoW_GUI:GetSetting("featureIcons.style") -- "ring" / "ringless"
 ```
 
 ### Set a setting (fires callbacks to all registered addons)
@@ -73,6 +75,7 @@ OneWoW_GUI:SetSetting("font", "expressway")
 OneWoW_GUI:SetSetting("fontSizeOffset", 2)       -- range: -3 to +5
 OneWoW_GUI:SetSetting("minimap.hide", true)
 OneWoW_GUI:SetSetting("minimap.theme", "alliance")
+OneWoW_GUI:SetSetting("featureIcons.style", "ringless")
 ```
 
 ### Register for settings change callbacks
@@ -93,6 +96,10 @@ end)
 
 OneWoW_GUI:RegisterSettingsCallback("OnIconThemeChanged", myAddon, function(self, newIconTheme)
     -- update your minimap icon
+end)
+
+OneWoW_GUI:RegisterSettingsCallback("OnFeatureIconStyleChanged", myAddon, function(self, newStyle)
+    -- Home / Manage Features / collector enhanced tiles use GetFeatureIcon
 end)
 
 OneWoW_GUI:RegisterSettingsCallback("OnFontChanged", myAddon, function(self, newFontKey)
@@ -151,6 +158,7 @@ addon folder — never a per-load-unit `OneWoW_*/Media/` tree.
 | Location | Use |
 |----------|-----|
 | `OneWoW/Media/` (root) | Shared assets: `icon-*.png`, faction minis, `bar.tga`, `OneWoWMini-*.tga`, `Fonts/` |
+| `OneWoW/Media/Features/` | Suite feature faces (`ring/` and `ringless/`), resolved by `OneWoW:GetFeatureIcon` |
 | `OneWoW/Media/<AddonName>/` | Assets owned by one unit (e.g. `OneWoW_QoL/cursorenhancer/`, `OneWoW_Utility_DevTool/devtools-error.ogg`) |
 
 **Lua:** use `OneWoW_GUI.Constants.MEDIA_BASE` — do not hardcode
@@ -1189,6 +1197,7 @@ local card = OneWoW_GUI:CreateSelectableCard(parent, {
     summary = "Cross-character dashboard for progress, gold, professions, bank, auctions, and lockouts.",
     badgeText = "Core Features",
     iconTexture = "Interface\\Icons\\Achievement_Guild_ClassyDwarf",
+    iconPlate = true, -- false skips the BG_TERTIARY icon well (ringless feature faces)
     checked = true,
     onToggle = function(card, checked) end,
 })
@@ -1649,6 +1658,7 @@ OneWoW_GUI:SkinIconFrame(existingFrame, {
     preset = "clean",         -- optional, style preset
     quality = 3,              -- optional, rarity border color
     trimIcon = true,          -- optional, trims blurry WoW icon edges
+    bgAlpha = 0.9,            -- optional; 0 hides the black well
     borderSize = 1,           -- optional, override preset border
     desaturate = false,       -- optional, gray out
     iconTexture = newTexture, -- optional, swap texture

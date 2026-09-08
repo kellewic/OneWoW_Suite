@@ -260,19 +260,27 @@ function UI:CreateHomeTab(parent)
             end
         end)
 
-        local iconFrame = OneWoW_GUI:CreateFrame(card, {
-            width = ICON_SIZE + 6,
-            height = ICON_SIZE + 6,
-            backdrop = BACKDROP_INNER_NO_INSETS,
-            bgColor = "BG_TERTIARY",
-            borderColor = "BORDER_SUBTLE",
-        })
+        local iconInfo = OneWoW:GetFeatureIcon(entry.addonName)
+        local iconFrame
+        if iconInfo and iconInfo.plate == false then
+            iconFrame = OneWoW_GUI:CreateLayoutFrame(card, {
+                width = ICON_SIZE + 6,
+                height = ICON_SIZE + 6,
+            })
+        else
+            iconFrame = OneWoW_GUI:CreateFrame(card, {
+                width = ICON_SIZE + 6,
+                height = ICON_SIZE + 6,
+                backdrop = BACKDROP_INNER_NO_INSETS,
+                bgColor = "BG_TERTIARY",
+                borderColor = "BORDER_SUBTLE",
+            })
+        end
         iconFrame:SetPoint("TOPLEFT", light, "BOTTOMLEFT", 0, -6)
 
         local icon = iconFrame:CreateTexture(nil, "ARTWORK")
         icon:SetSize(ICON_SIZE, ICON_SIZE)
         icon:SetPoint("CENTER", iconFrame, "CENTER", 0, 0)
-        local iconInfo = OneWoW:GetFeatureIcon(entry.addonName)
         if iconInfo and iconInfo.atlas then
             icon:SetAtlas(iconInfo.atlas, false)
         else
@@ -327,15 +335,19 @@ function UI:CreateHomeTab(parent)
         enableBtn:Hide()
 
         local function OpenFeature()
-            if isHub then
-                UI:Show(manifest.module)
-                return
+            local function fallback()
+                if isHub then
+                    UI:Show(manifest.module)
+                    return
+                end
+                local slashKey = STANDALONE_SLASH[addonName]
+                local handler = slashKey and SlashCmdList[slashKey]
+                if handler then
+                    handler("")
+                end
             end
-            local slashKey = STANDALONE_SLASH[addonName]
-            local handler = slashKey and SlashCmdList[slashKey]
-            if handler then
-                handler("")
-            end
+            local click = OneWoW:ResolveFeatureIconClick(addonName, fallback)
+            click()
         end
 
         card:SetScript("OnClick", function()
@@ -390,6 +402,7 @@ function UI:CreateHomeTab(parent)
                 afford:SetVertexColor(1, 1, 1, 1)
                 icon:SetDesaturated(false)
                 icon:SetVertexColor(1, 1, 1, 1)
+                OneWoW:ApplyFeatureIconAlert(icon, addonName)
             end
 
             if mismatch then
@@ -664,4 +677,6 @@ function UI:CreateHomeTab(parent)
     end
     parent.RefreshStatus = RefreshAll
     parent:HookScript("OnShow", RefreshAll)
+    EventRegistry:UnregisterCallback(OneWoW:GetFeatureIconAlertEvent(), UI)
+    EventRegistry:RegisterCallback(OneWoW:GetFeatureIconAlertEvent(), RefreshAll, UI)
 end

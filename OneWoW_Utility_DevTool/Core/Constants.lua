@@ -9,6 +9,8 @@ local itemLockCommonArgs = { "bagOrSlotIdx", "slotIdx" }
 ns.Constants = {
     -- Error logger: EventRegistry name for internal subscribers (e.g. future EventMonitor correlation)
     ERROR_CAPTURE_EVENT = "OneWoW_DevTool.ErrorCaptured",
+    -- Fired from UpdateErrorBadge when current-session errors appear or clear.
+    ERROR_ALERT_EVENT = "OneWoW_DevTool.ErrorAlert",
     -- Token-bucket refill rate (errors per second) before throttling capture
     ERROR_LOGGER_ERRORS_PER_SEC = 10,
     ERROR_LOGGER_ALERT_SOUND_FILE = OneWoW_GUI.Constants.MEDIA_BASE .. "OneWoW_Utility_DevTool\\devtools-error.ogg",

@@ -857,15 +857,25 @@ function OneWoW_GUI:CreateSelectableCard(parent, options)
     card.selectedAccent = selectedAccent
 
     local iconSize = options.iconSize or Constants.GUI.SELECTABLE_CARD_ICON_SIZE
-    local iconFrame = self:CreateFrame(card, {
-        width = iconSize + 8,
-        height = iconSize + 8,
-        backdrop = Constants.BACKDROP_INNER_NO_INSETS,
-        bgColor = "BG_TERTIARY",
-        borderColor = "BORDER_SUBTLE",
-    })
+    local iconPlate = options.iconPlate ~= false
+    local iconFrame
+    if iconPlate then
+        iconFrame = self:CreateFrame(card, {
+            width = iconSize + 8,
+            height = iconSize + 8,
+            backdrop = Constants.BACKDROP_INNER_NO_INSETS,
+            bgColor = "BG_TERTIARY",
+            borderColor = "BORDER_SUBTLE",
+        })
+    else
+        iconFrame = self:CreateLayoutFrame(card, {
+            width = iconSize + 8,
+            height = iconSize + 8,
+        })
+    end
     iconFrame:SetPoint("LEFT", card, "LEFT", OneWoW_GUI:GetSpacing("MD"), 0)
     card.iconFrame = iconFrame
+    card._iconPlate = iconPlate
 
     local icon = iconFrame:CreateTexture(nil, "ARTWORK")
     icon:SetSize(iconSize, iconSize)
@@ -963,7 +973,9 @@ function OneWoW_GUI:CreateSelectableCard(parent, options)
             myself.summary:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
             myself.icon:SetDesaturated(true)
             myself.icon:SetAlpha(0.4)
-            myself.iconFrame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
+            if myself._iconPlate then
+                myself.iconFrame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
+            end
             if myself.badge then
                 myself.badge:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
                 myself.badge.text:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
@@ -978,7 +990,9 @@ function OneWoW_GUI:CreateSelectableCard(parent, options)
             myself.summary:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
             myself.icon:SetDesaturated(false)
             myself.icon:SetAlpha(1)
-            myself.iconFrame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_ACCENT"))
+            if myself._iconPlate then
+                myself.iconFrame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_ACCENT"))
+            end
             if myself.badge then
                 myself.badge:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_ACCENT"))
                 myself.badge.text:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_ACCENT"))
@@ -991,7 +1005,9 @@ function OneWoW_GUI:CreateSelectableCard(parent, options)
             myself.summary:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
             myself.icon:SetDesaturated(true)
             myself.icon:SetAlpha(0.68)
-            myself.iconFrame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
+            if myself._iconPlate then
+                myself.iconFrame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
+            end
             if myself.badge then
                 myself.badge:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_SUBTLE"))
                 myself.badge.text:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))

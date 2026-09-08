@@ -21,6 +21,10 @@ OneWoW.Locale:Register(M._scope, "ptBR", {
     ["MMBTNS_ENHANCED_MENU"] = "Menu OneWoW aprimorado",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "Adiciona uma linha superior de icones de inicio rapido do OneWoW. Escolha abaixo quais mostrar.",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "Todos os icones OneWoW estao na lista. Desmarque os que nao quiser nessa linha. Um icone so aparece quando o addon dele estiver carregado.",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "Estilo dos icones aprimorados",
+    ["MMBTNS_FEATURE_ICON_RING"] = "Com anel",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "Sem anel",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "Anel mantem o circulo dourado. Sem anel mostra so o simbolo. Inicio e Gerenciar recursos usam a mesma escolha.",
 
     ["MMBTNS_MAX_COLUMNS"] = "Colunas máx.",
     ["MMBTNS_MAX_ROWS"] = "Linhas máx.",

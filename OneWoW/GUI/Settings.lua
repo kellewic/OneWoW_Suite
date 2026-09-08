@@ -36,6 +36,7 @@ function OneWoW_GUI:GetSetting(key)
     elseif key == "fontSizeOffset" then return db.fontSizeOffset
     elseif key == "minimap.hide" then return db.minimap.hide
     elseif key == "minimap.theme" then return db.minimap.theme
+    elseif key == "featureIcons.style" then return db.featureIcons.style
     elseif key == "moneyDisplay.useLetters" then
         return db.moneyDisplay.useLetters == true
     elseif key == "moneyDisplay.useGrouping" then
@@ -72,6 +73,13 @@ function OneWoW_GUI:SetSetting(key, value)
         if not db.minimap then db.minimap = {} end
         db.minimap.theme = value
         FireCallbacks("OnIconThemeChanged", value)
+    elseif key == "featureIcons.style" then
+        if not db.featureIcons then db.featureIcons = {} end
+        if value ~= "ringless" then
+            value = "ring"
+        end
+        db.featureIcons.style = value
+        FireCallbacks("OnFeatureIconStyleChanged", value)
     elseif key == "moneyDisplay.useLetters" then
         db.moneyDisplay.useLetters = value and true or false
         FireCallbacks("OnMoneyDisplayChanged", value)

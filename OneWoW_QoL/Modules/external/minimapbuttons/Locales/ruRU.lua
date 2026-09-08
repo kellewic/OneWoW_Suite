@@ -21,6 +21,10 @@ OneWoW.Locale:Register(M._scope, "ruRU", {
     ["MMBTNS_ENHANCED_MENU"] = "Улучшенное меню OneWoW",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "Добавляет верхний ряд значков быстрого запуска OneWoW. Выберите ниже, какие показывать.",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "В списке все значки OneWoW. Снимите те, которые не нужны в этом ряду. Значок появляется только когда его аддон загружен.",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "Стиль значков быстрого запуска",
+    ["MMBTNS_FEATURE_ICON_RING"] = "С кольцом",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "Без кольца",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "Кольцо оставляет золотой круг. Без кольца остается только символ. Главная и Управление функциями используют тот же выбор.",
 
     ["MMBTNS_MAX_COLUMNS"] = "Макс. столбцов",
     ["MMBTNS_MAX_ROWS"] = "Макс. строк",

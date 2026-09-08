@@ -62,6 +62,7 @@ function ns.Profiles.CaptureSettings()
         language  = g.language,
         theme     = g.theme,
         minimap   = DeepCopy(g.minimap),
+        featureIcons = DeepCopy(g.featureIcons),
         settings  = DeepCopy(g.settings),
         portalHub = DeepCopy(g.portalHub),
         searchCatalog = DeepCopy(g.searchCatalog),
@@ -95,6 +96,9 @@ function ns.Profiles.ApplySettings(snapshot, profileName)
         if snapshot.core.minimap then
             if snapshot.core.minimap.hide  ~= nil then g.minimap.hide  = snapshot.core.minimap.hide  end
             if snapshot.core.minimap.theme       then g.minimap.theme  = snapshot.core.minimap.theme end
+        end
+        if snapshot.core.featureIcons and snapshot.core.featureIcons.style then
+            g.featureIcons.style = snapshot.core.featureIcons.style
         end
         if snapshot.core.settings then DeepMerge(g.settings,  snapshot.core.settings)  end
         if snapshot.core.portalHub then DeepMerge(g.portalHub, snapshot.core.portalHub) end

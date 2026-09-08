@@ -21,6 +21,10 @@ OneWoW.Locale:Register(M._scope, "deDE", {
     ["MMBTNS_ENHANCED_MENU"] = "Erweitertes OneWoW-Menü",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "Fügt eine obere Zeile mit OneWoW-Schnellstart-Symbolen hinzu. Wähle darunter, welche angezeigt werden.",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "Jedes OneWoW-Symbol ist aufgeführt. Deaktiviere alle, die du in dieser Zeile nicht willst. Ein Symbol erscheint nur, wenn sein Addon geladen ist.",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "Stil der erweiterten Symbole",
+    ["MMBTNS_FEATURE_ICON_RING"] = "Mit Ring",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "Ohne Ring",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "Ring behält den goldenen Kreis. Ohne Ring zeigt nur das Symbol. Startseite und Funktionen verwalten nutzen dieselbe Wahl.",
 
     ["MMBTNS_MAX_COLUMNS"] = "Max. Spalten",
     ["MMBTNS_MAX_ROWS"] = "Max. Zeilen",

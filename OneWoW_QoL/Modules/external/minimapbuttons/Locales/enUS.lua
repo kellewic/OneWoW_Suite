@@ -20,6 +20,10 @@ OneWoW.Locale:Register(M._scope, "enUS", {
     ["MMBTNS_ENHANCED_MENU"] = "Enhanced OneWoW Menu",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "Adds a top row of OneWoW quick-launch icons. Pick which ones to show below.",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "Every OneWoW icon is listed. Uncheck any you do not want on that row. An icon only appears when its addon is loaded.",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "Enhanced icon style",
+    ["MMBTNS_FEATURE_ICON_RING"] = "With ring",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "Ringless",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "With ring keeps the gold circle. Ringless is just the symbol. Home and Manage Features use the same choice.",
 
     ["MMBTNS_MAX_COLUMNS"] = "Max Columns",
     ["MMBTNS_MAX_ROWS"] = "Max Rows",

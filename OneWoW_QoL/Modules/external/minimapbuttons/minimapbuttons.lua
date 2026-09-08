@@ -1156,7 +1156,7 @@ local function ApplyCompanionIcon(tex, comp)
     if info and info.texCoords then
         tex:SetTexCoord(unpack(info.texCoords))
     else
-        tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        tex:SetTexCoord(0, 1, 0, 1)
     end
 end
 
@@ -1170,7 +1170,16 @@ local function AddEnhancedButton(comp, action)
     tex:SetAllPoints()
     ApplyCompanionIcon(tex, comp)
 
-    OneWoW_GUI:SkinIconFrame(btn, { preset = "clean" })
+    local info = OneWoW:GetFeatureIcon(comp.addon)
+    local skin = { preset = "clean", trimIcon = false }
+    if info and info.plate == false then
+        skin.bgAlpha = 0
+        skin.borderSize = 0
+    end
+    OneWoW_GUI:SkinIconFrame(btn, skin)
+    btn._addon = comp.addon
+    local face = btn._skinnedIcon or tex
+    OneWoW:ApplyFeatureIconAlert(face, comp.addon)
 
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -1185,13 +1194,14 @@ local function AddEnhancedButton(comp, action)
     end)
     btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
-    if action then
-        btn:SetScript("OnClick", function() action() end)
-    else
-        btn:SetScript("OnClick", function()
+    btn:SetScript("OnClick", function()
+        local click = OneWoW:ResolveFeatureIconClick(comp.addon, action)
+        if click then
+            click()
+        else
             OneWoW.UI:Toggle()
-        end)
-    end
+        end
+    end)
 
     table.insert(enhancedRow, btn)
 end
@@ -1733,9 +1743,24 @@ function MinimapButtonsModule:OnEnable()
     OneWoW_GUI:RegisterSettingsCallback("OnIconThemeChanged", self, function()
         MinimapButtonsModule:UpdateIcon()
     end)
+    OneWoW_GUI:RegisterSettingsCallback("OnFeatureIconStyleChanged", self, function()
+        MinimapButtonsModule:Refresh()
+    end)
+
+    local alertEvent = OneWoW:GetFeatureIconAlertEvent()
+    EventRegistry:UnregisterCallback(alertEvent, self)
+    EventRegistry:RegisterCallback(alertEvent, function()
+        for _, btn in ipairs(enhancedRow) do
+            local face = btn._skinnedIcon
+            if face and btn._addon then
+                OneWoW:ApplyFeatureIconAlert(face, btn._addon)
+            end
+        end
+    end, self)
 end
 
 function MinimapButtonsModule:OnDisable()
+    EventRegistry:UnregisterCallback(OneWoW:GetFeatureIconAlertEvent(), self)
     if self._eventFrame then
         self._eventFrame:UnregisterAllEvents()
     end

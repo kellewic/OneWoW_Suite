@@ -2,6 +2,7 @@
 
 ## Home
 - Catalog data stores on Home and in Manage Features are Zone Database, NPC Database, Item Database, Quest Database, Quest Archive Database, and TradeSkill Database.
+- Home, Manage Features, and first-run cards use OneWoW feature icons instead of borrowed game art. Ringless sits on the card, not a black square.
 
 ---
 
@@ -50,12 +51,18 @@
 ---
 
 # DevTool
+## Errors
+- When DevTools catches a Lua error, the DevTools icon on Home and in the collector row turns red. Click it to open the Errors tab.
+
 ## Textures
 - Double-click a region on a texture sheet to add its name to a collected list. Copy the whole list when you are ready, or Clear it. Double-click the same region again to take that name off the list.
 
 ---
 
 # QoL
+## Minimap Button Collector
+- The enhanced OneWoW row uses the suite feature icons. In collector settings, pick With ring or Ringless. Home and Manage Features follow the same choice. Ringless sits on the panel, not a black square.
+
 ## ESC Menu
 - Turning off ESC Menu Panel now hides the character info, notes, and portal strips. Character Info, Zone Notes, and left/right side choices apply when you open the game menu.
 - Character info is a themed card with your portrait, a faction badge, spec, item level, Mythic+ rating, and gold. Mail and durability sit on the top right. Great Vault shows Raid, Dungeon, and World bars, and says Claim Reward when last week's chest is waiting. Trading Post travel points use a progress bar and say Cache Available when the Collector's Cache is waiting. Housing Endeavors can sit under that; turn them off on the ESC Menu Panel Features tab. Click the card to close the menu and open the character screen.
@@ -118,4 +125,4 @@
 
 ---
 
-- **Last Updated**: Sep 7, 2026
+- **Last Updated**: Sep 8, 2026

@@ -319,6 +319,56 @@ local function BuildContent(container, onRelayout)
         local extrasShown = false
         if s.enhancedMenu then
             extrasShown = true
+
+            local style = OneWoW_GUI:GetSetting("featureIcons.style")
+            if style ~= "ringless" then
+                style = "ring"
+            end
+            local styleLabels = {
+                ring = L["MMBTNS_FEATURE_ICON_RING"],
+                ringless = L["MMBTNS_FEATURE_ICON_RINGLESS"],
+            }
+
+            local styleLabel = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            styleLabel:SetPoint("TOPLEFT", content, "TOPLEFT", 12, cy)
+            styleLabel:SetText(L["MMBTNS_FEATURE_ICON_STYLE"] .. ":")
+            styleLabel:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
+
+            local styleDropdown, styleDropdownText = OneWoW_GUI:CreateDropdown(content, {
+                width = 140,
+                height = 26,
+                text = styleLabels[style],
+            })
+            styleDropdown:SetPoint("LEFT", styleLabel, "RIGHT", 8, 0)
+            styleDropdown._activeValue = style
+
+            OneWoW_GUI:AttachFilterMenu(styleDropdown, {
+                searchable = false,
+                menuHeight = 90,
+                buildItems = function()
+                    return {
+                        { value = "ring", text = L["MMBTNS_FEATURE_ICON_RING"] },
+                        { value = "ringless", text = L["MMBTNS_FEATURE_ICON_RINGLESS"] },
+                    }
+                end,
+                getActiveValue = function()
+                    local v = OneWoW_GUI:GetSetting("featureIcons.style")
+                    if v ~= "ringless" then
+                        return "ring"
+                    end
+                    return v
+                end,
+                onSelect = function(value, text)
+                    styleDropdown._activeValue = value
+                    styleDropdownText:SetText(text)
+                    OneWoW_GUI:SetSetting("featureIcons.style", value)
+                end,
+            })
+            cy = cy - 32
+
+            local _, styleCy = AddDescription(content, cy, L["MMBTNS_FEATURE_ICON_STYLE_DESC"], contentWidth)
+            cy = styleCy
+
             local _, extrasCy = AddDescription(content, cy, L["MMBTNS_ENHANCED_EXTRAS_DESC"], contentWidth)
             cy = extrasCy
 

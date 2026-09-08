@@ -21,6 +21,10 @@ OneWoW.Locale:Register(M._scope, "koKR", {
     ["MMBTNS_ENHANCED_MENU"] = "향상된 OneWoW 메뉴",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "OneWoW 빠른 실행 아이콘 상단 줄을 추가합니다. 아래에서 표시할 아이콘을 고르세요.",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "모든 OneWoW 아이콘이 목록에 있습니다. 그 줄에 보고 싶지 않은 항목은 체크를 해제하세요. 아이콘은 해당 애드온이 로드된 경우에만 나타납니다.",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "향상된 아이콘 스타일",
+    ["MMBTNS_FEATURE_ICON_RING"] = "테두리 있음",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "테두리 없음",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "테두리는 금색 원을 유지합니다. 테두리 없음은 가운데 상징만 보여 줍니다. 홈과 기능 관리도 같은 선택을 사용합니다.",
 
     ["MMBTNS_MAX_COLUMNS"] = "최대 열",
     ["MMBTNS_MAX_ROWS"] = "최대 행",

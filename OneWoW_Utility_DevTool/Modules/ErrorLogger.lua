@@ -31,6 +31,11 @@ local function captureEventName()
     return c.ERROR_CAPTURE_EVENT or "OneWoW_DevTool.ErrorCaptured"
 end
 
+local function alertEventName()
+    local c = getConstants()
+    return c.ERROR_ALERT_EVENT or "OneWoW_DevTool.ErrorAlert"
+end
+
 local function getErrorDB()
     return ns.db.global.errorDB
 end
@@ -625,32 +630,31 @@ end
 function ErrorLogger:UpdateErrorBadge()
     local showBadge = self:HasCurrentSessionErrors()
 
-    if not self.errorBadge then
-        if not showBadge then
-            return
-        end
+    if not self.errorBadge and showBadge then
         local button = self:GetMinimapButton()
-        if not button then
-            return
+        if button then
+            local badge = CreateFrame("Frame", nil, button)
+            badge:SetSize(20, 20)
+            badge:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
+            badge:SetFrameLevel(button:GetFrameLevel() + 5)
+
+            local icon = badge:CreateTexture(nil, "ARTWORK")
+            icon:SetAllPoints()
+            icon:SetAtlas("Ping_Chat_Warning")
+
+            self.errorBadge = badge
         end
-
-        local badge = CreateFrame("Frame", nil, button)
-        badge:SetSize(20, 20)
-        badge:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
-        badge:SetFrameLevel(button:GetFrameLevel() + 5)
-
-        local icon = badge:CreateTexture(nil, "ARTWORK")
-        icon:SetAllPoints()
-        icon:SetAtlas("Ping_Chat_Warning")
-
-        self.errorBadge = badge
     end
 
-    if showBadge then
-        self.errorBadge:Show()
-    else
-        self.errorBadge:Hide()
+    if self.errorBadge then
+        if showBadge then
+            self.errorBadge:Show()
+        else
+            self.errorBadge:Hide()
+        end
     end
+
+    EventRegistry:TriggerEvent(alertEventName(), showBadge)
 end
 
 function ErrorLogger:UpdateUI()

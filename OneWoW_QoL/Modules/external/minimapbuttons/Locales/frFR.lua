@@ -21,6 +21,10 @@ OneWoW.Locale:Register(M._scope, "frFR", {
     ["MMBTNS_ENHANCED_MENU"] = "Menu OneWoW amélioré",
     ["MMBTNS_ENHANCED_MENU_DESC"] = "Ajoute une rangée supérieure d'icônes de lancement rapide OneWoW. Choisissez ci-dessous celles à afficher.",
     ["MMBTNS_ENHANCED_EXTRAS_DESC"] = "Toutes les icônes OneWoW sont listées. Décochez celles que vous ne voulez pas sur cette rangée. Une icône n'apparaît que lorsque son addon est chargé.",
+    ["MMBTNS_FEATURE_ICON_STYLE"] = "Style des icônes améliorées",
+    ["MMBTNS_FEATURE_ICON_RING"] = "Avec anneau",
+    ["MMBTNS_FEATURE_ICON_RINGLESS"] = "Sans anneau",
+    ["MMBTNS_FEATURE_ICON_STYLE_DESC"] = "Anneau garde le cercle doré. Sans anneau n'affiche que le symbole. Accueil et Gérer les fonctionnalités utilisent le même choix.",
 
     ["MMBTNS_MAX_COLUMNS"] = "Colonnes max.",
     ["MMBTNS_MAX_ROWS"] = "Lignes max.",

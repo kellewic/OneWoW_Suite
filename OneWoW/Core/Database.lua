@@ -18,6 +18,9 @@ local DEFAULTS = {
         minimapPos = 220,
         theme = "horde",
     },
+    featureIcons = {
+        style = "ring", -- "ring" | "ringless"
+    },
     moneyDisplay = {
         useLetters = false,
         useGrouping = true,

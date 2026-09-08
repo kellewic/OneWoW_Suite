@@ -145,11 +145,27 @@ function OneWoW:GetLoadedComponents()
     return ns._loadedComponents
 end
 
---- Suite feature face for a load-unit folder name ({ texture?, atlas?, texCoords? }).
+--- Suite feature face for a load-unit folder name ({ texture?, atlas?, texCoords?, plate? }).
 ---@param addonName string
 ---@return table|nil
 function OneWoW:GetFeatureIcon(addonName)
     return ns:GetFeatureIcon(addonName)
+end
+
+function OneWoW:FeatureIconHasAlert(addonName)
+    return ns:FeatureIconHasAlert(addonName)
+end
+
+function OneWoW:ApplyFeatureIconAlert(texture, addonName)
+    return ns:ApplyFeatureIconAlert(texture, addonName)
+end
+
+function OneWoW:ResolveFeatureIconClick(addonName, fallback)
+    return ns:ResolveFeatureIconClick(addonName, fallback)
+end
+
+function OneWoW:GetFeatureIconAlertEvent()
+    return ns:GetFeatureIconAlertEvent()
 end
 
 --- Registered minimap launcher entries ({ addon, label, tabKey, callback }).

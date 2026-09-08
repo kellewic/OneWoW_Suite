@@ -965,6 +965,7 @@ function FirstRun:BuildPanel(parent, opts)
                     iconTexture = iconInfo.texture,
                     iconAtlas = iconInfo.atlas,
                     iconTexCoords = iconInfo.texCoords,
+                    iconPlate = iconInfo.plate,
                     checked = selections[addon],
                     onToggle = function(_, checked)
                         selections[addon] = checked and true or false
@@ -1120,6 +1121,7 @@ function FirstRun:BuildPanel(parent, opts)
                             iconTexture = featIconInfo.texture,
                             iconAtlas = featIconInfo.atlas,
                             iconTexCoords = featIconInfo.texCoords,
+                            iconPlate = featIconInfo.plate,
                             checked = featureSelections[feat.id] and true or false,
                             interactive = true,
                             onToggle = function(_, checked)
