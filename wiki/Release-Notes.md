@@ -90,6 +90,10 @@
 #### Instance Toast
 - Zoning into a dungeon or raid shows collectable counts on the instance toast when that expansion's Zones data is loaded. If it is not, the toast says Zones Catalog not loaded.
 
+#### Toast Alerts
+- New Collections toasts when you loot an uncollected collectible, using the same collected status as Catalog, including housing decor and heirlooms. Mounts, pets, and toys still toast when you learn them, without a second popup for the same unlock.
+- Upgrade Alerts now toasts when a gear upgrade for this character appears in your bags, using the same item-level or Pawn rules as the Upgrade overlay.
+
 #### Fixes
 - ESC and AFK no longer load Catalog Journal data just to name this place. That data stays unloaded until you open Catalog Zones (or another tab that needs it), so open-world memory and hitching stay down.
 

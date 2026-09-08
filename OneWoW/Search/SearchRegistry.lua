@@ -58,7 +58,7 @@ local INTENT = {
 local TAB_EXTRA_TAGS = {
     waypins = { "pins", "pin", "oneway", "map pin", "map pins", "minimap pin" },
     collectibles = { "mount", "pet", "toy", "transmog" },
-    toastalerts = { "popup", "pop-up", "notification", "alert", "toast" },
+    toastalerts = { "popup", "pop-up", "notification", "alert", "toast", "upgrade", "collection", "loot" },
     overlays = { "overlay", "bag overlay", "bag icon" },
     tooltips = { "tooltip", "hover" },
     quests = { "quest", "quest log" },
@@ -67,7 +67,7 @@ local TAB_EXTRA_TAGS = {
 }
 
 local FEATURE_TAB_TAGS = {
-    toastalerts = { "toast", "popup", "pop-up", "notification", "alert" },
+    toastalerts = { "toast", "popup", "pop-up", "notification", "alert", "upgrade", "collection", "loot" },
     overlays = { "overlay", "overlays", "bag overlay" },
     tooltips = { "tooltip", "tooltips", "hover" },
 }

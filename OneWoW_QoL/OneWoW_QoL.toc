@@ -53,6 +53,7 @@ UI\AltScopeSection.lua
 # toast types + settings tab that live in QoL)
 Features\toastalerts.lua
 Features\toast-loot.lua
+Features\toast-upgrade.lua
 Features\toast-instance.lua
 UI\t-toastalerts.lua
 

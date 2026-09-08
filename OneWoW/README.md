@@ -27,12 +27,10 @@ See useful information at a glance when you hover over items in your bags:
 - **Warbound & Soulbound** - Know which items are bound to your character
 
 ### Collection Notifications
-Get toast notifications (pop-up alerts) whenever you earn something new:
-- New mounts discovered
-- New pets collected
-- New toys unlocked
-- New recipes learned
-- New transmog appearances obtained
+Get toast notifications (pop-up alerts) when something new can be added to a collection, or when you learn it:
+- Uncollected mounts, pets, toys, recipes, transmog, housing decor, and heirlooms that appear in your bags
+- Mounts, pets, and toys when you learn them (no second popup for the same unlock)
+- Gear upgrades for this character that appear in your bags (Upgrade Alerts)
 
 ### Enhanced Item Tooltips
 Hover over any item to see extra helpful information:

@@ -90,6 +90,7 @@ function OneWoW_QoL:OnAddonLoaded()
     -- Toast types export their arming functions on ns; the handler registry
     -- doesn't exist at their file scope.
     OneWoW_QoL:RegisterLoginHandler("toast-loot", ns.ToastLoot.OnLogin)
+    OneWoW_QoL:RegisterLoginHandler("toast-upgrade", ns.ToastUpgrade.OnLogin)
     OneWoW_QoL:RegisterEnteringWorldHandler("toast-instance", ns.ToastInstance.OnEnteringWorld)
     -- Portal Hub: module before esc-menu integration.
     OneWoW_QoL:RegisterLoginHandler("portalhub", function() ns.PortalHubModule:Initialize() end)

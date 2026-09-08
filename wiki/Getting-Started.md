@@ -32,7 +32,7 @@ Even with no optional modules, **OneWoW** includes:
 
 * **Portal hub** — teleports, portals, and hearthstones in one place (favorites, filters, one-click use)
 * **Item status on hover** — collections, item level, junk, protected, quest, crafting, transmog, bind type, and more
-* **Collection toasts** — alerts when you learn mounts, pets, toys, recipes, transmog, and similar unlocks
+* **Collection toasts** — alerts when you loot an uncollected collectible (and when you learn mounts, pets, or toys), plus gear-upgrade toasts when those features are on
 * **Enhanced tooltips** — collection status, notes, tracking hints, recipe status, categories. Vendor price and Item Tracker (where it is / where to get it) are configurable under tooltip settings. Source lines show when that Catalog pack is already loaded.
 * **Title-bar search** — type a setting name or a short question in the hub search box to jump to that page (for example popup pins)
 * **Shared themes** across OneWoW windows

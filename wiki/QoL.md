@@ -50,7 +50,7 @@ UI and map tools: **AFK Panel** (same Character Card and Zone Card as ESC, plus 
 
 **Copy Text** — copy tooltip or UI text under the cursor.
 
-Built-in with QoL (not separate toggles): toast-style alerts and the Portals hub / ESC strip. Mages get separate Teleport and Portal flyouts on ESC; show or hide each set in Portals settings. ESC portal icons use short destination names; Portals settings can enlarge that text or hide it so you use the icon and tooltip only. You can pick a specific hearthstone toy, show only this season's Hero's Path flyouts, let new dungeon teleports come from the game, and turn on a Group Finder teleport prompt after you join a dungeon.
+Built-in with QoL (not separate toggles): toast-style alerts (New Collections when you loot something you do not have yet, Upgrade Alerts when a gear upgrade hits your bags, instance and note alerts) and the Portals hub / ESC strip. Mages get separate Teleport and Portal flyouts on ESC; show or hide each set in Portals settings. ESC portal icons use short destination names; Portals settings can enlarge that text or hide it so you use the icon and tooltip only. You can pick a specific hearthstone toy, show only this season's Hero's Path flyouts, let new dungeon teleports come from the game, and turn on a Group Finder teleport prompt after you join a dungeon.
 
 There are **36** external modules. The full labeled catalog lives in the repo ([MODULES.md](https://github.com/kellewic/OneWoW_Suite/blob/main/OneWoW_QoL/MODULES.md)).
 

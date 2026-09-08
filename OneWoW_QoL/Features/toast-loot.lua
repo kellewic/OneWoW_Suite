@@ -5,22 +5,49 @@ local OneWoW = OneWoW
 local PE = OneWoW.PredicateEngine
 local Toasts = OneWoW.Toasts
 local Inventory = OneWoW.Inventory
+local Collectibles = OneWoW.Collectibles
+
+-- ============================================================================
+-- Toast loot (New Collections)
+-- ============================================================================
+-- Fires when an uncollected collectible appears in bags, using the same
+-- Collectibles.GetItemCollectionStatus path Catalog loot rows use.
+-- NEW_MOUNT_ADDED / NEW_PET_ADDED / NEW_TOY_ADDED still toast when you learn
+-- one that did not already toast from bags (direct grants, same-session use).
+-- ============================================================================
 
 local TYPE_COLORS = {
-    mount  = {1.00, 0.84, 0.00, 1.0},
-    pet    = {0.20, 0.80, 0.80, 1.0},
-    toy    = {0.70, 0.40, 1.00, 1.0},
-    recipe = {1.00, 0.60, 0.20, 1.0},
-    tmog   = {1.00, 0.40, 0.60, 1.0},
+    mounts    = {1.00, 0.84, 0.00, 1.0},
+    pets      = {0.20, 0.80, 0.80, 1.0},
+    toys      = {0.70, 0.40, 1.00, 1.0},
+    recipes   = {1.00, 0.60, 0.20, 1.0},
+    tmogs     = {1.00, 0.40, 0.60, 1.0},
+    housing   = {0.45, 0.85, 0.55, 1.0},
+    heirlooms = {0.90, 0.80, 0.50, 1.0},
 }
 
 local TITLE_KEYS = {
-    mount  = "TOAST_NEW_MOUNT",
-    pet    = "TOAST_NEW_PET",
-    toy    = "TOAST_NEW_TOY",
-    recipe = "TOAST_NEW_RECIPE",
-    tmog   = "TOAST_NEW_TMOG",
+    mounts    = "TOAST_NEW_MOUNT",
+    pets      = "TOAST_NEW_PET",
+    toys      = "TOAST_NEW_TOY",
+    recipes   = "TOAST_NEW_RECIPE",
+    tmogs     = "TOAST_NEW_TMOG",
+    housing   = "TOAST_NEW_HOUSING",
+    heirlooms = "TOAST_NEW_HEIRLOOM",
 }
+
+local COLLECTIBLE_CATEGORY = {
+    mount      = "mounts",
+    pet        = "pets",
+    toy        = "toys",
+    recipe     = "recipes",
+    appearance = "tmogs",
+    set        = "tmogs",
+    decor      = "housing",
+    heirloom   = "heirlooms",
+}
+
+local toastedKeys = {}
 
 local function GetCfg()
     return OneWoW.SettingsFeatureRegistry:GetFeatureSettings("toastalerts", "detectiontypes")
@@ -30,29 +57,47 @@ local function LootEnabled()
     return OneWoW.SettingsFeatureRegistry:IsEnabled("toastalerts", "detectiontypes")
 end
 
+---@param category string
+---@return boolean
 local function CategoryEnabled(category)
     return GetCfg()[category] ~= false
 end
 
-local function GetL(key, fallback)
-    return (ns.L and ns.L[key]) or fallback
+---@param key string|nil
+---@return boolean
+local function AlreadyToasted(key)
+    return key ~= nil and toastedKeys[key] == true
 end
 
-local function FireLootToast(category, itemName, itemTexture, _)
+---@param key string|nil
+local function RememberKey(key)
+    if key then
+        toastedKeys[key] = true
+    end
+end
+
+---@param category string
+---@param itemName string
+---@param itemTexture number|string
+---@param collectibleKey string|nil
+local function FireLootToast(category, itemName, itemTexture, collectibleKey)
     if not LootEnabled() then return end
     if not CategoryEnabled(category) then return end
     if not itemName or itemName == "" then return end
+    if AlreadyToasted(collectibleKey) then return end
 
+    RememberKey(collectibleKey)
     Toasts.FireToast({
         toastType = "loot",
         category  = category,
-        title     = GetL(TITLE_KEYS[category], category),
+        title     = ns.L[TITLE_KEYS[category]],
         subtitle  = itemName,
         icon      = itemTexture,
         color     = TYPE_COLORS[category],
     })
 end
 
+---@param mountID number
 local function OnNewMount(mountID)
     if not LootEnabled() or not CategoryEnabled("mounts") then return end
     if not mountID or mountID <= 0 then return end
@@ -61,41 +106,39 @@ local function OnNewMount(mountID)
     if not isCollected then return end
     if not name or not icon then return end
 
-    FireLootToast("mount", name, icon, nil)
+    FireLootToast("mounts", name, icon, Collectibles.BuildKey("mount", mountID))
 end
 
+---@param petGUID string
 local function OnNewPet(petGUID)
     if not LootEnabled() or not CategoryEnabled("pets") then return end
     if not petGUID or petGUID == "" then return end
 
-    -- returns: speciesID, customName, level, xp, maxXp, displayID, isFavorite, name, icon, ...
     local speciesID, _, _, _, _, _, _, name, icon = C_PetJournal.GetPetInfoByPetID(petGUID)
     speciesID = tonumber(speciesID)
     if not speciesID or speciesID <= 0 then return end
     if not name or not icon then return end
 
-    FireLootToast("pet", name, icon, nil)
+    FireLootToast("pets", name, icon, Collectibles.BuildKey("pet", speciesID))
 end
 
+---@param itemID number
 local function OnNewToy(itemID)
     if not LootEnabled() or not CategoryEnabled("toys") then return end
     if not itemID or itemID <= 0 then return end
 
-    -- Use C_ToyBox.GetToyInfo for authoritative toy data.
-    -- PE:BuildProps relies on hyperlink-based item info, which is frequently
-    -- uncached the moment NEW_TOY_ADDED fires (especially for seasonal-vendor
-    -- toys like the Children's Week balloons), causing nameRaw to be empty
-    -- and the toast to silently no-op.
     local _, name, icon = C_ToyBox.GetToyInfo(itemID)
     if not name or not icon then return end
     if not PlayerHasToy(itemID) then return end
 
-    FireLootToast("toy", name, icon, nil)
+    FireLootToast("toys", name, icon, Collectibles.BuildKey("toy", itemID))
 end
 
 local bagCache  = {}
 local bagReady  = false
 
+---@param info table
+---@return string
 local function GetItemCacheKey(info)
     if info.itemGUID and info.itemGUID ~= "" then
         return info.itemGUID
@@ -113,27 +156,40 @@ local function BuildBagCache()
     bagReady = true
 end
 
+---@param bag number
+---@param slot number
+---@param info table
+---@param myProfsCompiled (fun(props: table): boolean)|nil
+local function ConsiderNewCollectible(bag, slot, info, myProfsCompiled)
+    local col = Collectibles.GetItemCollectionStatus(info.itemID, info.hyperlink, {
+        bagID = bag,
+        slotID = slot,
+        hyperlink = info.hyperlink,
+    })
+    if not col or not col.applicable or col.collected then return end
+
+    local category = COLLECTIBLE_CATEGORY[col.type]
+    if not category or not CategoryEnabled(category) then return end
+
+    if category == "recipes" and myProfsCompiled then
+        local props = PE:BuildProps(info.itemID, bag, slot, info)
+        if not PE:SafeEvaluate(myProfsCompiled, props) then return end
+    end
+
+    local name = C_Item.GetItemInfo(info.hyperlink or info.itemID)
+    local icon = info.iconFileID
+    if not name or not icon then return end
+
+    FireLootToast(category, name, icon, col.key)
+end
+
 local function ScanBagsForCollectibles()
     if not bagReady then return end
     if not LootEnabled() then return end
 
-    local tmogsEnabled = CategoryEnabled("tmogs")
-    local recipesEnabled = CategoryEnabled("recipes")
-    if not tmogsEnabled and not recipesEnabled then return end
-
-    local tmogsCompiled = nil
-    local recipeCompiled = nil
-
-    if tmogsEnabled then
-        tmogsCompiled = PE:Compile("#transmog&!#knowntransmog")
-    end
-
-    if recipesEnabled then
-        local expr = "#recipe&!#collected"
-        if GetCfg().recipesOnlyMyProfessions then
-            expr = expr .. "&#myprofs"
-        end
-        recipeCompiled = PE:Compile(expr)
+    local myProfsCompiled = nil
+    if CategoryEnabled("recipes") and GetCfg().recipesOnlyMyProfessions then
+        myProfsCompiled = PE:Compile("#myprofs")
     end
 
     local newCache = {}
@@ -144,25 +200,7 @@ local function ScanBagsForCollectibles()
         newCache[guid] = info.itemID
 
         if not bagCache[guid] then
-            local props = PE:BuildProps(info.itemID, bag, slot, info)
-
-            if props.name and props.icon then
-                if tmogsEnabled and tmogsCompiled then
-                    local result = PE:SafeEvaluate(tmogsCompiled, props)
-
-                    if result then
-                        FireLootToast("tmog", props.nameRaw, props.icon, nil)
-                    end
-                end
-
-                if recipesEnabled and recipeCompiled then
-                    local result = PE:SafeEvaluate(recipeCompiled, props)
-
-                    if result then
-                        FireLootToast("recipe", props.nameRaw, props.icon, nil)
-                    end
-                end
-            end
+            ConsiderNewCollectible(bag, slot, info, myProfsCompiled)
         end
     end)
 
@@ -206,7 +244,6 @@ lootFrame:RegisterEvent("NEW_PET_ADDED")
 lootFrame:RegisterEvent("NEW_TOY_ADDED")
 lootFrame:RegisterEvent("SKILL_LINES_CHANGED")
 
--- Bag collectible scans route through OneWoW.Inventory (BAG_UPDATE_DELAYED funnel).
 OneWoW.Inventory.RegisterDelayedCallback("ToastLoot", function()
     ScanBagsForCollectibles()
 end)

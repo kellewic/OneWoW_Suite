@@ -466,7 +466,7 @@ function Toasts.FireToast(data)
 end
 
 -- toastType -> settings feature id holding that category's sound key.
-local SOUND_FEATURE = { loot = "detectiontypes", notes = "notealerts", instance = "instances" }
+local SOUND_FEATURE = { loot = "detectiontypes", notes = "notealerts", instance = "instances", upgrade = "upgrades" }
 
 function Toasts.PlayToastSound(category)
     local featureId = SOUND_FEATURE[category]

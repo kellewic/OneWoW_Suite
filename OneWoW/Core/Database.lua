@@ -302,6 +302,8 @@ local DEFAULTS = {
                 recipes = false,
                 recipesOnlyMyProfessions = false,
                 tmogs   = false,
+                housing = false,
+                heirlooms = false,
                 suppressBlizzardAlerts = false,
                 sound   = SOUNDKIT.READY_CHECK,
             },
@@ -314,7 +316,7 @@ local DEFAULTS = {
                 items   = false,
                 sound   = SOUNDKIT.ACHIEVEMENT_MENU_OPEN,
             },
-            upgrades       = { enabled = false },
+            upgrades       = { enabled = false, sound = SOUNDKIT.READY_CHECK },
             anchor         = { visible = true, locked = false },
         },
         tooltips = {

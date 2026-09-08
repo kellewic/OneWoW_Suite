@@ -71,7 +71,7 @@ Clipboard and text tools.
 These ship with QoL core code (not separate external modules):
 
 - **Toggles** — searchable list of current game Options (gameplay, interface, nameplates, combat text, camera, chat, audio, graphics). Star a row to keep it at the top.
-- **Toast notifications** — loot, collection, and instance alerts (`Features/`)
+- **Toast notifications** — New Collections (loot of uncollected collectibles), Upgrade Alerts, instance, and note alerts (`Features/`)
 - **Portal hub data** — hearthstones, teleports, and custom portals integrated with ESC Panel and the [OneWoW](../OneWoW/README.md) hub (`Portals/`)
 
 ---

@@ -95,11 +95,13 @@ local function AddDetectionCards(stack)
     stack:AddCard("toast:detection:types", L["TOAST_LOOT_TYPES_HEADER"], function(content, _)
         local y = 0
         local types = {
-            { key = "mounts",  label = L["TOAST_LOOT_MOUNTS"] },
-            { key = "pets",    label = L["TOAST_LOOT_PETS"] },
-            { key = "toys",    label = L["TOAST_LOOT_TOYS"] },
-            { key = "recipes", label = L["TOAST_LOOT_RECIPES"] },
-            { key = "tmogs",   label = L["TOAST_LOOT_TMOGS"] },
+            { key = "mounts",    label = L["TOAST_LOOT_MOUNTS"] },
+            { key = "pets",      label = L["TOAST_LOOT_PETS"] },
+            { key = "toys",      label = L["TOAST_LOOT_TOYS"] },
+            { key = "recipes",   label = L["TOAST_LOOT_RECIPES"] },
+            { key = "tmogs",     label = L["TOAST_LOOT_TMOGS"] },
+            { key = "housing",   label = HOUSING_SETTINGS_LABEL },
+            { key = "heirlooms", label = HEIRLOOMS },
         }
 
         for _, entry in ipairs(types) do
@@ -189,6 +191,24 @@ local function AddItemAlertsCards(stack)
     end)
 end
 
+local function AddUpgradeCards(stack)
+    stack:AddCard("toast:upgrades:note", L["TOAST_UPGRADES_TITLE"], function(content, _)
+        local infoText = OneWoW_GUI:CreateFS(content, 12)
+        infoText:SetPoint("TOPLEFT", content, "TOPLEFT", 0, 0)
+        infoText:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, 0)
+        infoText:SetJustifyH("LEFT")
+        infoText:SetWordWrap(true)
+        infoText:SetText(L["TOAST_UPGRADES_NOTE"])
+        infoText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
+        return math.max(1, infoText:GetStringHeight() + 10)
+    end)
+
+    stack:AddCard("toast:upgrades:sound", L["TOAST_SOUND_HEADER"], function(content, _)
+        local y = CreateSoundDropdown(content, "upgrades", 0)
+        return math.max(1, math.abs(y))
+    end)
+end
+
 --- Instance feature has no CreateSection chrome — keep a free note under the header.
 local function AddInstanceNote(dsc, yOffset)
     local infoText = OneWoW_GUI:CreateFS(dsc, 12)
@@ -255,6 +275,7 @@ local function ShowFeatureDetail(split, feature, tabName, selectedRow)
     local useCards = feature.id == "general"
         or feature.id == "detectiontypes"
         or feature.id == "notealerts"
+        or feature.id == "upgrades"
 
     if useCards then
         cardsHost = CreateFrame("Frame", nil, dsc)
@@ -273,6 +294,8 @@ local function ShowFeatureDetail(split, feature, tabName, selectedRow)
             AddDetectionCards(stack)
         elseif feature.id == "notealerts" then
             AddItemAlertsCards(stack)
+        elseif feature.id == "upgrades" then
+            AddUpgradeCards(stack)
         end
 
         stack:Finish()
