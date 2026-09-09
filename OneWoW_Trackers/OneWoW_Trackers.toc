@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: |cFFFFD100OneWoW|r - |cFF00FF00Trackers|r
 ## Notes: OneWoW Addon that: provides tracker lists, guides, dailies, weeklies, and todo tracking.
 ## Author: OneWoW Dev Team

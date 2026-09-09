@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: |cFFFFD100OneWoW|r - |cFF00FF00Catalog|r
 ## Notes: OneWoW Addon that: provides a catalog of game data including journal, vendors, tradeskills, quests, collectibles, and housing.
 ## Author: OneWoW Dev Team

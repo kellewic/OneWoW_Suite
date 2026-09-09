@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: |cFFFFD100OneWoW|r - Utility: |cFFFF0000DevTool|r
 ## Notes: OneWoW Utility Addon that: provides frame inspection and addon development utilities.
 ## Author: OneWoW Dev Team

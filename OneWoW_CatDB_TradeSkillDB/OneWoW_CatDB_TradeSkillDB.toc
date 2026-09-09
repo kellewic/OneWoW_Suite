@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: OneWoW - Data: |cFFFFFFFFTradeskills|r
 ## Notes: OneWoW Data Addon that: provides profession and recipe data for the Catalog.
 ## Author: OneWoW Dev Team

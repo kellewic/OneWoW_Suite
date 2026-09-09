@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: |cFF00FF00OneWoW|r
 ## Notes: OneWoW - Central Hub for all OneWoW addons
 ## Author: OneWoW Dev Team

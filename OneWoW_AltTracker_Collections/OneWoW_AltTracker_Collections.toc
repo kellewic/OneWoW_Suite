@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: OneWoW - Data: |cFFFFFFFFCollections|r
 ## Notes: OneWoW Data Addon that: tracks quests, reputations, and achievements for each of your characters.
 ## Author: OneWoW Dev Team

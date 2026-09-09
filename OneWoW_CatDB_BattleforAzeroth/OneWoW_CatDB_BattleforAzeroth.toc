@@ -1,5 +1,5 @@
 ## Interface: 120100
-## Version: R6.2609.0106
+## Version: R6.2609.0905
 ## Title: OneWoW - Data: |cFFFFFFFFBattleforAzeroth|r
 ## Notes: OneWoW Catalog data for BattleforAzeroth.
 ## Author: OneWoW Dev Team
