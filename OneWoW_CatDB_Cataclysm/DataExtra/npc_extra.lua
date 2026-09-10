@@ -1,5 +1,40 @@
 -- npc_extra.lua
 local ADDON_NAME = ...
 OneWoW.CatalogData:Defer(ADDON_NAME, 'npc', function()
-return {}
+return {
+[24239] = {npcID=24239,expansion=3,roles={"boss"},placeKeys={"instance:77","zone:333"},encounterIDs={190}},
+[24396] = {npcID=24396,expansion=3,roles={"rare"},placeKeys={"instance:77","zone:333"}},
+[24480] = {npcID=24480,name="Mojo",expansion=3,displayID=28501,roles={"rare"},placeKeys={"instance:77","zone:333"}},
+[41376] = {npcID=41376,expansion=3,roles={"boss"},placeKeys={"instance:73"},encounterIDs={174}},
+[43324] = {npcID=43324,expansion=3,roles={"boss"},placeKeys={"instance:72","zone:294"},encounterIDs={167}},
+[47120] = {npcID=47120,expansion=3,roles={"boss"},placeKeys={"instance:75","zone:282"},encounterIDs={139}},
+[50005] = {npcID=50005,expansion=3,roles={"rare"},placeKeys={"zone:204"}},
+[50009] = {npcID=50009,expansion=3,roles={"rare"},locations={[204]={x=63.12,y=31.62}},placeKeys={"zone:204"}},
+[50056] = {npcID=50056,expansion=3,roles={"rare"},locations={[198]={x=37.1,y=72.33}},placeKeys={"zone:198"}},
+[50061] = {npcID=50061,expansion=3,roles={"rare"},locations={[207]={x=43.1,y=60.8}},placeKeys={"zone:207"}},
+[50063] = {npcID=50063,expansion=3,roles={"rare"},locations={[249]={x=38.2,y=60.28}},placeKeys={"zone:249"}},
+[50089] = {npcID=50089,expansion=3,roles={"rare"},locations={[241]={x=53.23,y=7.77}},placeKeys={"zone:241"}},
+[52148] = {npcID=52148,expansion=3,roles={"boss"},placeKeys={"instance:76","zone:337"},encounterIDs={185}},
+[52392] = {npcID=52392,expansion=3,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[52405] = {npcID=52405,expansion=3,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[52409] = {npcID=52409,expansion=3,roles={"boss"},placeKeys={"instance:78"},encounterIDs={198}},
+[52418] = {npcID=52418,expansion=3,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[52422] = {npcID=52422,expansion=3,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[52440] = {npcID=52440,expansion=3,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[52442] = {npcID=52442,expansion=3,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[52498] = {npcID=52498,expansion=3,roles={"boss"},placeKeys={"instance:78"},encounterIDs={192}},
+[52530] = {npcID=52530,expansion=3,roles={"boss"},placeKeys={"instance:78"},encounterIDs={194}},
+[52558] = {npcID=52558,expansion=3,roles={"boss"},placeKeys={"instance:78"},encounterIDs={193}},
+[52571] = {npcID=52571,expansion=3,roles={"boss"},placeKeys={"instance:78"},encounterIDs={197}},
+[52894] = {npcID=52894,name="Lashtail Hatchling",expansion=3,displayID=38065,roles={"rare"},placeKeys={"instance:76","zone:337"}},
+[53691] = {npcID=53691,expansion=3,roles={"boss"},placeKeys={"instance:78"},encounterIDs={195}},
+[53833] = {npcID=53833,expansion=3,roles={"rare"},placeKeys={"instance:78"}},
+[53879] = {npcID=53879,expansion=3,roles={"boss"},placeKeys={"instance:187","zone:409"},encounterIDs={318}},
+[55689] = {npcID=55689,expansion=3,roles={"boss"},placeKeys={"instance:187","zone:409"},encounterIDs={317}},
+[56173] = {npcID=56173,expansion=3,roles={"boss"},placeKeys={"instance:187","zone:409"},encounterIDs={333}},
+[58153] = {npcID=58153,expansion=3,roles={"rare"},placeKeys={"instance:187","zone:409"}},
+[143138] = {npcID=143138,expansion=3,roles={"rare"},locations={[337]={x=51.67,y=57.08}},placeKeys={"instance:76","zone:337"}},
+[188112] = {npcID=188112,expansion=3,roles={"rare"},placeKeys={"instance:187","zone:409"}},
+[249196] = {npcID=249196,expansion=3,category="housing",roles={"vendor"},locations={[241]={x=49.8,y=81.3}},placeKeys={"zone:241"}},
+}
 end)

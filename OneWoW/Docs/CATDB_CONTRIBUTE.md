@@ -51,11 +51,14 @@ while WoW is running.
 This is the developer import path. Players never do this.
 
 1. Site: `php OneWoW_ComWeb/tools/export_contribute.php --out PATH`
-2. Workspace dry-run: `python bin/catdb_contribute_merge.py --from PATH`
-3. Apply: `python bin/catdb_contribute_merge.py --from PATH --apply`
+2. Workspace: `python bin/warehouse/contribute_pull.py` (also inside
+   `python bin/warehouse/update.py`). Export lands in
+   `.warehouse/Sources/2-DataSet/1wContribute`.
+3. Extra emit: `python bin/catalog/emit_extra.py` — hole-fill existing
+   `Data/` rows or write new ids to `DataExtra/`.
 
-The merge writes the existing NPC / Quest / TradeSkill shard files. New
-rows look like every other shipped row. Do not add a Contribute.lua pack.
+`catdb_contribute_merge.py --apply` into `Data/` is not the import path.
+New rows look like every other shipped row. Do not add a Contribute.lua pack.
 Full notes: Companion `OneWoW_ComWeb/docs/CONTRIBUTE.md` and Workspace
 `Docs/CATDB_CONTRIBUTE.md`.
 

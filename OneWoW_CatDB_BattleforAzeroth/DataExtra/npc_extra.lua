@@ -1,5 +1,40 @@
 -- npc_extra.lua
 local ADDON_NAME = ...
 OneWoW.CatalogData:Defer(ADDON_NAME, 'npc', function()
-return {}
+return {
+[35607] = {npcID=35607,expansion=7,roles={"vendor"},locations={[1165]={x=44.96,y=40.15}},placeKeys={"zone:1165"}},
+[122963] = {npcID=122963,expansion=7,roles={"boss"},placeKeys={"instance:968"},encounterIDs={2083}},
+[122967] = {npcID=122967,expansion=7,roles={"boss"},placeKeys={"instance:968"},encounterIDs={2082}},
+[126983] = {npcID=126983,expansion=7,roles={"boss"},placeKeys={"instance:1001"},encounterIDs={2095}},
+[127484] = {npcID=127484,expansion=7,roles={"boss"},placeKeys={"instance:1002"},encounterIDs={2098}},
+[128652] = {npcID=128652,expansion=7,roles={"boss"},placeKeys={"instance:1023"},encounterIDs={2140}},
+[129214] = {npcID=129214,expansion=7,roles={"boss"},placeKeys={"instance:1012"},encounterIDs={2109}},
+[129227] = {npcID=129227,expansion=7,roles={"boss"},placeKeys={"instance:1012"},encounterIDs={2114}},
+[131864] = {npcID=131864,expansion=7,roles={"boss"},placeKeys={"instance:1021"},encounterIDs={2129}},
+[132253] = {npcID=132253,expansion=7,roles={"rare"},locations={[862]={x=69,y=31}},placeKeys={"zone:862"},encounterIDs={2141}},
+[133384] = {npcID=133384,expansion=7,roles={"boss"},placeKeys={"instance:1030"},encounterIDs={2143}},
+[133389] = {npcID=133389,expansion=7,roles={"boss"},placeKeys={"instance:1030"},encounterIDs={2144}},
+[133392] = {npcID=133392,expansion=7,roles={"boss"},placeKeys={"instance:1030"},encounterIDs={2145}},
+[134060] = {npcID=134060,expansion=7,roles={"boss"},placeKeys={"instance:1036"},encounterIDs={2155}},
+[135322] = {npcID=135322,expansion=7,roles={"boss"},placeKeys={"instance:1041"},encounterIDs={2165}},
+[135451] = {npcID=135451,expansion=7,roles={"rare"},placeKeys={"instance:1002"}},
+[138964] = {npcID=138964,name="Spawn of Merektha",expansion=7,displayID=86088,roles={"boss"},placeKeys={"instance:1030"},encounterIDs={2143}},
+[138967] = {npcID=138967,expansion=7,roles={"boss"},placeKeys={"instance:1031"},encounterIDs={2195}},
+[139049] = {npcID=139049,name="Filthy Slime",expansion=7,displayID=86101,roles={"rare"},placeKeys={"instance:1002"}},
+[139372] = {npcID=139372,name="Vengeful Chicken",expansion=7,displayID=86231,roles={"rare"},placeKeys={"instance:1021"}},
+[140125] = {npcID=140125,name="Miimii",expansion=7,displayID=86574,roles={"boss"},placeKeys={"instance:1041"},encounterIDs={2172}},
+[140319] = {npcID=140319,expansion=7,roles={"rare"},placeKeys={"instance:1012"}},
+[144796] = {npcID=144796,expansion=7,roles={"boss"},placeKeys={"instance:1176"},encounterIDs={2334}},
+[146409] = {npcID=146409,expansion=7,roles={"boss"},placeKeys={"instance:1176"},encounterIDs={2343}},
+[150159] = {npcID=150159,expansion=7,roles={"boss"},placeKeys={"instance:1178"},encounterIDs={2357}},
+[150190] = {npcID=150190,expansion=7,roles={"boss"},placeKeys={"instance:1178"},encounterIDs={2355}},
+[150222] = {npcID=150222,expansion=7,roles={"boss"},placeKeys={"instance:1178"},encounterIDs={2358}},
+[152364] = {npcID=152364,expansion=7,roles={"boss"},placeKeys={"instance:1179"},encounterIDs={2353}},
+[152671] = {npcID=152671,expansion=7,roles={"rare"},placeKeys={"zone:1355"},encounterIDs={2363}},
+[152910] = {npcID=152910,expansion=7,roles={"boss"},placeKeys={"instance:1179"},encounterIDs={2361}},
+[158041] = {npcID=158041,name="N'Zoth the Corruptor",expansion=7,displayID=93507,roles={"boss"},placeKeys={"instance:1180"},encounterIDs={2375}},
+[251921] = {npcID=251921,expansion=7,category="housing",roles={"vendor"},locations={[862]={x=58,y=62.6}},placeKeys={"zone:862"}},
+[252313] = {npcID=252313,expansion=7,category="housing",roles={"vendor"},locations={[942]={x=59.4,y=69.6}},placeKeys={"zone:942"}},
+[252316] = {npcID=252316,expansion=7,category="housing",roles={"vendor"},locations={[895]={x=53.4,y=31.3}},placeKeys={"zone:895"}},
+}
 end)

@@ -891,7 +891,7 @@ return {
 		instanceID=759,
 		order=999,
 		uiMapID=147,
-		difficultyIDs={14,24,13629,13631,13818,13819},
+		difficultyIDs={14,13629,13631,13818,13819},
 		loot={
 			{itemID=45088,diffs={14},faction=-1},
 			{itemID=45089,diffs={14},faction=-1},
@@ -948,10 +948,6 @@ return {
 			{itemID=46348,diffs={14},faction=-1},
 			{itemID=46350,diffs={14},faction=-1},
 			{itemID=46351,diffs={14},faction=-1},
-			{itemID=156255,diffs={24},faction=-1},
-			{itemID=156257,diffs={24},faction=-1},
-			{itemID=156462,diffs={24},faction=-1},
-			{itemID=156463,diffs={24},faction=-1},
 		},
 	},
 	[20000760]={

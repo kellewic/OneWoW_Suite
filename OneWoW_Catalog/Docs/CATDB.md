@@ -22,10 +22,12 @@ Learned overlays (`OneWoW_CatDB_ZoneDB_DB`, `NPCDB_DB`, `ItemDB_DB`,
 CompSync Contribute reads `sync = true` rows. Contract:
 [CATDB_CONTRIBUTE](../../OneWoW/Docs/CATDB_CONTRIBUTE.md).
 
-Emit lives in OneWoW_Workspace: `python bin/catdb_emit_base.py` (CSV/DB2
-→ `Data/`), `python bin/catdb_emit_extra.py` (`DataExtra/`), then
-`bin/catdb_era_pack.py`. Intermediates: `.warehouse/Generated/CatDB/`.
-Row counts and file sizes: [CatalogDataStats.md](CatalogDataStats.md)
-(`python bin/catdb_era_stats.py`; pack also rewrites it).
-Contribute facts merge into those same tables
-(`bin/catdb_contribute_merge.py`), not a side pack.
+Emit lives in OneWoW_Workspace:
+
+```bat
+python bin/warehouse/update.py
+python bin/catalog/emit_base.py
+python bin/catalog/emit_extra.py
+```
+
+`Data/` is client/Wago. `DataExtra/` is 2-DataSet + Offline drop (new ids; hole-fill existing Data rows). Intermediates: `.warehouse/Generated/CatDB/`. Stats: [`.warehouse/CatalogDataStats.md`](../../../.warehouse/CatalogDataStats.md) in OneWoW_Workspace ([pointer](CatalogDataStats.md)). Contribute lands in `2-DataSet/1wContribute`, then extra emit.

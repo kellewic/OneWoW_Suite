@@ -53,7 +53,7 @@ return {
 		instanceID=250,
 		order=999,
 		uiMapID=272,
-		difficultyIDs={2,24,10981,10982},
+		difficultyIDs={2,10981,10982},
 		loot={
 			{itemID=22543,diffs={},faction=-1},
 			{itemID=23615,diffs={},faction=-1},
@@ -63,7 +63,6 @@ return {
 			{itemID=30585,diffs={2},faction=-1},
 			{itemID=32079,diffs={10981},faction=-1,questIDs={10981}},
 			{itemID=32092,diffs={10982},faction=-1,questIDs={10982}},
-			{itemID=225678,diffs={24},faction=-1},
 		},
 	},
 	[20000251]={

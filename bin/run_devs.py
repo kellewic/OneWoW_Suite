@@ -32,7 +32,9 @@ def find_devs() -> Path | None:
                 return path
     parent = SUITE_ROOT.parent
     if (parent / "bin").is_dir() and (
-        (parent / ".cursor").is_dir() or (parent / "bin" / "locale_verify.py").is_file()
+        (parent / ".cursor").is_dir()
+        or (parent / "bin" / "locale_verify.py").is_file()
+        or (parent / "bin" / "locale" / "locale_verify.py").is_file()
     ):
         return parent
     for name in ("OneWoW_Workspace", "OneWoW_Devs"):
@@ -51,9 +53,17 @@ def main(argv: list[str]) -> int:
     if devs is None:
         print(f"OneWoW_Workspace not found; skipping {script}")
         return 0
-    target = devs / "bin" / script
+    bin_dir = devs / "bin"
+    target = bin_dir / script
     if not target.is_file():
-        print(f"missing {target}", file=sys.stderr)
+        name = Path(script).name
+        for sub in ("check", "locale", "release", "docs", "catalog", "warehouse", "wowhead", "devtool"):
+            candidate = bin_dir / sub / name
+            if candidate.is_file():
+                target = candidate
+                break
+    if not target.is_file():
+        print(f"missing {bin_dir / script}", file=sys.stderr)
         return 1
     return subprocess.call([sys.executable, str(target), *rest])
 

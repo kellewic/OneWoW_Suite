@@ -29,8 +29,6 @@ places={
 		order=2,
 		instanceType="zone",
 		isCity=true,
-		encounterIDs={10051596},
-		npcIDs={51596},
 	},
 	["zone:85"]={
 		kind="zone",
@@ -45,8 +43,6 @@ places={
 		order=3,
 		instanceType="zone",
 		isCity=true,
-		encounterIDs={10130911},
-		npcIDs={130911},
 		achievementIDs={14142,19961,41938,41947},
 	},
 	["zone:110"]={
@@ -75,8 +71,6 @@ places={
 		order=5,
 		instanceType="zone",
 		isCity=true,
-		encounterIDs={10112958,10130828},
-		npcIDs={112958,130828},
 	},
 	["zone:103"]={
 		kind="zone",
@@ -118,48 +112,6 @@ places={
 		order=8,
 		instanceType="zone",
 		isCity=true,
-	},
-},
-encounters={
-	[10051596]={
-		encounterID=10051596,
-		order=0,
-		uiMapID=87,
-		npcIDs={51596},
-		loot={
-			{itemID=68611,diffs={},faction=-1},
-		},
-	},
-	[10112958]={
-		encounterID=10112958,
-		order=0,
-		name="Soulare of Andorhal",
-		uiMapID=84,
-		npcIDs={112958},
-		loot={
-			{itemID=117573,diffs={},faction=-1},
-		},
-	},
-	[10130828]={
-		encounterID=10130828,
-		order=0,
-		uiMapID=84,
-		npcIDs={130828},
-		loot={
-			{itemID=134831,diffs={},faction=-1},
-		},
-	},
-	[10130911]={
-		encounterID=10130911,
-		order=0,
-		uiMapID=85,
-		npcIDs={130911},
-		loot={
-			{itemID=134831,diffs={},faction=-1},
-			{itemID=155907,diffs={},faction=-1},
-			{itemID=155909,diffs={},faction=-1},
-			{itemID=155910,diffs={},faction=-1},
-		},
 	},
 }
 }

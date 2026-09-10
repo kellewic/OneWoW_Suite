@@ -389,14 +389,5 @@ return {
 			{itemID=208542,diffs={77851,23},faction=-1,questIDs={77851,23}},
 		},
 	},
-	[30002023]={
-		encounterID=30002023,
-		order=999,
-		uiMapID=2023,
-		difficultyIDs={75467},
-		loot={
-			{itemID=203683,diffs={75467},faction=-1,questIDs={75467}},
-		},
-	},
 }
 end)

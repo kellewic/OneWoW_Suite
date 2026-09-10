@@ -108,6 +108,7 @@ return {
 			{itemID=271438,diffs={17,14,15,16},faction=-1},
 			{itemID=271440,diffs={17,14,15,16},faction=-1},
 			{itemID=271441,diffs={17,14,15,16},faction=-1},
+			{itemID=271444,diffs={17,14,15,16},faction=-1},
 			{itemID=271445,diffs={17,14,15,16},faction=-1},
 			{itemID=271451,diffs={17,14,15,16},faction=-1},
 			{itemID=271452,diffs={17,14,15,16},faction=-1},
