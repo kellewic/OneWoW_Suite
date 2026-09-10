@@ -68,7 +68,6 @@ Recipe fields (all included when present):
 python bin/catdb_tradeskill_emit.py
 python bin/catdb_tradeskill_emit.py --from-db2
 python bin/catdb_status.py tradeskill
-python bin/catdb_contribute_merge.py --from EXPORT
 ```
 
 Emit writes TradeSkillDB. `--from-db2` rebuilds from warehouse CSVs.

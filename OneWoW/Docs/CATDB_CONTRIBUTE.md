@@ -57,7 +57,7 @@ This is the developer import path. Players never do this.
 3. Extra emit: `python bin/catalog/emit_extra.py` — hole-fill existing
    `Data/` rows or write new ids to `DataExtra/`.
 
-`catdb_contribute_merge.py --apply` into `Data/` is not the import path.
+Do not merge test Contribute rows. Extra emit writes era `Data/` / `DataExtra/`.
 New rows look like every other shipped row. Do not add a Contribute.lua pack.
 Full notes: Companion `OneWoW_ComWeb/docs/CONTRIBUTE.md` and Workspace
 `Docs/CATDB_CONTRIBUTE.md`.
