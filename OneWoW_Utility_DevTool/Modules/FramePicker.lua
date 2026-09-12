@@ -1,10 +1,44 @@
+-- ============================================================================
+-- FramePicker
+-- ============================================================================
+-- Pick Frame overlay: hover the UI, Tab to cycle, click/Enter to inspect.
+-- Uses C_System.GetFrameStack (same stack as /fstack) on a 0.1s cadence.
+-- Do not walk EnumerateFrames here -- that path tanks FPS on dense 12.x UI.
+-- ============================================================================
+
 local _, ns = ...
 
 local OneWoW_GUI = OneWoW_GUI
 local L = ns.L
 
+local GetTime = GetTime
+local IsShiftKeyDown = IsShiftKeyDown
+local IsMouseButtonDown = IsMouseButtonDown
+
+local STACK_UPDATE_INTERVAL = 0.1
+
 local FramePicker = {}
 ns.FramePicker = FramePicker
+
+local detailsLines = {}
+
+--- True when `frame` is the picker overlay, info window, highlight, or a child of those.
+---@param frame ScriptRegion
+---@param ancestor Frame|nil
+---@return boolean
+local function isUnder(frame, ancestor)
+    if not ancestor then
+        return false
+    end
+    local current = frame
+    while current do
+        if current == ancestor then
+            return true
+        end
+        current = current.GetParent and current:GetParent()
+    end
+    return false
+end
 
 function FramePicker:Initialize()
     if self.overlay then return end
@@ -18,13 +52,14 @@ function FramePicker:Initialize()
 
     self.currentFrame = nil
     self.lastMouseState = false
+    self.frameIndex = 1
+    self.allFrames = {}
+    self.nextStackUpdate = 0
+    self.detailsKey = nil
 
     self.overlay:SetScript("OnUpdate", function(_, elapsed)
         FramePicker:OnUpdate(elapsed)
     end)
-
-    self.frameIndex = 1
-    self.allFrames = {}
 
     self.overlay:SetScript("OnKeyDown", function(_, key)
         if key == "ESCAPE" then
@@ -64,6 +99,122 @@ function FramePicker:Initialize()
     self.infoWindow = infoWindow
 end
 
+--- True when `frame` belongs to the picker chrome (must not be pickable).
+---@param frame ScriptRegion
+---@return boolean
+function FramePicker:IsPickerUI(frame)
+    if isUnder(frame, self.overlay) then
+        return true
+    end
+    if isUnder(frame, self.infoWindow) then
+        return true
+    end
+    return isUnder(frame, ns.FrameInspector.highlightFrame)
+end
+
+--- Cursor stack from the client, minus picker chrome and forbidden regions.
+---@return ScriptRegion[]
+function FramePicker:CollectValidFrames()
+    local stack = C_System.GetFrameStack()
+    local validFrames = {}
+    for i = 1, #stack do
+        local frame = stack[i]
+        if frame and not (frame.IsForbidden and frame:IsForbidden()) and not self:IsPickerUI(frame) then
+            tinsert(validFrames, frame)
+        end
+    end
+    return validFrames
+end
+
+--- Refresh the info window and highlight for `self.frameIndex` in `self.allFrames`.
+function FramePicker:ShowSelection()
+    local validFrames = self.allFrames
+    local targetFrame = validFrames[self.frameIndex]
+
+    if not targetFrame then
+        self.currentFrame = nil
+        if self.detailsKey ~= "empty" then
+            self.detailsKey = "empty"
+            if #validFrames == 0 then
+                self.infoWindow.details:SetText(L["FRAME_PICKER_MSG_NO_FRAME"])
+            else
+                self.infoWindow.details:SetText(L["FRAME_PICKER_ALL_FILTERED"])
+            end
+        end
+        ns.FrameInspector:ClearHighlight()
+        return
+    end
+
+    self.currentFrame = targetFrame
+    ns.FrameInspector:HighlightFrame(targetFrame)
+
+    local detailsKey = tostring(targetFrame) .. ":" .. self.frameIndex .. ":" .. #validFrames
+    if detailsKey == self.detailsKey then
+        return
+    end
+    self.detailsKey = detailsKey
+
+    wipe(detailsLines)
+    if #validFrames > 1 then
+        tinsert(detailsLines, (L["FRAME_PICKER_FRAME_OF"]):format(self.frameIndex, #validFrames))
+        tinsert(detailsLines, "")
+    end
+
+    local name = ns.safeGet(targetFrame, "GetName") or "Anonymous"
+    if type(name) ~= "string" then
+        name = "Anonymous"
+    end
+    local ftype = ns.safeGet(targetFrame, "GetObjectType") or "Unknown"
+
+    tinsert(detailsLines, "NAME: " .. name)
+    tinsert(detailsLines, "TYPE: " .. ftype)
+
+    local shown = ns.safeGet(targetFrame, "IsShown")
+    if shown ~= nil then
+        tinsert(detailsLines, "SHOWN: " .. (shown and "Yes" or "No"))
+    end
+
+    local mouse = ns.safeGet(targetFrame, "IsMouseEnabled")
+    if mouse ~= nil then
+        tinsert(detailsLines, "MOUSE: " .. (mouse and "Yes" or "No"))
+    end
+
+    local parent = targetFrame.GetParent and targetFrame:GetParent()
+    if parent then
+        local pname = ns.safeGet(parent, "GetName") or "Anonymous"
+        if type(pname) ~= "string" then
+            pname = "Anonymous"
+        end
+        tinsert(detailsLines, "PARENT: " .. pname)
+    end
+
+    local width = ns.safeGet(targetFrame, "GetWidth")
+    local height = ns.safeGet(targetFrame, "GetHeight")
+    if width ~= nil and height ~= nil then
+        tinsert(detailsLines, string.format("SIZE: %.0f x %.0f", width, height))
+    end
+
+    local strata = ns.safeGet(targetFrame, "GetFrameStrata")
+    if strata then
+        tinsert(detailsLines, "STRATA: " .. strata)
+    end
+
+    local level = ns.safeGet(targetFrame, "GetFrameLevel")
+    if level ~= nil then
+        tinsert(detailsLines, "LEVEL: " .. level)
+    end
+
+    self.infoWindow.details:SetText(table.concat(detailsLines, "\n"))
+end
+
+function FramePicker:RefreshStack()
+    self.allFrames = self:CollectValidFrames()
+    if self.frameIndex > #self.allFrames then
+        self.frameIndex = 1
+    end
+    self:ShowSelection()
+end
+
 function FramePicker:Start()
     self:Initialize()
 
@@ -73,6 +224,13 @@ function FramePicker:Start()
         self.wasMainFrameShown = true
         ns.UI.mainFrame:Hide()
     end
+
+    self.currentFrame = nil
+    self.frameIndex = 1
+    self.allFrames = {}
+    self.detailsKey = nil
+    self.nextStackUpdate = 0
+    self.lastMouseState = false
 
     self.overlay:Show()
     self.overlay:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -89,6 +247,7 @@ function FramePicker:CycleFrame()
 
     self.frameIndex = (self.frameIndex % #self.allFrames) + 1
     ns:Print((L["FRAME_PICKER_MSG_CYCLING"]):format(self.frameIndex, #self.allFrames))
+    self:ShowSelection()
 end
 
 function FramePicker:Cancel()
@@ -96,6 +255,8 @@ function FramePicker:Cancel()
 
     self.overlay:Hide()
     self.infoWindow:Hide()
+    self.currentFrame = nil
+    self.detailsKey = nil
     ns.FrameInspector:ClearHighlight()
 
     if self.wasMainFrameShown and ns.UI and ns.UI.mainFrame then
@@ -105,78 +266,7 @@ function FramePicker:Cancel()
     ns:Print(L["FRAME_PICKER_MSG_CANCELLED"])
 end
 
-function FramePicker:GetGeometricFramesAtCursor()
-    local scale = UIParent:GetEffectiveScale()
-    local x, y = GetCursorPosition()
-    x, y = x / scale, y / scale
-
-    local framesAtCursor = {}
-    local frame = EnumerateFrames()
-    local checkedCount = 0
-    local visibleCount = 0
-    local hasRectCount = 0
-
-    while frame do
-        checkedCount = checkedCount + 1
-
-        pcall(function()
-            if frame:IsVisible() and frame:IsShown() then
-                visibleCount = visibleCount + 1
-
-                local l, b, w, h = frame:GetRect()
-                if l and w and h and w > 0 and h > 0 then
-                    hasRectCount = hasRectCount + 1
-                    local right = l + w
-                    local top = b + h
-                    if x >= l and x <= right and y >= b and y <= top then
-                        tinsert(framesAtCursor, frame)
-                    end
-                end
-            end
-        end)
-
-        frame = EnumerateFrames(frame)
-    end
-
-    if not self.lastDebugTime or (GetTime() - self.lastDebugTime) > 2 then
-        self.lastDebugTime = GetTime()
-        self.debugStats = string.format("Scanned: %d | Visible: %d | HasRect: %d | AtCursor: %d",
-            checkedCount, visibleCount, hasRectCount, #framesAtCursor)
-    end
-
-    local strataOrder = {
-        BACKGROUND = 1,
-        LOW = 2,
-        MEDIUM = 3,
-        HIGH = 4,
-        DIALOG = 5,
-        FULLSCREEN = 6,
-        FULLSCREEN_DIALOG = 7,
-        TOOLTIP = 8
-    }
-
-    sort(framesAtCursor, function(a, b)
-        local strataA = a:GetFrameStrata()
-        local strataB = b:GetFrameStrata()
-        local orderA = strataOrder[strataA] or 0
-        local orderB = strataOrder[strataB] or 0
-
-        if orderA ~= orderB then
-            return orderA > orderB
-        end
-
-        return a:GetFrameLevel() > b:GetFrameLevel()
-    end)
-
-    return framesAtCursor
-end
-
 function FramePicker:OnUpdate(_)
-    if not self.checkedAPI then
-        ns:Print(L["FRAME_PICKER_MSG_GEOMETRIC"])
-        self.checkedAPI = true
-    end
-
     local shiftHeld = IsShiftKeyDown()
 
     if shiftHeld then
@@ -184,152 +274,25 @@ function FramePicker:OnUpdate(_)
         return
     end
 
-    local frames = GetMouseFoci()
-    local geometricFrames = self:GetGeometricFramesAtCursor()
-
-    local frameSet = {}
-    for _, frame in ipairs(frames) do
-        frameSet[frame] = true
-    end
-
-    for _, frame in ipairs(geometricFrames) do
-        if not frameSet[frame] then
-            tinsert(frames, frame)
-            frameSet[frame] = true
-        end
-    end
-
-    if #frames == 0 then
-        self.currentFrame = nil
-        self.allFrames = {}
-        self.frameIndex = 1
-        local msg = "No frames detected under cursor"
-        if self.debugStats then
-            msg = msg .. "\n\n" .. self.debugStats
-        end
-        self.infoWindow.details:SetText(msg)
-        ns.FrameInspector:ClearHighlight()
-        return
-    end
-
-    local validFrames = {}
-    for _, frame in ipairs(frames) do
-        local isPickerUI = false
-
-        if frame == self.overlay or frame == self.infoWindow then
-            isPickerUI = true
-        end
-
-        local parent = frame.GetParent and frame:GetParent()
-        if parent == self.infoWindow then
-            isPickerUI = true
-        end
-
-        if not isPickerUI then
-            local isForbidden = false
-            pcall(function()
-                isForbidden = frame:IsForbidden()
-            end)
-
-            if not isForbidden then
-                tinsert(validFrames, frame)
-            end
-        end
-    end
-
-    self.allFrames = validFrames
-
-    if self.frameIndex > #validFrames then
-        self.frameIndex = 1
-    end
-
-    local targetFrame = validFrames[self.frameIndex]
-
-    if targetFrame then
-        self.currentFrame = targetFrame
-
-        local name = targetFrame.GetName and targetFrame:GetName() or "Anonymous"
-        local ftype = targetFrame.GetObjectType and targetFrame:GetObjectType() or "Unknown"
-
-        local details = {}
-        if #validFrames > 1 then
-            tinsert(details, (L["FRAME_PICKER_FRAME_OF"]):format(self.frameIndex, #validFrames))
-            tinsert(details, "")
-        end
-        tinsert(details, "NAME: " .. name)
-        tinsert(details, "TYPE: " .. ftype)
-
-        if targetFrame.IsShown then
-            tinsert(details, "SHOWN: " .. (targetFrame:IsShown() and "Yes" or "No"))
-        end
-
-        if targetFrame.IsMouseEnabled then
-            tinsert(details, "MOUSE: " .. (targetFrame:IsMouseEnabled() and "Yes" or "No"))
-        end
-
-        if targetFrame.GetParent then
-            local parent = targetFrame:GetParent()
-            if parent then
-                local pname = parent.GetName and parent:GetName() or "Anonymous"
-                tinsert(details, "PARENT: " .. pname)
-            end
-        end
-
-        if targetFrame.GetWidth and targetFrame.GetHeight then
-            local width = targetFrame:GetWidth()
-            local height = targetFrame:GetHeight()
-            tinsert(details, string.format("SIZE: %.0f x %.0f", width, height))
-        end
-
-        if targetFrame.GetFrameStrata then
-            tinsert(details, "STRATA: " .. targetFrame:GetFrameStrata())
-        end
-
-        if targetFrame.GetFrameLevel then
-            tinsert(details, "LEVEL: " .. targetFrame:GetFrameLevel())
-        end
-
-        if self.debugStats then
-            tinsert(details, "")
-            tinsert(details, "DEBUG: " .. self.debugStats)
-            tinsert(details, "TOTAL FRAMES FOUND: " .. #frames)
-
-            if #validFrames > 1 then
-                tinsert(details, "")
-                tinsert(details, "ALL FRAMES AT CURSOR:")
-                for i = 1, math.min(8, #validFrames) do
-                    local f = validFrames[i]
-                    local fname = f.GetName and f:GetName() or "Anonymous"
-                    local frameType = f.GetObjectType and f:GetObjectType() or "Unknown"
-                    local mouse = f.IsMouseEnabled and (f:IsMouseEnabled() and "M" or "-") or "?"
-                    local hasRect = "-"
-                    pcall(function() if f.GetRect and select(1, f:GetRect()) ~= nil then hasRect = "R" end end)
-                    local marker = (i == self.frameIndex) and ">>>" or "   "
-                    tinsert(details, string.format("%s[%d] %s (%s) %s%s", marker, i, fname, frameType, mouse, hasRect))
-                end
-                if #validFrames > 8 then
-                    tinsert(details, string.format("  ... and %d more", #validFrames - 8))
-                end
-            end
-        end
-
-        self.infoWindow.details:SetText(table.concat(details, "\n"))
-        ns.FrameInspector:HighlightFrame(targetFrame)
-    else
-        self.currentFrame = nil
-        self.infoWindow.details:SetText(L["FRAME_PICKER_ALL_FILTERED"])
-        ns.FrameInspector:ClearHighlight()
-    end
-
     local mouseDown = IsMouseButtonDown("LeftButton")
     if mouseDown and not self.lastMouseState then
         self:OnClick()
+        self.lastMouseState = mouseDown
+        return
     end
     self.lastMouseState = mouseDown
 
     if IsMouseButtonDown("RightButton") then
         self:Cancel()
+        return
     end
+
+    local now = GetTime()
+    if now < self.nextStackUpdate then
+        return
+    end
+    self.nextStackUpdate = now + STACK_UPDATE_INTERVAL
+    self:RefreshStack()
 end
 
 function FramePicker:OnClick()
@@ -342,7 +305,11 @@ function FramePicker:OnClick()
     self:Cancel()
 
     ns.FrameInspector:InspectFrame(frame)
-    ns:Print((L["FRAME_PICKER_MSG_SELECTED"]):format(frame.GetName and frame:GetName() or "Anonymous"))
+    local selectedName = ns.safeGet(frame, "GetName") or "Anonymous"
+    if type(selectedName) ~= "string" then
+        selectedName = "Anonymous"
+    end
+    ns:Print((L["FRAME_PICKER_MSG_SELECTED"]):format(selectedName))
 
     if ns.UI then
         ns.UI:Show()

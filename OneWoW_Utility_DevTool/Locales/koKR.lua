@@ -150,7 +150,6 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "프레임 선택기 취소됨",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "커서 아래 프레임 없음",
     ["FRAME_PICKER_MSG_SELECTED"] = "선택됨: %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "기하학적 프레임 감지 사용 중 (fstack과 유사)",
     ["FRAME_PICKER_FRAME_OF"] = "프레임 %d/%d (TAB으로 변경)",
     ["FRAME_PICKER_AND_MORE"] = "  ... 및 %d개 더",
     ["MSG_NO_FRAMES_MATCHING"] = "일치하는 프레임 없음: %s",

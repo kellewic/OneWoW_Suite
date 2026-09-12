@@ -150,7 +150,6 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "Выбор фрейма отменён",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "Нет фрейма под курсором",
     ["FRAME_PICKER_MSG_SELECTED"] = "Выбрано: %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "Используется геометрическое определение фреймов (как fstack)",
     ["FRAME_PICKER_FRAME_OF"] = "ФРЕЙМ %d из %d (TAB для переключения)",
     ["FRAME_PICKER_AND_MORE"] = "  ... и ещё %d",
     ["MSG_NO_FRAMES_MATCHING"] = "Не найдено фреймов по запросу: %s",

@@ -150,7 +150,6 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "Sélecteur de cadre annulé",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "Aucun cadre sous le curseur",
     ["FRAME_PICKER_MSG_SELECTED"] = "Sélectionné : %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "Détection géométrique des cadres (comme fstack)",
     ["FRAME_PICKER_FRAME_OF"] = "CADRE %d sur %d (TAB pour changer)",
     ["FRAME_PICKER_AND_MORE"] = "  ... et %d de plus",
     ["MSG_NO_FRAMES_MATCHING"] = "Aucun cadre trouvé pour : %s",

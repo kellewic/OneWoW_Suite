@@ -62,6 +62,9 @@
 ---
 
 ### DevTool
+#### Frame Inspector
+- Pick Frame no longer locks the game at 1 FPS. Hover, Tab, and click still inspect the frame under the cursor.
+
 #### Errors
 - When DevTools catches a Lua error, the DevTools icon on Home and in the collector row turns red. Click it to open the Errors tab.
 
@@ -154,7 +157,7 @@
 
 ---
 
-- **Last Updated**: Sep 8, 2026
+- **Last Updated**: Sep 12, 2026
 
 ## R6.2609.0106
 

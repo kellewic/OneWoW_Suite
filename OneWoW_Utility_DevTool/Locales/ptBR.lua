@@ -151,7 +151,6 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "Seletor de frame cancelado",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "Nenhum frame sob o cursor",
     ["FRAME_PICKER_MSG_SELECTED"] = "Selecionado: %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "Usando detecção geométrica de frames (como fstack)",
     ["FRAME_PICKER_FRAME_OF"] = "FRAME %d de %d (TAB para alternar)",
     ["FRAME_PICKER_AND_MORE"] = "  ... e mais %d",
     ["MSG_NO_FRAMES_MATCHING"] = "Nenhum frame encontrado correspondendo a: %s",

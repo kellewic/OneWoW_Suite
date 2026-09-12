@@ -151,7 +151,6 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "框架選擇器已取消",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "游標下沒有框架",
     ["FRAME_PICKER_MSG_SELECTED"] = "已選擇：%s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "使用幾何框架偵測（類似 fstack）",
     ["FRAME_PICKER_FRAME_OF"] = "框架 %d / %d（TAB 循環）",
     ["FRAME_PICKER_AND_MORE"] = "  ... 還有 %d 個",
     ["MSG_NO_FRAMES_MATCHING"] = "找不到符合的框架：%s",

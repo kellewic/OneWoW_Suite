@@ -150,7 +150,6 @@ OneWoW.Locale:Register(ADDON_NAME, "esES", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "Selector de marcos cancelado",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "Ningún marco bajo el cursor",
     ["FRAME_PICKER_MSG_SELECTED"] = "Seleccionado: %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "Usando detección geométrica de marcos (como fstack)",
     ["FRAME_PICKER_FRAME_OF"] = "MARCO %d de %d (TAB para cambiar)",
     ["FRAME_PICKER_AND_MORE"] = "  ... y %d más",
     ["MSG_NO_FRAMES_MATCHING"] = "No se encontraron marcos para: %s",

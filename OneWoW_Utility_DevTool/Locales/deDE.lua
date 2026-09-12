@@ -150,7 +150,6 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "Frame-Picker abgebrochen",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "Kein Frame unter dem Cursor",
     ["FRAME_PICKER_MSG_SELECTED"] = "Ausgewählt: %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "Geometrische Frame-Erkennung aktiv (wie fstack)",
     ["FRAME_PICKER_FRAME_OF"] = "FRAME %d von %d (TAB zum Wechseln)",
     ["FRAME_PICKER_AND_MORE"] = "  ... und %d weitere",
     ["MSG_NO_FRAMES_MATCHING"] = "Keine Frames gefunden für: %s",

@@ -150,7 +150,6 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
     ["FRAME_PICKER_MSG_CANCELLED"] = "Frame picker cancelled",
     ["FRAME_PICKER_MSG_NO_FRAME"] = "No frame under cursor",
     ["FRAME_PICKER_MSG_SELECTED"] = "Selected: %s",
-    ["FRAME_PICKER_MSG_GEOMETRIC"] = "Using geometric frame detection (like fstack)",
     ["FRAME_PICKER_FRAME_OF"] = "FRAME %d of %d (TAB to cycle)",
     ["FRAME_PICKER_AND_MORE"] = "  ... and %d more",
     ["MSG_NO_FRAMES_MATCHING"] = "No frames found matching: %s",
