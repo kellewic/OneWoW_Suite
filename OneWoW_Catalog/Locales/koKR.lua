@@ -111,6 +111,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "미수집 있음",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "풍요로운 구렁만",
+    ["JOURNAL_ZONE_CONTENTS"] = "이 지역 안",
 
     ["JOURNAL_GENERAL_LOOT"] = "일반 전리품",
     ["JOURNAL_QUEST_LOOT"] = "퀘스트 관련 / 퀘스트 전리품",
@@ -137,6 +138,10 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["JOURNAL_OPEN_ZONE_TT"] = "이 지역의 카드를 엽니다",
     ["JOURNAL_SEE_NPC"] = "NPC 보기",
     ["JOURNAL_SEE_NPC_TT"] = "이 NPC를 NPC 탭에서 엽니다.",
+    ["JOURNAL_SEE_NPCS"] = "NPC 보기",
+    ["JOURNAL_SEE_NPCS_TT"] = "이 장소의 NPC를 NPC 탭에서 엽니다.",
+    ["JOURNAL_SEE_GUIDE"] = "가이드 보기",
+    ["JOURNAL_SEE_GUIDE_TT"] = "모험 안내서에서 이 우두머리를 엽니다.",
     ["JOURNAL_SEE_MAP"] = "지도 보기",
     ["JOURNAL_SEE_MAP_TT"] = "지도를 열고 이 전투 위치에 핀을 놓습니다.",
     ["JOURNAL_ATT_DETECTED"] = "ATT 감지됨",

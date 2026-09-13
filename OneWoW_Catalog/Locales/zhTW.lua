@@ -112,6 +112,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "有未收集",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "僅顯示豐碩",
+    ["JOURNAL_ZONE_CONTENTS"] = "此區域內",
 
     ["JOURNAL_GENERAL_LOOT"] = "一般戰利品",
     ["JOURNAL_QUEST_LOOT"] = "任務相關 / 任務掉落",
@@ -138,6 +139,10 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
     ["JOURNAL_OPEN_ZONE_TT"] = "開啟此區域的卡片",
     ["JOURNAL_SEE_NPC"] = "查看 NPC",
     ["JOURNAL_SEE_NPC_TT"] = "在 NPC 分頁開啟此 NPC。",
+    ["JOURNAL_SEE_NPCS"] = "查看 NPC",
+    ["JOURNAL_SEE_NPCS_TT"] = "在 NPC 分頁開啟此地的 NPC。",
+    ["JOURNAL_SEE_GUIDE"] = "查看指南",
+    ["JOURNAL_SEE_GUIDE_TT"] = "在冒險指南中開啟此首領。",
     ["JOURNAL_SEE_MAP"] = "查看地圖",
     ["JOURNAL_SEE_MAP_TT"] = "開啟地圖並在此首領處放置標記。",
     ["JOURNAL_ATT_DETECTED"] = "已偵測到 ATT",

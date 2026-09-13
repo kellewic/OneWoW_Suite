@@ -3,7 +3,7 @@
 - **Status**: Draft
 
 ### Home
-- Catalog data on Home and in Manage Features is one addon per expansion, plus Other and Tradeskills. Turn expansions and topics on or off.
+- Catalog data on Home and in Manage Features is one addon per expansion, plus Other and Tradeskills. Turn an expansion on to use it on every Catalog tab. Uncheck a topic under an expansion if you want that tab to skip it.
 - Home, Manage Features, and first-run cards use OneWoW feature icons instead of borrowed game art. Ringless sits on the card, not a black square.
 
 ---
@@ -11,7 +11,7 @@
 ### Catalog
 #### Data
 - Catalog is the encyclopedia for the suite, not only the Catalog window. Turning it off in Manage Features also stops expansion packs, Other, and Tradeskills from loading. ESC and AFK Zone Cards lose zone data, item tooltips lose sources, and profession extras in Shopping List and AltTracker go empty. Use What's affected? on the Catalog row. Apply & Reload drops Catalog from memory if it already loaded this session. After you update, delete a leftover `OneWoW_CatDB` folder in AddOns if Curse left one; keep the expansion folders (Classic, Other, Tradeskills, and the rest).
-- Catalog data is per expansion. Only the expansions and topics you turn on load, so Journal and other tabs use less memory. Other holds rows that are not assigned to an expansion yet.
+- Catalog data is per expansion. Turn an expansion on to use it on every Catalog tab. Opening Zones, NPCs, Quests, or Item Search loads that data for the expansions you have on. Uncheck a topic under an expansion if you want that tab to skip it. Other holds rows that are not assigned to an expansion yet.
 - Opening Zones does not walk every completed quest or saved vendor overlay. Those load when you use Quests or NPCs.
 - Catalog data packs are per expansion, so those tabs open with less hitching. Item icons and types come from the game when you look at a row.
 - Items use the expansion from the game files. If that field is empty, Catalog uses the first drop or vendor we know. Other is only items we still cannot place.
@@ -31,6 +31,7 @@
 #### NPCs
 - The NPCs tab lists shops, trainers, innkeepers, repair, stables, flight masters, bankers, barbers, quest givers, rares, and bosses. Encounter cards show type, kill quest, related quests, loot, Adventure Guide text in a readable inset when the game has it, and location. Click a quest, View loot, or a location to open Quests, Zones, or the map. Search by name, encounter name, NPC id, encounter id, or quest id. Filter by Encounters or a boss type.
 - Encounter NPCs use the instance or zone from that encounter instead of Unknown Location. Current Zone Only lists bosses in this instance or map. Click the location to open that map.
+- The NPCs expansion list shows every expansion you have turned on. Opening the tab checks Current Zone Only and loads this zone's expansion first, not every pack.
 - Opening an NPC card asks the game for the name and remembers it. The list can still show an id until you open that card.
 
 #### Fixes
@@ -38,14 +39,18 @@
 - Opening a quest or NPC card no longer errors when the creature name is restricted, or on the location pin row.
 - View loot on an NPC opens that encounter on Zones. It no longer jumps to a city the NPC also visits.
 - Looking up a Battle for Azeroth item no longer errors when that expansion's Journal data loads. Journal cards and drop lines for that expansion work again.
+- In This Zone on Spires of Arak shows that zone, not The Blood Furnace.
 
 #### Journal
 - This week's bountiful Delves still sort and filter as Delves. The type line says Bountiful and keeps the gold border and bountiful icon.
 - Standing in an older dungeon or raid (Skyreach, Timewalking, and the rest) shows that place. Extra floors in the instance load with that expansion.
 - Extra drops that come from a quest or an achievement sit in their own groups again. Click the quest link to open that quest.
 - Opening Zones loads this expansion first so the tab does not hitch. Pick All to load the rest in the background.
-- Encounter rows have See NPC and See Map after the source icon when we know that NPC or a pin.
-- Opening a dungeon or raid card shows the Adventure Guide overview in a readable inset. Expanding a Guide boss shows that encounter's text and abilities the same way. Ability titles sit below the wrapped text, including when you change font size.
+- In This Zone is on when you open Zones. It lists this zone, city, or instance plus dungeons, raids, Delves, and cities that belong here, and sets the expansion list to All so that card can appear. Checking it clears search and the other filters; you can set them again after.
+- Encounter rows have See NPC, See Guide, and See Map after the source icon when we know that NPC, Guide page, or pin.
+- Opening a city or zone card loads that expansion's NPCs. See NPCs opens the NPCs tab for that place.
+- Classic city cards no longer list NPCs from the wrong continent.
+- Opening a dungeon or raid card shows the Adventure Guide overview. Encounter rows use See Guide instead of pasting that boss's flavor text and abilities. Achievements start collapsed.
 - Zone achievement rows no longer show a Difficulty column, so the name has more room.
 
 #### Quests

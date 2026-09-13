@@ -112,6 +112,7 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "A des non collectés",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Gouffres abondants",
+    ["JOURNAL_ZONE_CONTENTS"] = "Dans cette zone",
 
     ["JOURNAL_GENERAL_LOOT"] = "Butin général",
     ["JOURNAL_QUEST_LOOT"] = "Lié à une quête / Butin de quête",
@@ -138,6 +139,10 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
     ["JOURNAL_OPEN_ZONE_TT"] = "Ouvrir la fiche de cette zone",
     ["JOURNAL_SEE_NPC"] = "Voir le PNJ",
     ["JOURNAL_SEE_NPC_TT"] = "Ouvre ce PNJ dans l'onglet PNJ.",
+    ["JOURNAL_SEE_NPCS"] = "Voir les PNJ",
+    ["JOURNAL_SEE_NPCS_TT"] = "Ouvre les PNJ de ce lieu.",
+    ["JOURNAL_SEE_GUIDE"] = "Voir le guide",
+    ["JOURNAL_SEE_GUIDE_TT"] = "Ouvre cette rencontre dans le Guide de l'aventurier.",
     ["JOURNAL_SEE_MAP"] = "Voir la carte",
     ["JOURNAL_SEE_MAP_TT"] = "Ouvre la carte et place un marqueur sur cette rencontre.",
     ["JOURNAL_ATT_DETECTED"] = "ATT détecté",

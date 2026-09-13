@@ -234,8 +234,16 @@ function ATTLive:MergeLiveATTExtras(inst)
     if inst.instanceType ~= "zone" and inst.instanceID and inst.instanceID > 0 then
         HarvestGroups(inst, att.SearchForField("instanceID", inst.instanceID), false, att, seen, extras)
     end
-    if (inst.instanceType == "world" or inst.instanceType == "zone") and inst.mapID then
-        HarvestGroups(inst, att.SearchForField("mapID", inst.mapID), true, att, seen, extras)
+    -- Zone/city cards must use uiMapID. place.mapID is often a continent
+    -- instance map (Classic Silvermoon / Exodar = Outland 530).
+    local harvestMapID
+    if inst.instanceType == "zone" then
+        harvestMapID = inst.uiMapID or inst.mapID
+    elseif inst.instanceType == "world" then
+        harvestMapID = inst.mapID or inst.uiMapID
+    end
+    if harvestMapID and harvestMapID > 0 then
+        HarvestGroups(inst, att.SearchForField("mapID", harvestMapID), true, att, seen, extras)
     end
     if #extras == 0 then
         return false

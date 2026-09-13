@@ -112,6 +112,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "Tiene sin coleccionar",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Solo pródigas",
+    ["JOURNAL_ZONE_CONTENTS"] = "En esta zona",
 
     ["JOURNAL_GENERAL_LOOT"] = "Botín general",
     ["JOURNAL_QUEST_LOOT"] = "Relacionado con misión / Botín de misión",
@@ -138,6 +139,10 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
     ["JOURNAL_OPEN_ZONE_TT"] = "Abrir la ficha de esta zona",
     ["JOURNAL_SEE_NPC"] = "Ver PNJ",
     ["JOURNAL_SEE_NPC_TT"] = "Abre este PNJ en la pestana PNJ.",
+    ["JOURNAL_SEE_NPCS"] = "Ver PNJ",
+    ["JOURNAL_SEE_NPCS_TT"] = "Abre los PNJ de este lugar.",
+    ["JOURNAL_SEE_GUIDE"] = "Ver guia",
+    ["JOURNAL_SEE_GUIDE_TT"] = "Abre este encuentro en la Guia de aventuras.",
     ["JOURNAL_SEE_MAP"] = "Ver mapa",
     ["JOURNAL_SEE_MAP_TT"] = "Abre el mapa y coloca un marcador en este encuentro.",
     ["JOURNAL_ATT_DETECTED"] = "ATT detectado",

@@ -64,6 +64,14 @@ function OneWoW_Catalog_API.OpenToVendor(npcID, npcInfo)
     end
 end
 
+--- Open the NPCs tab for a zone or city card (Current Zone Only off).
+---@param spec { zoneName?: string, uiMapID?: number, expansionID?: number }
+function OneWoW_Catalog_API.OpenVendorsForZone(spec)
+    if ns.UI and ns.UI.OpenVendorsForZone then
+        ns.UI.OpenVendorsForZone(spec)
+    end
+end
+
 --- Open the Zones (Journal) tab on a place. Number is mapID; table may carry
 --- instanceID / placeKey / encounterID.
 ---@param spec number|table

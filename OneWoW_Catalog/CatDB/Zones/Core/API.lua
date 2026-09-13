@@ -13,6 +13,7 @@ local C_TooltipInfo = C_TooltipInfo
 local C_AreaPoiInfo = C_AreaPoiInfo
 local C_QuestLog = C_QuestLog
 local C_UIWidgetManager = C_UIWidgetManager
+local GetInstanceInfo = GetInstanceInfo
 
 -- Public, cross-addon read surface for ZoneDB. ns stays private.
 -- Journal-shaped helpers for the Catalog Zones tab. Catalog can
@@ -816,14 +817,155 @@ function OneWoW_CatDB_ZoneDB_API.GetEncounter(encounterID)
     return ns.Encounters[encounterID]
 end
 
+local function CollectChildMapSet(rootMapID)
+    local set = {}
+    if not rootMapID then
+        return set
+    end
+    set[rootMapID] = true
+    local children = C_Map.GetMapChildrenInfo(rootMapID, nil, true)
+    if children then
+        for i = 1, #children do
+            local child = children[i]
+            local id = child and child.mapID
+            if id then
+                set[id] = true
+            end
+        end
+    end
+    return set
+end
+
+local function PlayerMapAncestry()
+    local current = C_Map.GetBestMapForUnit("player")
+    local ancestors = {}
+    local seen = {}
+    local id = current
+    for _ = 1, 8 do
+        if not id or id == 0 or seen[id] then
+            break
+        end
+        seen[id] = true
+        tinsert(ancestors, id)
+        local info = C_Map.GetMapInfo(id)
+        id = info and info.parentMapID
+    end
+    return current, ancestors
+end
+
+local function CardMapHits(inst, mapSet)
+    if not inst or not mapSet then
+        return false
+    end
+    if inst.uiMapID and mapSet[inst.uiMapID] then
+        return true
+    end
+    if inst.mapID and mapSet[inst.mapID] then
+        return true
+    end
+    if inst.parentUiMapID and mapSet[inst.parentUiMapID] then
+        return true
+    end
+    local ents = inst.entrance or inst.entrances
+    if type(ents) ~= "table" then
+        return false
+    end
+    if ents.mapID or ents.uiMapID then
+        return (ents.mapID and mapSet[ents.mapID]) or (ents.uiMapID and mapSet[ents.uiMapID]) or false
+    end
+    for i = 1, #ents do
+        local e = ents[i]
+        if type(e) == "table" then
+            if e.mapID and mapSet[e.mapID] then
+                return true
+            end
+            if e.uiMapID and mapSet[e.uiMapID] then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+--- Instance map IDs and world uiMapIDs share numbers (Blood Furnace 542 /
+--- Spires of Arak 542). Only use placesByInstanceMapID while actually instanced.
+local function PlayerInstanceMapID()
+    local _, instanceType, _, _, _, _, _, instanceMapID = GetInstanceInfo()
+    if instanceType and instanceType ~= "none" and instanceMapID and instanceMapID > 0 then
+        return instanceMapID
+    end
+    return nil
+end
+
+--- "here" = the zone/city/instance card for this map. "contents" = that card plus
+--- dungeons, raids, Delves, and cities that belong to this map.
+---@param zoneScope string|nil "here"|"contents"|nil
+---@return table|nil scope
+local function ResolveZoneScope(zoneScope)
+    if zoneScope ~= "here" and zoneScope ~= "contents" then
+        return nil
+    end
+    EnsurePlaceLookups()
+    local instanceMapID = PlayerInstanceMapID()
+    if instanceMapID then
+        local interiorKeys = placesByInstanceMapID[instanceMapID]
+        if interiorKeys and #interiorKeys > 0 then
+            local keySet = {}
+            for i = 1, #interiorKeys do
+                keySet[interiorKeys[i]] = true
+            end
+            return { keySet = keySet }
+        end
+    end
+    local current, ancestors = PlayerMapAncestry()
+    if not current then
+        return { empty = true }
+    end
+    for i = 1, #ancestors do
+        local mapID = ancestors[i]
+        local placeKey = placeByUiMapID[mapID] or placeByZoneMapID[mapID]
+        if placeKey then
+            if zoneScope == "here" then
+                return { keySet = { [placeKey] = true } }
+            end
+            return { hereKey = placeKey, contents = CollectChildMapSet(mapID) }
+        end
+    end
+    if zoneScope == "here" then
+        return { maps = { [current] = true } }
+    end
+    return { maps = CollectChildMapSet(current) }
+end
+
+local function InstancePassesZoneScope(inst, placeKey, scope)
+    if not scope then
+        return true
+    end
+    if scope.empty then
+        return false
+    end
+    if scope.keySet then
+        return scope.keySet[placeKey] == true
+    end
+    if scope.hereKey or scope.contents then
+        return inst.placeKey == scope.hereKey or CardMapHits(inst, scope.contents)
+    end
+    if scope.maps then
+        return CardMapHits(inst, scope.maps)
+    end
+    return true
+end
+
 --- Places sorted for the Catalog Zones / Journal tab.
 ---@param expansionFilter number|nil
 ---@param searchText string|nil
 ---@param instanceTypeFilter string|nil
+---@param zoneScope string|nil "here"|"contents"|nil
 ---@return table instances
-function OneWoW_CatDB_ZoneDB_API.GetSortedInstances(expansionFilter, searchText, instanceTypeFilter)
+function OneWoW_CatDB_ZoneDB_API.GetSortedInstances(expansionFilter, searchText, instanceTypeFilter, zoneScope)
     local result = {}
     local search = searchText and searchText:lower() or ""
+    local scope = ResolveZoneScope(zoneScope)
     for placeKey, place in pairs(ns.Places) do
         local expansions = ListingExpansions(placeKey, place)
         for i = 1, #expansions do
@@ -833,7 +975,9 @@ function OneWoW_CatDB_ZoneDB_API.GetSortedInstances(expansionFilter, searchText,
                 local passesSearch = (search == ""
                     or (inst.name and inst.name:lower():find(search, 1, true))
                     or (inst.expansionName and inst.expansionName:lower():find(search, 1, true)))
-                if passesExpansion and passesSearch and InstancePassesTypeFilter(inst, instanceTypeFilter) then
+                if passesExpansion and passesSearch and InstancePassesTypeFilter(inst, instanceTypeFilter)
+                    and InstancePassesZoneScope(inst, placeKey, scope)
+                then
                     tinsert(result, inst)
                 end
             end
@@ -849,6 +993,40 @@ function OneWoW_CatDB_ZoneDB_API.GetSortedInstances(expansionFilter, searchText,
         return (a.name or "") < (b.name or "")
     end)
     return result
+end
+
+--- Zone, city, or instance card for the player's current map (same idea as ESC / AFK).
+---@return table|nil place
+function OneWoW_CatDB_ZoneDB_API.GetPlayerZoneCard()
+    local scope = ResolveZoneScope("contents")
+    if not scope or scope.empty then
+        return nil
+    end
+    if scope.hereKey then
+        return GetCard(scope.hereKey)
+    end
+    if scope.keySet then
+        local pick
+        for placeKey in pairs(scope.keySet) do
+            pick = placeKey
+            break
+        end
+        if pick then
+            return GetCard(pick)
+        end
+    end
+    local current = C_Map.GetBestMapForUnit("player")
+    if current then
+        return OneWoW_CatDB_ZoneDB_API.GetZoneInstance(nil, current)
+    end
+    return nil
+end
+
+--- Suite expansion ID for the player's current zone card.
+---@return number|nil expansionID
+function OneWoW_CatDB_ZoneDB_API.GetPlayerZoneExpansionID()
+    local card = OneWoW_CatDB_ZoneDB_API.GetPlayerZoneCard()
+    return card and card.expansionID
 end
 
 --- Expansion IDs that have at least one place row.
@@ -1109,12 +1287,13 @@ end
 
 ---@param delveMapID number
 ---@param info table|nil
-local function AbsorbLivePOI(delveMapID, info)
+---@param isBountifulDoor boolean|nil
+local function AbsorbLivePOI(delveMapID, info, isBountifulDoor)
     if not info then
         return
     end
     local atlas = info.atlasName
-    if atlas and atlas:lower():find("bountiful", 1, true) then
+    if isBountifulDoor or (atlas and atlas:lower():find("bountiful", 1, true)) then
         bountifulMapIDs[delveMapID] = true
     end
     if not storyByMapID[delveMapID] then
@@ -1135,11 +1314,7 @@ function OneWoW_CatDB_ZoneDB_API.RefreshBountiful()
                 local uiMapID = ent.uiMapID
                 if uiMapID then
                     if ent.bountifulPoiID then
-                        local info = C_AreaPoiInfo.GetAreaPOIInfo(uiMapID, ent.bountifulPoiID)
-                        if info then
-                            bountifulMapIDs[place.mapID] = true
-                            AbsorbLivePOI(place.mapID, info)
-                        end
+                        AbsorbLivePOI(place.mapID, C_AreaPoiInfo.GetAreaPOIInfo(uiMapID, ent.bountifulPoiID), true)
                     end
                     if ent.areaPoiID then
                         AbsorbLivePOI(place.mapID, C_AreaPoiInfo.GetAreaPOIInfo(uiMapID, ent.areaPoiID))
@@ -1594,6 +1769,12 @@ local function RequestNPCName(npcID, cb)
         end)
     end
     tinsert(list, cb)
+end
+
+---@param npcID number
+---@param cb fun(npcID: number, info: table|nil)
+function OneWoW_CatDB_ZoneDB_API.RequestNPCName(npcID, cb)
+    RequestNPCName(npcID, cb)
 end
 
 OneWoW_GUI:RegisterEntityResolver("npc", {

@@ -112,6 +112,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "Tem não coletados",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Só abundantes",
+    ["JOURNAL_ZONE_CONTENTS"] = "Nesta zona",
 
     ["JOURNAL_GENERAL_LOOT"] = "Despojo geral",
     ["JOURNAL_QUEST_LOOT"] = "Relacionado a missão / Saque de missão",
@@ -138,6 +139,10 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["JOURNAL_OPEN_ZONE_TT"] = "Abrir o cartão desta zona",
     ["JOURNAL_SEE_NPC"] = "Ver PNJ",
     ["JOURNAL_SEE_NPC_TT"] = "Abre este PNJ na aba PNJs.",
+    ["JOURNAL_SEE_NPCS"] = "Ver PNJs",
+    ["JOURNAL_SEE_NPCS_TT"] = "Abre os PNJs deste lugar na aba PNJs.",
+    ["JOURNAL_SEE_GUIDE"] = "Ver guia",
+    ["JOURNAL_SEE_GUIDE_TT"] = "Abre este encontro no Guia da aventura.",
     ["JOURNAL_SEE_MAP"] = "Ver mapa",
     ["JOURNAL_SEE_MAP_TT"] = "Abre o mapa e coloca um marcador neste encontro.",
     ["JOURNAL_ATT_DETECTED"] = "ATT detectado",

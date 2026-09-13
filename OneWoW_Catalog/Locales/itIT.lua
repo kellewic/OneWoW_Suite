@@ -112,6 +112,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "Ha non raccolti",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Solo fruttuose",
+    ["JOURNAL_ZONE_CONTENTS"] = "In questa zona",
 
     ["JOURNAL_GENERAL_LOOT"] = "Bottino generale",
     ["JOURNAL_QUEST_LOOT"] = "Relativo a missione / Bottino di missione",
@@ -138,6 +139,10 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
     ["JOURNAL_OPEN_ZONE_TT"] = "Apri la scheda di questa zona",
     ["JOURNAL_SEE_NPC"] = "Vedi PNG",
     ["JOURNAL_SEE_NPC_TT"] = "Apre questo PNG nella scheda PNG.",
+    ["JOURNAL_SEE_NPCS"] = "Vedi PNG",
+    ["JOURNAL_SEE_NPCS_TT"] = "Apre i PNG di questo luogo nella scheda PNG.",
+    ["JOURNAL_SEE_GUIDE"] = "Vedi guida",
+    ["JOURNAL_SEE_GUIDE_TT"] = "Apre questo scontro nella Guida alle avventure.",
     ["JOURNAL_SEE_MAP"] = "Vedi mappa",
     ["JOURNAL_SEE_MAP_TT"] = "Apre la mappa e posiziona un segnalino su questo scontro.",
     ["JOURNAL_ATT_DETECTED"] = "ATT rilevato",

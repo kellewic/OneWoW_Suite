@@ -12,9 +12,8 @@ local COLLECTED = COLLECTED
 local NOT_COLLECTED = NOT_COLLECTED
 local SetPortraitTextureFromCreatureDisplayID = SetPortraitTextureFromCreatureDisplayID
 local EJ_GetCreatureInfo = EJ_GetCreatureInfo
-local C_EncounterJournal = C_EncounterJournal
 local OVERVIEW = OVERVIEW
-local ABILITIES = ABILITIES
+local ADVENTURE_JOURNAL = ADVENTURE_JOURNAL
 
 local BACKDROP_SIMPLE = OneWoW_GUI.Constants.BACKDROP_SIMPLE
 local BACKDROP_INNER_NO_INSETS = OneWoW_GUI.Constants.BACKDROP_INNER_NO_INSETS
@@ -32,7 +31,7 @@ local instanceTypeFilter = "all"
 ---@type string|number # "all" sentinel, or a numeric EJ difficulty id
 local selectedDifficulty = "all"
 local expandedEncounters = {}
-local achievementsExpanded = true
+local achievementsExpanded = false
 local panels_ref = nil
 local RefreshJournalList
 local RefreshDetailView
@@ -59,6 +58,21 @@ local filterCollection = "all"
 local hideNonCollectable = false
 local hasUncollectedOnly = false
 local showBountifulOnly = false
+local zoneContentsOnly = true
+
+local function JournalZoneScope()
+    if zoneContentsOnly then
+        return "contents"
+    end
+    return nil
+end
+
+local function ForceExpansionAll(panels)
+    expansionFilter = 0
+    if panels and panels.expText then
+        panels.expText:SetText(L["JOURNAL_EXPANSION_ALL"])
+    end
+end
 
 -- Ordered definition for the Item Type filter menu (taxonomy order; Show All is
 -- the empty-selection sentinel). Keys drive filterItemTypes; `special` matches
@@ -622,6 +636,9 @@ local function LayoutEncounterHeaderRow(encBtn)
     if encBtn.seeNpc then
         trail = trail + (encBtn.seeNpc:GetWidth() or 0) + 8
     end
+    if encBtn.seeGuide then
+        trail = trail + (encBtn.seeGuide:GetWidth() or 0) + 8
+    end
     if encBtn.seeMap then
         trail = trail + (encBtn.seeMap:GetWidth() or 0) + 8
     end
@@ -647,6 +664,11 @@ local function LayoutEncounterHeaderRow(encBtn)
         encBtn.seeNpc:SetPoint("LEFT", after, "RIGHT", 8, 0)
         after = encBtn.seeNpc
     end
+    if encBtn.seeGuide then
+        encBtn.seeGuide:ClearAllPoints()
+        encBtn.seeGuide:SetPoint("LEFT", after, "RIGHT", 8, 0)
+        after = encBtn.seeGuide
+    end
     if encBtn.seeMap then
         encBtn.seeMap:ClearAllPoints()
         encBtn.seeMap:SetPoint("LEFT", after, "RIGHT", 8, 0)
@@ -656,14 +678,38 @@ end
 local rareNameRefreshPending = {}
 
 ---@param encounter table
-local function ScheduleRareNameRefresh(encounter)
+---@return boolean
+local function IsUnresolvedRareName(encounter)
+    if encounter.nameResolved then
+        return false
+    end
+    local name = encounter.name
+    if IsBlankDisplayName(name) then
+        return true
+    end
     local npcID = encounter.npcID
-    if not npcID or encounter.nameResolved or rareNameRefreshPending[npcID] then
+    return npcID ~= nil and name == string.format(L["JOURNAL_NPC_UNNAMED"], npcID)
+end
+
+---@param encounter table
+local function ApplyCachedRareName(encounter)
+    local npcID = encounter.npcID
+    if not npcID or not IsUnresolvedRareName(encounter) then
         return
     end
-    -- CatDB ships a label (name or "NPC #id"). Do not tooltip-scan every
-    -- world rare when the card opens — that rebuilt the pane once per rare.
-    if encounter.name and encounter.name ~= "" then
+    local addon = GetDataAddon()
+    local name = addon and addon.ResolveNPCName(npcID)
+    if not name or name == "" or name == string.format(L["JOURNAL_NPC_UNNAMED"], npcID) then
+        return
+    end
+    encounter.name = name
+    encounter.nameResolved = true
+end
+
+---@param encounter table
+local function ScheduleRareNameRefresh(encounter)
+    local npcID = encounter.npcID
+    if not npcID or rareNameRefreshPending[npcID] or not IsUnresolvedRareName(encounter) then
         return
     end
     local addon = GetDataAddon()
@@ -671,16 +717,19 @@ local function ScheduleRareNameRefresh(encounter)
         return
     end
     rareNameRefreshPending[npcID] = true
-    C_Timer.After(0.4, function()
+    local function apply(name)
         rareNameRefreshPending[npcID] = nil
-        local name = addon.ResolveNPCName(npcID)
-        if name then
-            encounter.name = name
-            encounter.nameResolved = true
-            if selectedInstance then
-                ScheduleNameFillRefresh()
-            end
+        if not name or name == "" or name == string.format(L["JOURNAL_NPC_UNNAMED"], npcID) then
+            return
         end
+        encounter.name = name
+        encounter.nameResolved = true
+        if selectedInstance then
+            ScheduleNameFillRefresh()
+        end
+    end
+    addon.RequestNPCName(npcID, function(_, info)
+        apply(info and info.name)
     end)
 end
 
@@ -2019,9 +2068,46 @@ local function EncounterMapPoint(encounter)
     return nil
 end
 
+local JOURNAL_ENCOUNTER_ID_MAX = 9999999
+
+---@param encounterID number|nil
+---@return boolean
+local function IsGuideEncounterID(encounterID)
+    return type(encounterID) == "number"
+        and encounterID >= 1
+        and encounterID <= JOURNAL_ENCOUNTER_ID_MAX
+end
+
+---@param instData table|nil
+---@return boolean
+local function InstanceHasGuidePage(instData)
+    if not instData or not instData.instanceID or instData.instanceID <= 0 then
+        return false
+    end
+    local instanceType = instData.instanceType
+    if instanceType == "zone" or instanceType == "delve" or instData.isCity then
+        return false
+    end
+    return true
+end
+
+---@param instData table
+---@param encounterID number
+local function OpenEncounterGuide(instData, encounterID)
+    if not instData or not instData.instanceID or instData.instanceID <= 0 then
+        return
+    end
+    if not OneWoW:EnsureLoaded("Blizzard_EncounterJournal") then
+        return
+    end
+    local diffID = selectedDifficulty ~= "all" and selectedDifficulty or nil
+    EncounterJournal_OpenJournal(diffID, instData.instanceID, encounterID)
+end
+
 ---@param encBtn Button
 ---@param encounter table
-local function AddEncounterNavLinks(encBtn, encounter)
+---@param instData table|nil
+local function AddEncounterNavLinks(encBtn, encounter, instData)
     local npcID = EncounterNPCID(encounter)
     if npcID then
         local seeNpc = OneWoW_GUI:CreateTextLink(encBtn, {
@@ -2035,6 +2121,20 @@ local function AddEncounterNavLinks(encBtn, encounter)
         })
         seeNpc:SetFrameLevel((encBtn:GetFrameLevel() or 0) + 2)
         encBtn.seeNpc = seeNpc
+    end
+    if instData and InstanceHasGuidePage(instData) and IsGuideEncounterID(encounter.encounterID) then
+        local capturedEncID = encounter.encounterID
+        local seeGuide = OneWoW_GUI:CreateTextLink(encBtn, {
+            text = L["JOURNAL_SEE_GUIDE"],
+            fontSize = 11,
+            tooltipTitle = ADVENTURE_JOURNAL,
+            tooltipText = L["JOURNAL_SEE_GUIDE_TT"],
+            onClick = function()
+                OpenEncounterGuide(instData, capturedEncID)
+            end,
+        })
+        seeGuide:SetFrameLevel((encBtn:GetFrameLevel() or 0) + 2)
+        encBtn.seeGuide = seeGuide
     end
     local mapID, x, y = EncounterMapPoint(encounter)
     if mapID then
@@ -2056,6 +2156,7 @@ end
 ---@return boolean
 local function EncounterHeaderClickOnLink(encBtn)
     return (encBtn.seeNpc and encBtn.seeNpc:IsMouseOver())
+        or (encBtn.seeGuide and encBtn.seeGuide:IsMouseOver())
         or (encBtn.seeMap and encBtn.seeMap:IsMouseOver())
         or (encBtn.jumpBtn and encBtn.jumpBtn:IsMouseOver())
 end
@@ -2324,27 +2425,6 @@ local function BuildAchievementsTable(parent, instData, yOffset)
     return yOffset - 8
 end
 
--- Guide overview headerType is local in FrameXML (EJ_HTYPE_OVERVIEW = 3).
-local EJ_SECTION_HEADER_OVERVIEW = 3
-local JOURNAL_ENCOUNTER_ID_MAX = 9999999
-
-local function IsGuideEncounterID(encounterID)
-    return type(encounterID) == "number"
-        and encounterID >= 1
-        and encounterID <= JOURNAL_ENCOUNTER_ID_MAX
-end
-
-local function InstanceHasGuidePage(instData)
-    if not instData or not instData.instanceID or instData.instanceID <= 0 then
-        return false
-    end
-    local instanceType = instData.instanceType
-    if instanceType == "zone" or instanceType == "delve" or instData.isCity then
-        return false
-    end
-    return true
-end
-
 local LORE_PAD = 10
 local LORE_BODY_GAP = 4
 local LORE_TITLE_GAP = 8
@@ -2428,52 +2508,6 @@ local function AppendLorePanel(parent, yOffset, blocks)
     return yOffset - (height + LORE_PAD) - 8
 end
 
-local function CollectGuideSections(rootSectionID)
-    local sections = {}
-    local function skipOverviews(sectionID)
-        while sectionID and sectionID > 0 do
-            local info = C_EncounterJournal.GetSectionInfo(sectionID)
-            if not info then
-                return nil
-            end
-            if info.headerType == EJ_SECTION_HEADER_OVERVIEW then
-                sectionID = info.siblingSectionID
-            else
-                return sectionID
-            end
-        end
-        return nil
-    end
-
-    local function walk(sectionID, depth)
-        while sectionID and sectionID > 0 do
-            local info = C_EncounterJournal.GetSectionInfo(sectionID)
-            if not info then
-                break
-            end
-            local hasTitle = info.title and info.title ~= ""
-            local hasDesc = info.description and info.description ~= ""
-            if hasTitle or hasDesc then
-                tinsert(sections, {
-                    title = info.title,
-                    description = info.description,
-                    depth = depth,
-                })
-            end
-            if info.firstChildSectionID and info.firstChildSectionID > 0 then
-                walk(info.firstChildSectionID, depth + 1)
-            end
-            sectionID = info.siblingSectionID
-        end
-    end
-
-    local startID = skipOverviews(rootSectionID)
-    if startID then
-        walk(startID, 0)
-    end
-    return sections
-end
-
 local function LiveInstanceDescription(instanceID)
     if not OneWoW:EnsureLoaded("Blizzard_EncounterJournal") then
         return nil
@@ -2483,46 +2517,6 @@ local function LiveInstanceDescription(instanceID)
         return description
     end
     return nil
-end
-
-local function AppendLiveEncounterGuide(parent, encounter, yOffset)
-    if encounter.worldRare or encounter.extrasCategory or encounter.questCategory then
-        return yOffset
-    end
-    local encID = encounter.encounterID
-    if not IsGuideEncounterID(encID) then
-        return yOffset
-    end
-    if not OneWoW:EnsureLoaded("Blizzard_EncounterJournal") then
-        return yOffset
-    end
-    local _, description, _, rootSectionID = EJ_GetEncounterInfo(encID)
-    local blocks = {}
-    local lore = LorePlain(description)
-    if lore then
-        tinsert(blocks, { kind = "body", text = lore })
-    end
-    if rootSectionID and rootSectionID > 0 then
-        local sections = CollectGuideSections(rootSectionID)
-        if #sections > 0 then
-            tinsert(blocks, { kind = "label", text = ABILITIES })
-            for i = 1, #sections do
-                local sec = sections[i]
-                local title = LorePlain(sec.title)
-                local body = LorePlain(sec.description)
-                if title then
-                    tinsert(blocks, { kind = "title", text = title, depth = sec.depth })
-                end
-                if body then
-                    tinsert(blocks, { kind = "body", text = body, depth = sec.depth })
-                end
-            end
-        end
-    end
-    if #blocks == 0 then
-        return yOffset
-    end
-    return AppendLorePanel(parent, yOffset, blocks)
 end
 
 RefreshDetailView = function(isSecondRefresh)
@@ -2724,8 +2718,11 @@ RefreshDetailView = function(isSecondRefresh)
             end
         end
 
-        if encounter.worldRare and isExpanded then
-            ScheduleRareNameRefresh(encounter)
+        if encounter.worldRare then
+            ApplyCachedRareName(encounter)
+            if isExpanded then
+                ScheduleRareNameRefresh(encounter)
+            end
         end
 
         local displayID = ResolveEncounterDisplayID(encounter)
@@ -2781,7 +2778,7 @@ RefreshDetailView = function(isSecondRefresh)
         encBtn.encSource = encSource
         local jumpBtn = AddZoneJumpButton(encBtn, instData, encounter.zoneMapID)
         encBtn.jumpBtn = jumpBtn
-        AddEncounterNavLinks(encBtn, encounter)
+        AddEncounterNavLinks(encBtn, encounter, instData)
 
         encBtn:SetScript("OnSizeChanged", function(myself)
             LayoutEncounterHeaderRow(myself)
@@ -2815,7 +2812,6 @@ RefreshDetailView = function(isSecondRefresh)
         yOffset = yOffset - ((showPortrait and ENC_ROW_HEIGHT_PORTRAIT or ENC_ROW_HEIGHT) + 2)
 
         if isExpanded then
-            yOffset = AppendLiveEncounterGuide(parent, encounter, yOffset)
             if #filteredItems > 0 then
             if encounter.questCategory then
                 for i, item in ipairs(filteredItems) do
@@ -2980,7 +2976,7 @@ function ShowInstanceDetail(panels, instData, encounterID)
     if encounterID then
         expandedEncounters[encounterID] = true
     end
-    achievementsExpanded = true
+    achievementsExpanded = false
     panels_ref = panels
 
     local dataAddon = GetDataAddon()
@@ -2994,6 +2990,9 @@ function ShowInstanceDetail(panels, instData, encounterID)
             dataAddon.SetLiveMergeTarget(nil)
         end
         dataAddon.MergeLiveATTExtras(instData)
+    end
+    if instData.instanceType == "zone" then
+        OneWoW:EnsureCatalogRoleShardsForFilter("vendors", instData.expansionID)
     end
     -- Hydrate mutates the cache entry after SetSelectedIndex already bound the
     -- row. Refresh rebinds visible cards; do not SetSelectedIndex (re-enters).
@@ -3049,6 +3048,13 @@ function ShowInstanceDetail(panels, instData, encounterID)
             panels.ejBtn:Hide()
         end
     end
+    if panels.seeNpcsBtn then
+        if instData.isCity or instData.instanceType == "zone" then
+            panels.seeNpcsBtn:Show()
+        else
+            panels.seeNpcsBtn:Hide()
+        end
+    end
     RefreshDetailView(false)
 end
 
@@ -3091,6 +3097,7 @@ local function JournalHasListFilter()
         or instanceTypeFilter ~= "all"
         or hasUncollectedOnly
         or showBountifulOnly
+        or zoneContentsOnly
 end
 
 ---@param panels table
@@ -3163,9 +3170,9 @@ FillJournalList = function(panels)
         addon.RefreshBountiful()
     end
 
-    local filtKey = string.format("%d\0%s\0%s\0%s", expansionFilter, searchText or "", tostring(instanceTypeFilter or "all"), tostring(showBountifulOnly))
+    local filtKey = string.format("%d\0%s\0%s\0%s\0%s", expansionFilter, searchText or "", tostring(instanceTypeFilter or "all"), tostring(showBountifulOnly), tostring(JournalZoneScope() or ""))
     if journalBaseListKey ~= filtKey or not journalBaseList then
-        journalBaseList = addon.GetSortedInstances(expansionFilter, searchText, instanceTypeFilter)
+        journalBaseList = addon.GetSortedInstances(expansionFilter, searchText, instanceTypeFilter, JournalZoneScope())
         journalBaseListKey = filtKey
     end
 
@@ -3185,6 +3192,14 @@ end
 function RefreshJournalList(panels)
     wipe(listResults)
     ns.EnsureCatalogPack("journal")
+    if zoneContentsOnly then
+        ForceExpansionAll(panels)
+        local addon = GetDataAddon()
+        local zoneExp = addon and addon.GetPlayerZoneExpansionID()
+        if zoneExp then
+            OneWoW:EnsureJournalShards(zoneExp)
+        end
+    end
     OneWoW:EnsureJournalShardsForFilter(expansionFilter, function()
         local p = panels_ref or panels
         if not p then
@@ -3286,6 +3301,18 @@ FinishJournalList = function(panels, sorted)
             if JournalCacheKey(inst) == keepKey then
                 keepIndex = i
                 break
+            end
+        end
+    end
+    if not keepIndex and zoneContentsOnly and addon then
+        local currentCard = addon.GetPlayerZoneCard()
+        local wantKey = currentCard and currentCard.placeKey
+        if wantKey then
+            for i, inst in ipairs(listResults) do
+                if inst.placeKey == wantKey then
+                    keepIndex = i
+                    break
+                end
             end
         end
     end
@@ -3497,7 +3524,7 @@ end
 function ns.UI.CreateJournalTab(parent)
     local LEFT_W = ns.Constants.GUI.LEFT_PANEL_WIDTH
     local GAP    = ns.Constants.GUI.PANEL_GAP
-    local HDR_H  = 86  -- was 80; adds bottom padding for expansion dropdown
+    local HDR_H  = 90
 
     local leftHeader = OneWoW_GUI:CreateFilterBar(parent, { height = HDR_H, offset = 0 })
     leftHeader:ClearAllPoints()
@@ -3559,9 +3586,9 @@ function ns.UI.CreateJournalTab(parent)
     searchBox:SetPoint("TOPLEFT", leftHeader, "TOPLEFT", 8, -8)
     searchBox:SetPoint("TOPRIGHT", clearBtn, "TOPLEFT", -4, 0)
 
-    -- LEFT HEADER: Expansion dropdown (no label — dropdown text is self-explanatory)
-    -- then "Has uncollected" checkbox under it.
-    expansionFilter = OneWoW.CatalogData:GetCurrentSuiteExpansionID()
+    -- LEFT HEADER: Expansion dropdown, then Has uncollected + In this zone.
+    expansionFilter = 0
+    zoneContentsOnly = true
     local expDropdown, expText = OneWoW_GUI:CreateDropdown(leftHeader, { width = LEFT_W - 16, text = ExpansionFilterLabel() })
     expDropdown:SetPoint("TOPLEFT", leftHeader, "TOPLEFT", 8, -38)
 
@@ -3575,6 +3602,25 @@ function ns.UI.CreateJournalTab(parent)
     })
     hasUncollectedChk:SetPoint("TOPLEFT", leftHeader, "TOPLEFT", 8, -64)
 
+    local ResetOtherJournalFilters
+    local zoneContentsChk = OneWoW_GUI:CreateCheckbox(leftHeader, {
+        label = L["JOURNAL_ZONE_CONTENTS"],
+        checked = true,
+        onClick = function(self)
+            zoneContentsOnly = self:GetChecked()
+            if zoneContentsOnly then
+                ResetOtherJournalFilters()
+            end
+            RefreshJournalList(panels)
+            if selectedInstance then
+                RefreshDetailView(false)
+            end
+        end,
+    })
+    zoneContentsChk:SetPoint("LEFT", hasUncollectedChk.label, "RIGHT", 16, 0)
+    zoneContentsChk:SetPoint("TOP", hasUncollectedChk, "TOP", 0, 0)
+    panels.zoneContentsChk = zoneContentsChk
+
     local bountifulChk = OneWoW_GUI:CreateCheckbox(leftHeader, {
         label = L["JOURNAL_SHOW_BOUNTIFUL"],
         checked = false,
@@ -3583,7 +3629,7 @@ function ns.UI.CreateJournalTab(parent)
             RefreshJournalList(panels)
         end,
     })
-    bountifulChk:SetPoint("LEFT", hasUncollectedChk.label, "RIGHT", 16, 0)
+    bountifulChk:SetPoint("LEFT", zoneContentsChk.label, "RIGHT", 16, 0)
     bountifulChk:SetPoint("TOP", hasUncollectedChk, "TOP", 0, 0)
     bountifulChk:Hide()
 
@@ -3657,19 +3703,28 @@ function ns.UI.CreateJournalTab(parent)
         end)
     end
 
-    -- Clear button resets all filters
-    clearBtn:SetScript("OnClick", function()
-        searchText         = ""
-        expansionFilter    = 0
+    -- Checking In This Zone starts from this zone only; search and other
+    -- filters can be applied again afterward.
+    ResetOtherJournalFilters = function()
+        if panels._searchTimer then
+            panels._searchTimer:Cancel()
+            panels._searchTimer = nil
+        end
+        searchText = ""
+        expansionFilter = 0
         instanceTypeFilter = "all"
         ResetItemTypeFilter()
-        filterCollection   = "all"
+        filterCollection = "all"
         hideNonCollectable = false
         hasUncollectedOnly = false
-        showBountifulOnly  = false
+        showBountifulOnly = false
         searchBox:SetText("")
         searchBox:ClearFocus()
         searchBox:RestorePlaceholder()
+        if panels._searchTimer then
+            panels._searchTimer:Cancel()
+            panels._searchTimer = nil
+        end
         expText:SetText(L["JOURNAL_EXPANSION_ALL"])
         typeText:SetText(L["JOURNAL_FILTER_SHOW_ALL"])
         itemFilterText:SetText(GetItemTypeFilterLabel())
@@ -3677,6 +3732,14 @@ function ns.UI.CreateJournalTab(parent)
         chkBox:SetChecked(false)
         hasUncollectedChk:SetChecked(false)
         SetBountifulFilterVisible(panels, false)
+    end
+
+    clearBtn:SetScript("OnClick", function()
+        zoneContentsOnly = false
+        if panels.zoneContentsChk then
+            panels.zoneContentsChk:SetChecked(false)
+        end
+        ResetOtherJournalFilters()
         RefreshJournalList(panels)
         if selectedInstance then
             RefreshDetailView(false)
@@ -3772,6 +3835,35 @@ function ns.UI.CreateJournalTab(parent)
     end)
     panels.ejBtn = ejBtn
 
+    local seeNpcsBtn = OneWoW_GUI:CreateFitTextButton(panels.detailPanel, {
+        text = L["JOURNAL_SEE_NPCS"],
+        height = 26,
+    })
+    seeNpcsBtn:SetPoint("RIGHT", detailPinBtn, "LEFT", -8, 0)
+    seeNpcsBtn:SetFrameLevel((panels.detailPanel:GetFrameLevel() or 0) + 10)
+    seeNpcsBtn:Hide()
+    seeNpcsBtn:SetScript("OnClick", function()
+        local instData = selectedInstance
+        if not instData then
+            return
+        end
+        ns.UI.OpenVendorsForZone({
+            zoneName = instData.name,
+            uiMapID = instData.uiMapID,
+            expansionID = OneWoW.CatalogData.SUITE_TO_LE[instData.expansionID],
+        })
+    end)
+    seeNpcsBtn:HookScript("OnEnter", function(myself)
+        GameTooltip:SetOwner(myself, "ANCHOR_RIGHT")
+        GameTooltip:SetText(L["JOURNAL_SEE_NPCS"], 1, 1, 1)
+        GameTooltip:AddLine(L["JOURNAL_SEE_NPCS_TT"], 0.8, 0.8, 0.8, true)
+        GameTooltip:Show()
+    end)
+    seeNpcsBtn:HookScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+    panels.seeNpcsBtn = seeNpcsBtn
+
     LayoutJournalDetailHeader(panels)
 
     panels.expDropdown              = expDropdown
@@ -3788,6 +3880,13 @@ function ns.UI.CreateJournalTab(parent)
 
     ns.UI.journalPanels = panels
     panels_ref = panels
+
+    parent:HookScript("OnShow", function()
+        if zoneContentsOnly then
+            ForceExpansionAll(panels)
+        end
+        RefreshJournalList(panels)
+    end)
 
     local mainWindow = OneWoWMainWindow
     if mainWindow and not mainWindow._oneWoWJournalBountifulReset then

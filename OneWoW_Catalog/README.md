@@ -13,8 +13,10 @@ Browse dungeons, raids, Delves, and World hubs from every expansion:
 - Source icons on encounters and loot: Adventure Guide or shipped OneWoW data. When AllTheThings is loaded, a shield on the lower right of the filter bar marks it; hover the shield. Journal can add anything AllTheThings has live
 - See all instances and encounters at a glance
 - Pin on a card or the details toolbar opens the world map at that instance's entrance (gold pins are Wowhead locations until official doors ship). Right-click the pin to save a OneWay Pin in Notes
-- Encounter rows have See NPC (opens that boss on the NPCs tab) and See Map (pins that encounter when we have a location)
+- Encounter rows have See NPC (opens that boss on the NPCs tab), See Guide (opens that encounter in the Adventure Guide), and See Map (pins that encounter when we have a location)
+- City and zone cards have See NPCs (opens that place on the NPCs tab)
 - Instance Type includes World, Zones, Cities, and Delves, with a Show Bountiful checkbox for this week's bountiful doors
+- **In This Zone** (on when you open the tab) shows the zone, city, or instance you are standing in plus dungeons, raids, Delves, and cities that belong here, and sets the expansion list to All. Checking it clears search and the other filters; you can set them again after.
 - This week's bountiful doors still sort as Delves; the type line says Bountiful
 - Delve cards show today's story on the type line (Incomplete color only while you still need that variant) and remaining Stories progress until that achievement is complete. Details list each variant under Stories while it is unfinished
 - Cities and outdoor zones for every expansion ship with that expansion's Catalog data
@@ -22,9 +24,8 @@ Browse dungeons, raids, Delves, and World hubs from every expansion:
 - Cards use a type-colored border for raid, dungeon, world, zone, city, Delve, and bountiful Delve
 - Achievements sit above loot on the details side (collapsible, same header as Items). Cards show bosses, rares (World), items, and the achievement count. World cards include that expansion's exploration achievements. Status is a check / Warband mark / X
 - Adventure Guide button on dungeon and raid details. Delves keep a disabled Difficulty dropdown so the map pin lines up
-- Details show Adventure Guide overview text. Expanding a Guide boss shows that encounter's text and abilities
-- Detailed encounter information (if data addon is installed)
-- Look up loot tables and boss mechanics
+- Details show the instance Adventure Guide overview. Encounter rows stay listed and start collapsed. See Guide opens that boss in the Adventure Guide. Achievements start collapsed.
+- Look up loot tables by encounter
 - Search for specific raids, dungeons, or delves
 - Perfect for planning raid nights or preparing for content
 
@@ -37,6 +38,7 @@ Find NPCs, shops, and encounters:
 - Click a quest to open it on the Quests tab; View loot opens the Zones encounter
 - Click a location (or Pin) to open that zone on the world map
 - Encounter NPCs show the instance or zone for that encounter. Current Zone Only includes bosses in this instance or map
+- The expansion list shows every expansion you have turned on. Opening the tab checks Current Zone Only and loads this zone's expansion first
 - Filter by expansion, zone, currency, or type (including Encounters)
 - **Pin** sets a live waypoint and opens that zone on the world map. **Save Pin** writes a OneWay Pin in Notes; it becomes **Open Pin** once that location is saved
 
@@ -81,7 +83,8 @@ Catalog data is the **CatDB** addons: one folder per expansion, **Other**, and T
 
 ### Expansion data (`OneWoW_CatDB_<Expansion>`)
 - Places, NPCs, quests, and items for that expansion
-- Topic toggles in Manage Features choose what loads
+- Turn the expansion on to use it on every Catalog tab. Opening a tab loads that data
+- Uncheck a topic under the expansion to skip it
 - Classic through Midnight
 
 ### Other (`OneWoW_CatDB_Other`)

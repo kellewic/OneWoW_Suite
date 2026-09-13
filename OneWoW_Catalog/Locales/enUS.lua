@@ -111,6 +111,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
 
     ["JOURNAL_HAS_UNCOLLECTED"] = "Has uncollected",
     ["JOURNAL_SHOW_BOUNTIFUL"] = "Show Bountiful",
+    ["JOURNAL_ZONE_CONTENTS"] = "In This Zone",
 
     ["JOURNAL_GENERAL_LOOT"] = "General Loot",
     ["JOURNAL_QUEST_LOOT"] = "Quest Related / Quest Drop",
@@ -137,6 +138,10 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
     ["JOURNAL_OPEN_ZONE_TT"] = "Open this zone's card",
     ["JOURNAL_SEE_NPC"] = "See NPC",
     ["JOURNAL_SEE_NPC_TT"] = "Open this NPC on the NPCs tab.",
+    ["JOURNAL_SEE_NPCS"] = "See NPCs",
+    ["JOURNAL_SEE_NPCS_TT"] = "Open NPCs for this place.",
+    ["JOURNAL_SEE_GUIDE"] = "See Guide",
+    ["JOURNAL_SEE_GUIDE_TT"] = "Open this encounter in the Adventure Guide.",
     ["JOURNAL_SEE_MAP"] = "See Map",
     ["JOURNAL_SEE_MAP_TT"] = "Open the map and place a pin at this encounter.",
     ["JOURNAL_ATT_DETECTED"] = "ATT Detected",

@@ -30,7 +30,9 @@ local listResults = {}
 local detailElements = {}
 local searchText = ""
 local zoneFilter = nil
-local currentZoneOnly = false
+local jumpMapIDs = nil
+local currentZoneOnly = true
+local suppressCurrentZoneOnShow = false
 local currencyFilter = nil
 local categoryFilter = nil
 local expansionFilter = -1
@@ -138,9 +140,22 @@ local function EnsureVendorCardStride()
     return vendorCardStride
 end
 
+local function ApplyCurrentZoneOnOpen(panels)
+    currentZoneOnly = true
+    zoneFilter = nil
+    jumpMapIDs = nil
+    if panels and panels.zoneCurrentCheckbox then
+        panels.zoneCurrentCheckbox:SetChecked(true)
+    end
+    if panels and panels.zoneDropdownText then
+        panels.zoneDropdownText:SetText(L["QUESTS_ZONE_ALL"])
+    end
+end
+
 local function ClearVendorFilters(panels)
     searchText = ""
     zoneFilter = nil
+    jumpMapIDs = nil
     currentZoneOnly = false
     currencyFilter = nil
     categoryFilter = nil
@@ -1837,12 +1852,34 @@ function RefreshVendorList(panels)
         return
     end
 
+    local function RefreshAfterShards()
+        RefreshVendorList(panels)
+    end
+    if currentZoneOnly then
+        local loadID = expansionFilter
+        if not loadID or loadID == -1 then
+            ns.EnsureCatalogPack("journal")
+            local journal = ns.GetCatalogPackAPI("journal")
+            loadID = journal and journal.GetPlayerZoneExpansionID()
+            if not loadID then
+                OneWoW:EnsureJournalShardsForFilter(0, RefreshAfterShards)
+            end
+        end
+        if loadID and loadID ~= -1 then
+            ns.EnsureCatalogRoleShardsForFilter("vendors", loadID, RefreshAfterShards)
+        end
+    else
+        ns.EnsureCatalogRoleShardsForFilter("vendors", expansionFilter, RefreshAfterShards)
+    end
+
     local sorted = addon.GetSortedVendors(nil)
 
     local activeZoneFilter = nil
     local activeMapIDs = nil
     if currentZoneOnly then
         activeMapIDs = CollectPlayerMapIDs()
+    elseif jumpMapIDs then
+        activeMapIDs = jumpMapIDs
     elseif zoneFilter then
         activeZoneFilter = zoneFilter
     end
@@ -2024,6 +2061,9 @@ function ns.UI.OpenToVendor(npcID, npcInfo)
     npcID = tonumber(npcID)
     if not npcID then return end
 
+    suppressCurrentZoneOnShow = true
+    currentZoneOnly = false
+
     if OneWoW.CatDBSync and npcInfo then
         OneWoW.CatDBSync.LearnNPC(npcID, npcInfo)
     end
@@ -2052,12 +2092,80 @@ function ns.UI.OpenToVendor(npcID, npcInfo)
             return false
         end
         ns.pendingVendorSelect = nil
+        if panels.zoneCurrentCheckbox then
+            panels.zoneCurrentCheckbox:SetChecked(false)
+        end
+        RefreshVendorList(panels)
         return SelectVendorByNpcID(panels, npcID)
     end
 
     if not trySelect() then
         C_Timer.After(0.15, trySelect)
         C_Timer.After(0.35, trySelect)
+    end
+end
+
+local function VendorExpansionLabel(leID)
+    if not leID or leID == -1 then
+        return L["QUESTS_EXPANSION_ALL"]
+    end
+    local expansions = ns.GetWantedCatalogExpansions("vendors", true)
+    for i = 1, #expansions do
+        local exp = expansions[i]
+        if exp.id == leID then
+            return exp.name
+        end
+    end
+    return L["QUESTS_EXPANSION_ALL"]
+end
+
+---@param spec { zoneName?: string, uiMapID?: number, expansionID?: number }
+function ns.UI.OpenVendorsForZone(spec)
+    spec = spec or {}
+    local zoneName = spec.zoneName
+    local uiMapID = tonumber(spec.uiMapID)
+    if not zoneName and uiMapID then
+        local info = C_Map.GetMapInfo(uiMapID)
+        zoneName = info and info.name
+    end
+    if not zoneName and not uiMapID then
+        return
+    end
+
+    suppressCurrentZoneOnShow = true
+    currentZoneOnly = false
+    zoneFilter = zoneName
+    jumpMapIDs = uiMapID and { [uiMapID] = true } or nil
+    expansionFilter = spec.expansionID
+    if expansionFilter == nil then
+        expansionFilter = -1
+    end
+
+    OneWoW:EnsureCatalogPack("vendors")
+    OneWoW.UI:Show("catalog")
+    OneWoW.UI:SelectSubTab("catalog", "vendors")
+
+    local function apply()
+        local panels = ns.UI.vendorsPanels
+        if not panels then
+            return false
+        end
+        if panels.zoneCurrentCheckbox then
+            panels.zoneCurrentCheckbox:SetChecked(false)
+        end
+        if panels.zoneDropdownText then
+            panels.zoneDropdownText:SetText(zoneName or L["QUESTS_ZONE_ALL"])
+        end
+        if panels.expDropdownText then
+            panels.expDropdownText:SetText(VendorExpansionLabel(expansionFilter))
+        end
+        RefreshVendorList(panels)
+        return true
+    end
+
+    if not apply() then
+        C_Timer.After(0.15, apply)
+        C_Timer.After(0.35, apply)
     end
 end
 
@@ -2148,11 +2256,9 @@ function ns.UI.CreateVendorsTab(parent)
         getActiveValue = function() return expansionFilter end,
         buildItems = function()
             local items = { { value = -1, text = L["QUESTS_EXPANSION_ALL"] } }
-            local addon = GetDataAddon()
-            if addon then
-                for _, exp in ipairs(addon.GetAvailableExpansions()) do
-                    tinsert(items, { value = exp.id, text = exp.name })
-                end
+            local expansions = ns.GetWantedCatalogExpansions("vendors", true)
+            for _, exp in ipairs(expansions) do
+                tinsert(items, { value = exp.id, text = exp.name })
             end
             return items
         end,
@@ -2160,6 +2266,7 @@ function ns.UI.CreateVendorsTab(parent)
             expansionFilter = value
             expDropdownText:SetText(value == -1 and L["QUESTS_EXPANSION_ALL"] or text)
             zoneFilter = nil
+            jumpMapIDs = nil
             if panels.zoneDropdownText then
                 panels.zoneDropdownText:SetText(L["QUESTS_ZONE_ALL"])
             end
@@ -2251,7 +2358,7 @@ function ns.UI.CreateVendorsTab(parent)
     })
     panels.zoneDropdownText = zoneDropdownText
 
-    local chkBox = OneWoW_GUI:CreateCheckbox(rightHeader, { label = L["VENDORS_ZONE_CURRENT"] })
+    local chkBox = OneWoW_GUI:CreateCheckbox(rightHeader, { label = L["VENDORS_ZONE_CURRENT"], checked = true })
     panels.zoneCurrentCheckbox = chkBox
 
     OneWoW_GUI:AttachFilterMenu(zoneDropdown, {
@@ -2267,6 +2374,7 @@ function ns.UI.CreateVendorsTab(parent)
         end,
         onSelect = function(zone, text)
             zoneFilter = zone
+            jumpMapIDs = nil
             zoneDropdownText:SetText(text)
             if zone then
                 currentZoneOnly = false
@@ -2314,6 +2422,7 @@ function ns.UI.CreateVendorsTab(parent)
         currentZoneOnly = self:GetChecked()
         if currentZoneOnly then
             zoneFilter = nil
+            jumpMapIDs = nil
             zoneDropdownText:SetText(L["QUESTS_ZONE_ALL"])
         end
         RefreshVendorList(panels)
@@ -2322,6 +2431,7 @@ function ns.UI.CreateVendorsTab(parent)
     clearBtn:SetScript("OnClick", function()
         searchText = ""
         zoneFilter = nil
+        jumpMapIDs = nil
         currentZoneOnly = false
         currencyFilter = nil
         categoryFilter = nil
@@ -2452,7 +2562,15 @@ function ns.UI.CreateVendorsTab(parent)
             C_Timer.After(0.05, function()
                 ns.UI.OpenToVendor(id)
             end)
-        elseif selectedVendor then
+            return
+        end
+        if suppressCurrentZoneOnShow then
+            suppressCurrentZoneOnShow = false
+        else
+            ApplyCurrentZoneOnOpen(panels)
+            RefreshVendorList(panels)
+        end
+        if selectedVendor then
             ShowVendorDetail(panels, selectedVendor)
         end
     end)
