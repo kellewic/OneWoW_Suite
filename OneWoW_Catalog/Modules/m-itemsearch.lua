@@ -251,9 +251,21 @@ end
 --- Load the packs for this filter. Opening the tab or changing filter is the
 --- explicit action; do not wait for another tab to have loaded them.
 ---@param filterKey string
-function ItemSearch.EnsureFilterPacks(filterKey)
-    for _, name in ipairs(ItemSearch.GetFilterPacks(filterKey)) do
-        OneWoW:EnsureLoaded(name)
+---@param onUpdate function|nil
+function ItemSearch.EnsureFilterPacks(filterKey, onUpdate)
+    if filterKey == "all" or filterKey == "drops" then
+        OneWoW:EnsureCatalogPack("items")
+        OneWoW:EnsureCatalogRoleShardsForFilter("items", 0, onUpdate)
+    end
+    local role = FILTER_PACK_ROLE[filterKey]
+    if role == "tradeskills" then
+        OneWoW:EnsureCatalogPack("tradeskills")
+    elseif role then
+        OneWoW:EnsureCatalogPack(role)
+        OneWoW:EnsureCatalogRoleShardsForFilter(role, 0, onUpdate)
+    end
+    if filterKey == "owned" then
+        OneWoW:EnsureLoaded("OneWoW_AltTracker_Storage")
     end
 end
 

@@ -4433,6 +4433,10 @@ local function StartCompletionFilter(panels, addon, rawQuests, previousScroll, l
 end
 
 function RefreshQuestList(panels, invalidateStatus)
+    ns.EnsureCatalogRoleShardsForFilter("quests", expansionFilter, function()
+        RefreshQuestList(panels, invalidateStatus)
+    end)
+
     local previousScroll = 0
     if panels
         and panels.listScrollFrame
@@ -4741,7 +4745,7 @@ local function PopulateExpansionDropdown(panels)
         getActiveValue = function() return expansionFilter end,
         buildItems = function()
             local items = { { value = -1, text = L["QUESTS_EXPANSION_ALL"] } }
-            local expansions = addon.GetAvailableExpansions()
+            local expansions = ns.GetWantedCatalogExpansions("quests", true)
             for _, exp in ipairs(expansions) do
                 table.insert(items, {
                     value   = exp.id,

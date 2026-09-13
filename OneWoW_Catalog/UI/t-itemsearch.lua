@@ -256,7 +256,7 @@ local function CreateSourceButton(parent, def)
         GameTooltip:Hide()
     end)
     btn:SetScript("OnClick", function(self)
-        ns.ItemSearch.EnsureFilterPacks(self.sourceKey)
+        ns.ItemSearch.EnsureFilterPacks(self.sourceKey, RefreshItemList)
         UpdateSourceButtonStates()
         if not ns.ItemSearch:IsSourceAvailable(self.sourceKey) then
             return
@@ -1026,7 +1026,7 @@ function ns.UI.CreateItemSearchTab(parent)
         currentSearch = ""
         currentSource = "all"
         selectedItem = nil
-        ns.ItemSearch.EnsureFilterPacks(currentSource)
+        ns.ItemSearch.EnsureFilterPacks(currentSource, RefreshItemList)
         ClearDetailElements()
         if emptyDetail then
             emptyDetail:SetText(L["ITEMSEARCH_SELECT"])
@@ -1086,7 +1086,7 @@ function ns.UI.CreateItemSearchTab(parent)
 
     panels.detailScrollChild:SetHeight(100)
 
-    ns.ItemSearch.EnsureFilterPacks(currentSource)
+    ns.ItemSearch.EnsureFilterPacks(currentSource, RefreshItemList)
     UpdateSourceButtonStates()
     if emptyList then
         emptyList:SetText(L["ITEMSEARCH_EMPTY"])
@@ -1149,7 +1149,7 @@ function ns.UI.CreateItemSearchTab(parent)
         currentSource = "all"
         currentSearch = query
         selectedItem = nil
-        ns.ItemSearch.EnsureFilterPacks(currentSource)
+        ns.ItemSearch.EnsureFilterPacks(currentSource, RefreshItemList)
 
         UpdateSourceButtonStates()
         if searchTimer then
@@ -1182,7 +1182,7 @@ function ns.UI.CreateItemSearchTab(parent)
     end
 
     function parent.Activate()
-        ns.ItemSearch.EnsureFilterPacks(currentSource)
+        ns.ItemSearch.EnsureFilterPacks(currentSource, RefreshItemList)
         if UpdateSourceButtonStates() then
             RefreshItemList()
         end

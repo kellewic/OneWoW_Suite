@@ -1057,6 +1057,10 @@ local function InvalidateNPCView(npcID)
     allNPCsCache = nil
 end
 
+function ns.InvalidateNpcListCache()
+    InvalidateNPCView()
+end
+
 local function AddPlaceKey(npc, mapID)
     if not mapID then
         return

@@ -84,6 +84,8 @@ local COLON_METHODS = {
     "EnsureCatalogJournalPlaces",
     "EnsureJournalShards",
     "EnsureJournalShardsForFilter",
+    "EnsureCatalogRoleShardsForFilter",
+    "GetWantedCatalogExpansions",
     "AreWantedJournalPlacesLoaded",
     "IsCatalogPackAvailable",
     "IsCatalogRoleReady",

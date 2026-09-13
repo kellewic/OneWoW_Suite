@@ -38,6 +38,14 @@ function ns.GetCatalogUnavailableNotice(roleOrRoles)
     return OneWoW:GetCatalogUnavailableNotice(roleOrRoles)
 end
 
+function ns.EnsureCatalogRoleShardsForFilter(role, expansionID, onUpdate)
+    return OneWoW:EnsureCatalogRoleShardsForFilter(role, expansionID, onUpdate)
+end
+
+function ns.GetWantedCatalogExpansions(role, useLeId)
+    return OneWoW:GetWantedCatalogExpansions(role, useLeId)
+end
+
 --- Deduped list of addons Item Search watches for data-ready.
 ---@return string[]
 function ns.GetCatalogItemSearchAddons()

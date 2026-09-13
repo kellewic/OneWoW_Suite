@@ -52,6 +52,9 @@ function ns.IsListVendor(npc)
     return hasItems
 end
 
+function ns.InvalidateNpcListCache()
+end
+
 --- Merge NPC rows keyed by npcID.
 ---@param source table<number, table>
 function ns:RegisterNpcData(source)
@@ -75,4 +78,5 @@ function ns:RegisterNpcData(source)
             end
         end
     end
+    ns.InvalidateNpcListCache()
 end

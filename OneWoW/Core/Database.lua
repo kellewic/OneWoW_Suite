@@ -436,8 +436,11 @@ local DEFAULTS = {
         recipe = {},
     },
     -- Per-era CatDB topic toggles: [addonName] = { hubs=true, zone=false, ... }.
-    -- Missing keys use CatalogData defaults (hubs on; current two expansions on).
+    -- Missing keys use CatalogData defaults (all topics on except zone_extra).
     catalogTopics = {},
+    -- 0: old defaults (NPC/quest/item only on The War Within and Midnight).
+    -- CatalogData:MigrateTopicDefaults bumps this and turns those topics on.
+    catalogTopicsVersion = 0,
 }
 
 --- Fresh copy of the shipped defaults subtree for one settings tab
@@ -472,6 +475,7 @@ function ns:InitializeDatabase()
 
     self:MigrateAltScope()
     self:MigrateOverlays2()
+    ns.CatalogData:MigrateTopicDefaults()
     ns.SearchCatalog:MigrateFromSearchShortcuts()
 
     -- Custom overlays are the core-owned store of user-authored expressions.

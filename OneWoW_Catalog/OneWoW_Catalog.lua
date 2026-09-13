@@ -17,7 +17,7 @@ local function RegisterWithOneWoW()
             { name = "vendors",     displayName = function() return ns.L["TAB_VENDORS"]     end, requiresCatalogRole = "vendors", requiresAddon = ns.ResolveCatalogPack("vendors"),     create = function(p) ns.UI.CreateVendorsTab(p)    end },
             { name = "tradeskills", displayName = function() return TRADESKILLS end, requiresAddon = ns.ResolveCatalogPack("tradeskills"), create = function(p) ns.UI.CreateTradeskillsTab(p) end },
             { name = "quests",      displayName = function() return ns.L["TAB_QUESTS"]      end, requiresCatalogRole = "quests", requiresAddon = ns.ResolveCatalogPack("quests"),      create = function(p) ns.UI.CreateQuestsTab(p)     end },
-            { name = "itemsearch",  displayName = function() return ns.L["TAB_ITEMSEARCH"]  end, create = function(p) ns.UI.CreateItemSearchTab(p) end },
+            { name = "itemsearch",  displayName = function() return ns.L["TAB_ITEMSEARCH"]  end, requiresCatalogRole = "items", create = function(p) ns.UI.CreateItemSearchTab(p) end },
             { name = "collectibles", displayName = function() return ns.L["TAB_COLLECTIBLES"] end, create = function(p) ns.UI.CreateCollectiblesTab(p) end },
             { name = "housing",     displayName = function() return ns.L["JOURNAL_FILTER_HOUSING"] end, create = function(p) ns.UI.CreateHousingTab(p) end },
         },

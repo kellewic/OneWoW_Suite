@@ -69,6 +69,22 @@ function ns:EnsureJournalShardsForFilter(expansionID, onUpdate)
     ns.CatalogData:EnsureJournalShardsForFilter(expansionID, onUpdate)
 end
 
+--- Load one role's expansion shards. All (0 / -1) loads this expansion first, then the rest.
+---@param role string
+---@param expansionID number
+---@param onUpdate function|nil
+function ns:EnsureCatalogRoleShardsForFilter(role, expansionID, onUpdate)
+    ns.CatalogData:EnsureRoleShardsForFilter(role, expansionID, onUpdate)
+end
+
+--- Wanted expansions for a Catalog role dropdown (before those shards load).
+---@param role string
+---@param useLeId boolean|nil
+---@return table
+function ns:GetWantedCatalogExpansions(role, useLeId)
+    return ns.CatalogData:GetWantedRoleExpansions(role, useLeId)
+end
+
 --- True when wanted expansion Journal place shards are loaded and activated.
 function ns:AreWantedJournalPlacesLoaded()
     return ns.CatalogData:AreWantedJournalPlacesLoaded()

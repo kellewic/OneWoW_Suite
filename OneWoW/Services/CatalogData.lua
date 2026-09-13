@@ -54,6 +54,9 @@ end
 
 local journalShardJob
 local journalShardOnUpdate
+local roleShardJobs = {}
+local roleShardOnUpdate = {}
+local TOPIC_DEFAULTS_VERSION = 2
 
 local ROLE_API = {
     journal = "OneWoW_CatDB_ZoneDB_API",
@@ -107,12 +110,9 @@ local function DefaultTopicOn(expansionID, topic)
     if expansionID == OTHER_EXPANSION_ID then
         return topic == "item" or topic == "achievement"
     end
-    -- Journal places for every expansion that is turned on. NPC / quest / item
-    -- topics stay on The War Within and Midnight unless the player enables them.
-    if topic == "zone" or topic == "hubs" then
-        return true
-    end
-    return expansionID >= 11
+    -- Expansion on means every Catalog tab can use that pack. zone_extra stays
+    -- off (heavy extras). Uncheck a topic in Manage Features to skip it.
+    return true
 end
 
 local function ScanInstalled()
@@ -147,6 +147,40 @@ local function ScanInstalled()
         end
         return a.expansionID < b.expansionID
     end)
+end
+
+--- Flip persisted old defaults so a ticked expansion feeds every Catalog tab.
+function CatalogData:MigrateTopicDefaults()
+    local db = ns.db.global
+    if (db.catalogTopicsVersion or 0) >= TOPIC_DEFAULTS_VERSION then
+        return
+    end
+    ScanInstalled()
+    local store = TopicsStore()
+    for i = 1, #eras do
+        local era = eras[i]
+        if era.expansionID ~= OTHER_EXPANSION_ID and era.expansionID < 11 then
+            local row = store[era.addon]
+            if row then
+                if row.npc == false then
+                    row.npc = true
+                end
+                if row.quest == false then
+                    row.quest = true
+                end
+                if row.item == false then
+                    row.item = true
+                end
+                if row.achievement == false then
+                    row.achievement = true
+                end
+                if row.mappin == false then
+                    row.mappin = true
+                end
+            end
+        end
+    end
+    db.catalogTopicsVersion = TOPIC_DEFAULTS_VERSION
 end
 
 function CatalogData:GetTopics()
@@ -391,29 +425,9 @@ function CatalogData:EnsureRole(roleOrName)
     local role = ROLE_TOPICS[roleOrName] and roleOrName or nil
     ns:EnsureLoaded(RUNTIME_ADDON)
     -- Journal/zones place tables load per expansion via EnsureJournalShards.
-    -- Activating every wanted era here hitch-opens Catalog on one frame.
+    -- NPC / quest / item shards use the same current-first, rest-across-frames path.
     if role and role ~= "journal" and role ~= "zones" then
-        ScanInstalled()
-        local topics = ROLE_TOPICS[role]
-        for i = 1, #eras do
-            local era = eras[i]
-            if ns:IsFeatureWanted(era.addon) and RoleNeedsEra(self, role, era) then
-                ns:EnsureLoaded(era.addon)
-                for topic in pairs(topics) do
-                    if self:IsTopicEnabled(era.addon, topic) then
-                        self:ActivateTopic(era.addon, topic)
-                    end
-                end
-                if self:IsTopicEnabled(era.addon, "mappin") then
-                    self:ActivateTopic(era.addon, "mappin")
-                end
-            end
-        end
-        if role == "quests" or role == "archive" then
-            OneWoW_Catalog.EnsureCatDBQuestRuntime()
-        elseif role == "vendors" or role == "npcs" then
-            OneWoW_Catalog.EnsureCatDBVendorRuntime()
-        end
+        self:EnsureRoleShardsForFilter(role, 0)
     end
     return RUNTIME_ADDON
 end
@@ -606,18 +620,40 @@ function CatalogData:GetCurrentSuiteExpansionID()
     return 0
 end
 
---- Wanted Journal expansions for the Zones dropdown (even before those shards load).
----@return { expansionID: number, displayName: string }[]
-function CatalogData:GetWantedJournalExpansions()
+--- Wanted expansions for a Catalog role dropdown (even before those shards load).
+---@param role string
+---@param useLeId boolean|nil vendors/quests use LE expansion IDs
+---@return { expansionID: number, displayName: string, id: number, name: string }[]
+function CatalogData:GetWantedRoleExpansions(role, useLeId)
     ScanInstalled()
     local out = {}
+    local journal = role == "journal" or role == "zones"
     for i = 1, #eras do
         local era = eras[i]
         if era.expansionID ~= OTHER_EXPANSION_ID and ns:IsFeatureWanted(era.addon) then
-            tinsert(out, { expansionID = era.expansionID, displayName = era.title })
+            if journal or RoleNeedsEra(self, role, era) then
+                local id = era.expansionID
+                if useLeId then
+                    id = SUITE_TO_LE[era.expansionID]
+                end
+                if id ~= nil then
+                    tinsert(out, {
+                        expansionID = id,
+                        displayName = era.title,
+                        id = id,
+                        name = era.title,
+                    })
+                end
+            end
         end
     end
     return out
+end
+
+--- Wanted Journal expansions for the Zones dropdown (even before those shards load).
+---@return { expansionID: number, displayName: string }[]
+function CatalogData:GetWantedJournalExpansions()
+    return self:GetWantedRoleExpansions("journal")
 end
 
 --- Load hubs + zone for one suite expansion (no-op for 0 / All).
@@ -695,6 +731,158 @@ function CatalogData:EnsureJournalShardsForFilter(expansionID, onUpdate)
         end,
         onCancel = function()
             journalShardJob = nil
+        end,
+    })
+end
+
+local function FinishRoleRuntime(role)
+    if role == "quests" or role == "archive" then
+        OneWoW_Catalog.EnsureCatDBQuestRuntime()
+    elseif role == "vendors" or role == "npcs" then
+        OneWoW_Catalog.EnsureCatDBVendorRuntime()
+    end
+end
+
+local function ActivateRoleEra(self, role, era)
+    if role == "journal" or role == "zones" then
+        ActivateJournalEra(self, era)
+        return
+    end
+    ns:EnsureLoaded(era.addon)
+    local topics = ROLE_TOPICS[role]
+    for topic in pairs(topics) do
+        if self:IsTopicEnabled(era.addon, topic) then
+            self:ActivateTopic(era.addon, topic)
+        end
+    end
+    if role == "vendors" or role == "npcs" or role == "quests" or role == "archive" then
+        if self:IsTopicEnabled(era.addon, "mappin") then
+            self:ActivateTopic(era.addon, "mappin")
+        end
+    end
+end
+
+local function EraMatchesShardFilter(era, expansionID)
+    if era.expansionID == expansionID then
+        return true
+    end
+    return SUITE_TO_LE[era.expansionID] == expansionID
+end
+
+function CatalogData:CancelRoleShardJob(role)
+    if role == "journal" or role == "zones" then
+        self:CancelJournalShardJob()
+        return
+    end
+    local job = roleShardJobs[role]
+    if job then
+        roleShardJobs[role] = nil
+        roleShardOnUpdate[role] = nil
+        job:Cancel()
+    end
+end
+
+--- Load one wanted expansion's topics for this role (suite ID or LE ID).
+---@param role string
+---@param expansionID number
+function CatalogData:EnsureRoleShards(role, expansionID)
+    if role == "journal" or role == "zones" then
+        self:EnsureJournalShards(expansionID)
+        return
+    end
+    if not expansionID or expansionID == 0 or expansionID == -1 then
+        return
+    end
+    ns:EnsureLoaded(RUNTIME_ADDON)
+    ScanInstalled()
+    for i = 1, #eras do
+        local era = eras[i]
+        if EraMatchesShardFilter(era, expansionID)
+            and ns:IsFeatureWanted(era.addon)
+            and RoleNeedsEra(self, role, era)
+        then
+            ActivateRoleEra(self, role, era)
+            FinishRoleRuntime(role)
+            return
+        end
+    end
+end
+
+--- Load the selected expansion now. All loads this expansion first, then the rest
+--- across frames so opening NPCs / Quests / Item Search does not hitch every pack.
+---@param role string
+---@param expansionID number
+---@param onUpdate function|nil
+function CatalogData:EnsureRoleShardsForFilter(role, expansionID, onUpdate)
+    if role == "journal" or role == "zones" then
+        self:EnsureJournalShardsForFilter(expansionID, onUpdate)
+        return
+    end
+    ns:EnsureLoaded(RUNTIME_ADDON)
+    ScanInstalled()
+    if expansionID and expansionID ~= 0 and expansionID ~= -1 then
+        self:CancelRoleShardJob(role)
+        self:EnsureRoleShards(role, expansionID)
+        return
+    end
+    local current = self:GetCurrentSuiteExpansionID()
+    if current ~= 0 then
+        self:EnsureRoleShards(role, current)
+    end
+    roleShardOnUpdate[role] = onUpdate
+    if roleShardJobs[role] then
+        return
+    end
+    local pending = {}
+    local topics = ROLE_TOPICS[role]
+    for i = 1, #eras do
+        local era = eras[i]
+        if era.expansionID ~= OTHER_EXPANSION_ID
+            and era.expansionID ~= current
+            and ns:IsFeatureWanted(era.addon)
+            and RoleNeedsEra(self, role, era)
+        then
+            local needActivate = false
+            for topic in pairs(topics) do
+                if self:IsTopicEnabled(era.addon, topic) and not self:IsTopicActivated(era.addon, topic) then
+                    needActivate = true
+                    break
+                end
+            end
+            if needActivate then
+                tinsert(pending, era)
+            end
+        end
+    end
+    FinishRoleRuntime(role)
+    if #pending == 0 then
+        return
+    end
+    roleShardJobs[role] = ns.ChunkedJob.Start({
+        budgetMs = 8,
+        run = function(shouldYield)
+            for i = 1, #pending do
+                ActivateRoleEra(self, role, pending[i])
+                ns.ChunkedJob.YieldIfNeeded(shouldYield)
+            end
+        end,
+        onProgress = function()
+            local cb = roleShardOnUpdate[role]
+            if cb then
+                cb()
+            end
+        end,
+        onComplete = function()
+            roleShardJobs[role] = nil
+            local cb = roleShardOnUpdate[role]
+            roleShardOnUpdate[role] = nil
+            FinishRoleRuntime(role)
+            if cb then
+                cb()
+            end
+        end,
+        onCancel = function()
+            roleShardJobs[role] = nil
         end,
     })
 end
