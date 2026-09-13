@@ -81,6 +81,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
 
     ["JOURNAL_CARD_CITY"] = "Città",
     ["JOURNAL_CARD_DUNGEON"] = "Spedizione",
+    ["JOURNAL_CARD_BOUNTIFUL"] = "Fruttuosa",
     ["JOURNAL_CARD_ENCOUNTER_ONE"] = "%d boss",
     ["JOURNAL_CARD_ENCOUNTERS"] = "%d boss",
     ["JOURNAL_CARD_RARE_ONE"] = "%d raro",

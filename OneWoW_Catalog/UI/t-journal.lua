@@ -1079,7 +1079,20 @@ local function BindJournalPinButton(btn, instData)
     end
 end
 
+---@param addon table|nil
+---@param mapID number|nil
+---@return boolean
+---@return string
+local function DelveTypeDisplay(addon, mapID)
+    local bountiful = addon and addon.IsDelveBountiful(mapID)
+    if bountiful then
+        return true, L["JOURNAL_CARD_BOUNTIFUL"]
+    end
+    return false, DELVE_LABEL
+end
+
 -- Map POI atlases inline via |A: so Expansion | Type stays one FontString.
+-- Bountiful is a short type label only; stored instanceType stays delve.
 local function FormatInstanceInfoLine(instData, iconSize)
     local typeStr = ""
     if instData.instanceType == "raid" then
@@ -1095,11 +1108,9 @@ local function FormatInstanceInfoLine(instData, iconSize)
             typeStr = string.format("|A:Waypoint-MapPin-Untracked:%d:%d|a %s", iconSize, iconSize, ZONE)
         end
     elseif instData.instanceType == "delve" then
-        local addon = GetDataAddon()
-        local atlas = (addon and addon.IsDelveBountiful(instData.mapID))
-            and "delves-bountiful"
-            or "delves-regular"
-        typeStr = string.format("|A:%s:%d:%d|a %s", atlas, iconSize, iconSize, DELVE_LABEL)
+        local isBountiful, typeLabel = DelveTypeDisplay(GetDataAddon(), instData.mapID)
+        local atlas = isBountiful and "delves-bountiful" or "delves-regular"
+        typeStr = string.format("|A:%s:%d:%d|a %s", atlas, iconSize, iconSize, typeLabel)
         local storyName, idx, criteria = ResolveDelveStoryDisplayName(instData)
         if storyName then
             if ActiveStoryIncomplete(idx, criteria) then

@@ -38,6 +38,7 @@
 - Looking up a Battle for Azeroth item no longer errors when that expansion's Journal data loads. Journal cards and drop lines for that expansion work again.
 
 ## Journal
+- This week's bountiful Delves still sort and filter as Delves. The type line says Bountiful and keeps the gold border and bountiful icon.
 - Standing in an older dungeon or raid (Skyreach, Timewalking, and the rest) shows that place. Extra floors in the instance load with that expansion.
 - Extra drops that come from a quest or an achievement sit in their own groups again. Click the quest link to open that quest.
 - Opening Zones loads this expansion first so the tab does not hitch. Pick All to load the rest in the background.
@@ -155,4 +156,4 @@
 
 ---
 
-- **Last Updated**: Sep 12, 2026
+- **Last Updated**: Sep 13, 2026

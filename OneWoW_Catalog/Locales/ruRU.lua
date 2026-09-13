@@ -81,6 +81,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
 
     ["JOURNAL_CARD_CITY"] = "Город",
     ["JOURNAL_CARD_DUNGEON"] = "Подземелье",
+    ["JOURNAL_CARD_BOUNTIFUL"] = "Многообещающая",
     ["JOURNAL_CARD_ENCOUNTER_ONE"] = "Босс: %d",
     ["JOURNAL_CARD_ENCOUNTERS"] = "Боссов: %d",
     ["JOURNAL_CARD_RARE_ONE"] = "Редкий: %d",

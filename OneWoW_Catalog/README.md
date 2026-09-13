@@ -15,6 +15,7 @@ Browse dungeons, raids, Delves, and World hubs from every expansion:
 - Pin on a card or the details toolbar opens the world map at that instance's entrance (gold pins are Wowhead locations until official doors ship). Right-click the pin to save a OneWay Pin in Notes
 - Encounter rows have See NPC (opens that boss on the NPCs tab) and See Map (pins that encounter when we have a location)
 - Instance Type includes World, Zones, Cities, and Delves, with a Show Bountiful checkbox for this week's bountiful doors
+- This week's bountiful doors still sort as Delves; the type line says Bountiful
 - Delve cards show today's story on the type line (Incomplete color only while you still need that variant) and remaining Stories progress until that achievement is complete. Details list each variant under Stories while it is unfinished
 - Cities and outdoor zones for every expansion ship with that expansion's Catalog data
 - Delve cards use official entrance background art. Zones, cities, and other cards without their own art use that expansion's Adventure Guide background

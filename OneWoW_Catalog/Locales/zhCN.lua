@@ -81,6 +81,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
 
     ["JOURNAL_CARD_CITY"] = "主城",
     ["JOURNAL_CARD_DUNGEON"] = "地下城",
+    ["JOURNAL_CARD_BOUNTIFUL"] = "丰裕",
     ["JOURNAL_CARD_ENCOUNTER_ONE"] = "%d 个首领",
     ["JOURNAL_CARD_ENCOUNTERS"] = "%d 个首领",
     ["JOURNAL_CARD_RARE_ONE"] = "%d 个稀有",

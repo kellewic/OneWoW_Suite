@@ -81,6 +81,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esES", {
 
     ["JOURNAL_CARD_CITY"] = "Ciudad",
     ["JOURNAL_CARD_DUNGEON"] = "Mazmorra",
+    ["JOURNAL_CARD_BOUNTIFUL"] = "Pródiga",
     ["JOURNAL_CARD_ENCOUNTER_ONE"] = "%d jefe",
     ["JOURNAL_CARD_ENCOUNTERS"] = "%d jefes",
     ["JOURNAL_CARD_RARE_ONE"] = "%d raro",

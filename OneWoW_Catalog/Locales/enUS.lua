@@ -80,6 +80,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
 
     ["JOURNAL_CARD_CITY"] = "City",
     ["JOURNAL_CARD_DUNGEON"] = "Dungeon",
+    ["JOURNAL_CARD_BOUNTIFUL"] = "Bountiful",
     ["JOURNAL_CARD_ENCOUNTER_ONE"] = "%d Boss",
     ["JOURNAL_CARD_ENCOUNTERS"] = "%d Bosses",
     ["JOURNAL_CARD_RARE_ONE"] = "%d Rare",

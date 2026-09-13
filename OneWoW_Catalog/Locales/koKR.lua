@@ -80,6 +80,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
 
     ["JOURNAL_CARD_CITY"] = "도시",
     ["JOURNAL_CARD_DUNGEON"] = "던전",
+    ["JOURNAL_CARD_BOUNTIFUL"] = "풍요로운",
     ["JOURNAL_CARD_ENCOUNTER_ONE"] = "보스 %d명",
     ["JOURNAL_CARD_ENCOUNTERS"] = "보스 %d명",
     ["JOURNAL_CARD_RARE_ONE"] = "희귀 %d마리",
