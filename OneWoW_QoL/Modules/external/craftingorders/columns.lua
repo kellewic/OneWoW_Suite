@@ -97,7 +97,7 @@ local function CopyLayoutDefaults()
         order = CopyTable(COLUMN_IDS),
         hidden = CopyTable(DEFAULT_HIDDEN),
         sizes = CopyTable(DEFAULT_SIZES),
-        hideHaveMats = true,
+        hideHaveMats = false,
         tight = true,
         hideScrollBar = false,
         priceSource = "onewow",

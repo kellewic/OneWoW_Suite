@@ -19,6 +19,8 @@ if not M then return end
 --   Customer Provides = covered slots, using the allocated item (not the
 --   schematic default). reagentState == All is a coarse UI flag, not a
 --   per-slot dump of the recipe into Customer.
+--   Recraft: slots already on the item (GetItemSlotModificationsForOrder)
+--   count as covered, same as Blizzard OrderView AllocateModification.
 -- ============================================================================
 
 local GetItemCount = C_Item.GetItemCount
@@ -86,6 +88,42 @@ local function CoveredByOrder(order)
     return covered
 end
 
+-- Recraft items already carry finishing/modified reagents (spark, etc.).
+-- Keyed by schematic dataSlotIndex, matching Blizzard's modification table.
+---@param order CraftingOrderInfo
+---@return table<number, number>|nil
+local function RecraftModsByDataSlot(order)
+    if order.isRecraft ~= true or not order.orderID then
+        return nil
+    end
+    local mods = C_TradeSkillUI.GetItemSlotModificationsForOrder(order.orderID)
+    if not mods then
+        return nil
+    end
+    local byDataSlot = {}
+    local found = false
+    for key, mod in pairs(mods) do
+        if type(mod) == "table" then
+            local reagent = mod.reagent
+            local itemID = reagent and reagent.itemID
+            if itemID and itemID > 0 then
+                local dataSlotIndex = mod.dataSlotIndex
+                if not dataSlotIndex and type(key) == "number" then
+                    dataSlotIndex = key
+                end
+                if dataSlotIndex then
+                    byDataSlot[dataSlotIndex] = itemID
+                    found = true
+                end
+            end
+        end
+    end
+    if not found then
+        return nil
+    end
+    return byDataSlot
+end
+
 local function CustomerIcon(provided, slot)
     return {
         itemID = (provided and provided.itemID) or SlotIconItem(slot),
@@ -107,6 +145,7 @@ local function ClassifyReagents(order)
     local missing = {}
     local allCovered = true
     local covered = CoveredByOrder(order)
+    local recraftMods = RecraftModsByDataSlot(order)
     local seenCover = {}
 
     local schematic = C_TradeSkillUI.GetRecipeSchematic(order.spellID, order.isRecraft == true)
@@ -115,6 +154,13 @@ local function ClassifyReagents(order)
         for i = 1, #slots do
             local slot = slots[i]
             local provided = covered[slot.slotIndex]
+            if not provided and recraftMods and slot.dataSlotIndex then
+                local itemID = recraftMods[slot.dataSlotIndex]
+                if itemID then
+                    provided = { itemID = itemID, need = slot.quantityRequired or 1 }
+                    covered[slot.slotIndex] = provided
+                end
+            end
             if provided then
                 seenCover[slot.slotIndex] = true
                 customerOut[#customerOut + 1] = CustomerIcon(provided, slot)

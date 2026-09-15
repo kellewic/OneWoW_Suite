@@ -18,6 +18,29 @@ local collapsedCards = {}
 
 local ROW_H = 28
 local ROW_GAP = 4
+local DESC_GAP = 4
+local OPTION_GAP = 8
+
+local function ApplyMutedWrap(fs, text, width)
+    fs:SetJustifyH("LEFT")
+    fs:SetWordWrap(true)
+    if width >= 1 then
+        fs:SetWidth(width)
+    end
+    OneWoW_GUI:SetFontBaseSize(fs, 10)
+    OneWoW_GUI:SafeSetFont(fs, OneWoW_GUI:GetFont(), 10)
+    fs:SetText(text)
+    fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+end
+
+local function PlaceCheckThenDesc(content, cb, desc, y)
+    cb:ClearAllPoints()
+    cb:SetPoint("TOPLEFT", content, "TOPLEFT", 0, y)
+    y = y - cb:GetMeasuredHeight() - DESC_GAP
+    desc:ClearAllPoints()
+    desc:SetPoint("TOPLEFT", content, "TOPLEFT", 0, y)
+    return y - (desc:GetStringHeight() or 14) - OPTION_GAP
+end
 
 local function CopyOrder(src)
     local out = {}
@@ -286,24 +309,14 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
                 SyncSizeControls()
             end,
         })
-        tightCb:SetPoint("TOPLEFT", content, "TOPLEFT", 0, y)
         SetControlEnabled(tightCb, IsDetailEnabled())
         widgets.tightCb = tightCb
-        y = y - 28
 
-        local tightDesc = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        tightDesc:SetPoint("TOPLEFT", content, "TOPLEFT", 0, y)
-        tightDesc:SetJustifyH("LEFT")
-        tightDesc:SetWordWrap(true)
         local descW = tonumber(contentWidth) or 0
-        if descW >= 1 then
-            tightDesc:SetWidth(descW)
-        else
-            tightDesc:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, y)
-        end
-        tightDesc:SetText(L["CRAFTORDERS_TIGHT_DESC"])
-        tightDesc:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
-        y = y - (tightDesc:GetStringHeight() or 14) - 10
+        local tightDesc = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        ApplyMutedWrap(tightDesc, L["CRAFTORDERS_TIGHT_DESC"], descW)
+        widgets.tightDesc = tightDesc
+        y = PlaceCheckThenDesc(content, tightCb, tightDesc, y)
 
         local hideScrollCb = OneWoW_GUI:CreateCheckbox(content, {
             label = L["CRAFTORDERS_HIDE_SCROLLBAR"],
@@ -312,25 +325,13 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
                 M:SetHideScrollBar(myself:GetChecked())
             end,
         })
-        hideScrollCb:SetPoint("TOPLEFT", content, "TOPLEFT", 0, y)
         SetControlEnabled(hideScrollCb, IsDetailEnabled())
         widgets.hideScrollCb = hideScrollCb
-        y = y - 28
 
         local hideScrollDesc = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        hideScrollDesc:SetPoint("TOPLEFT", content, "TOPLEFT", 0, y)
-        hideScrollDesc:SetJustifyH("LEFT")
-        hideScrollDesc:SetWordWrap(true)
-        if descW >= 1 then
-            hideScrollDesc:SetWidth(descW)
-        else
-            hideScrollDesc:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, y)
-        end
-        hideScrollDesc:SetText(L["CRAFTORDERS_HIDE_SCROLLBAR_DESC"])
-        hideScrollDesc:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+        ApplyMutedWrap(hideScrollDesc, L["CRAFTORDERS_HIDE_SCROLLBAR_DESC"], descW)
         widgets.hideScrollDesc = hideScrollDesc
-        y = y - (hideScrollDesc:GetStringHeight() or 14) - 10
-        local sizeStartY = y
+        y = PlaceCheckThenDesc(content, hideScrollCb, hideScrollDesc, y)
 
         local keys = {
             { key = "product", label = L["CRAFTORDERS_SIZE_ITEM"] },
@@ -371,7 +372,13 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
 
         widgets.relayoutSizeSliders = function()
             local shown = M:GetLayout()
-            local nextY = sizeStartY
+            local nextY = 0
+            if widgets.tightCb and widgets.tightDesc then
+                nextY = PlaceCheckThenDesc(content, widgets.tightCb, widgets.tightDesc, nextY)
+            end
+            if widgets.hideScrollCb and widgets.hideScrollDesc then
+                nextY = PlaceCheckThenDesc(content, widgets.hideScrollCb, widgets.hideScrollDesc, nextY)
+            end
             for i = 1, #widgets.sizeRows do
                 local row = widgets.sizeRows[i]
                 local show = not row.colId or shown.hidden[row.colId] ~= true
