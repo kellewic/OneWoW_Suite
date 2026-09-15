@@ -52,7 +52,7 @@
 - Zone achievement rows no longer show a Difficulty column, so the name has more room.
 
 ## Quests
-- Catalog Quests now includes a large set of quests that were missing, and fills in details on quests we already had.
+- Catalog Quests now includes a large set of quests that were missing, including older holiday and class quests, and fills in details on quests we already had.
 - Show on Map uses the NPC database pin for the giver or turn-in, including object starters.
 - Talking to a quest giver fills missing Catalog quest text and rewards again.
 - Click the giver or turn-in name to open that person in Catalog NPCs. A quest you pick up that we did not ship is saved.
