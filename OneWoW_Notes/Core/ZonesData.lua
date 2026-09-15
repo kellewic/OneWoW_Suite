@@ -181,6 +181,27 @@ function Zones:DisableScanning()
     ns.db.global.zoneAlertsEnabled = false
 end
 
+function Zones:IsPinnedWindowEnabled()
+    return ns.db.global.zonePinnedWindowEnabled ~= false
+end
+
+function Zones:SetPinnedWindowEnabled(enabled)
+    ns.db.global.zonePinnedWindowEnabled = enabled and true or false
+    if not enabled and ns.ZonePins and ns.zonePins then
+        local ids = {}
+        for noteId in pairs(ns.zonePins) do
+            ids[#ids + 1] = noteId
+        end
+        for _, noteId in ipairs(ids) do
+            ns.ZonePins:HideZonePin(noteId)
+        end
+    end
+    self:CheckZones()
+    if ns.WayPinsCompanion then
+        ns.WayPinsCompanion:Sync()
+    end
+end
+
 -- Runs on every zone change: shows/hides pinned zone notes (always) and fires
 -- zone alert messages (only when zone alerts are enabled).
 function Zones:CheckZones()
@@ -239,8 +260,9 @@ function Zones:CheckZones()
         local dismissed = zoneData.dismissedUntil and GetTime() < zoneData.dismissedUntil
         local title = self:FormatTitleFromData(zoneData)
 
-        -- Pins always trigger, regardless of the alert setting.
-        if zoneData.pinEnabled and not dismissed and ns.ZonePins then
+        if zoneData.pinEnabled and not dismissed and ns.ZonePins
+            and ns.db.global.zonePinnedWindowEnabled ~= false
+        then
             ns.ZonePins:ShowZonePin(noteId, zoneData)
         end
 
@@ -255,6 +277,9 @@ function Zones:CheckZones()
                 OneWoW.Toasts.FireZoneAlert(title, preview)
             end
         end
+    end
+    if ns.WayPinsCompanion then
+        ns.WayPinsCompanion:Sync()
     end
 end
 

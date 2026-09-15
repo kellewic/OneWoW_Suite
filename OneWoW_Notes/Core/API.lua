@@ -588,15 +588,6 @@ function OneWoW_Notes_API.OpenJournalNote(noteID)
     return true
 end
 
---- Attach a pin's map to a zone note window (create/enable pinEnabled).
----@param pinID string
----@return string|nil noteId
-function OneWoW_Notes_API.AttachWayPinToZoneNotes(pinID)
-    if not ns.WayPinsVisual.Enabled() then return nil end
-    if not ns.WayPins then return nil end
-    return ns.WayPins:AttachToZoneNotes(pinID)
-end
-
 --- Open the OneWay Pin editor. `seed` is an existing pin or a coord draft.
 ---@param seed table|nil
 function OneWoW_Notes_API.OpenWayPinEditor(seed)

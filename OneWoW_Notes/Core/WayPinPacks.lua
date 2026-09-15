@@ -143,6 +143,53 @@ local function IsShippedPack(pack)
     return type(pack) == "table" and pack.shipped == true
 end
 
+local function PackPrefs(packId)
+    local store = ns.db.global.waypinPackPrefs
+    local prefs = store[packId]
+    if type(prefs) ~= "table" then
+        prefs = {}
+        store[packId] = prefs
+    end
+    return prefs
+end
+
+function Packs:IsEnabled(pack)
+    if type(pack) ~= "table" then
+        return false
+    end
+    if IsShippedPack(pack) then
+        local prefs = ns.db.global.waypinPackPrefs[pack.id]
+        return not (prefs and prefs.enabled == false)
+    end
+    return pack.enabled ~= false
+end
+
+function Packs:ShowsOn(pack, key)
+    if type(pack) ~= "table" or not key then
+        return true
+    end
+    if IsShippedPack(pack) then
+        local prefs = ns.db.global.waypinPackPrefs[pack.id]
+        return not (prefs and prefs[key] == false)
+    end
+    return pack[key] ~= false
+end
+
+function Packs:SetShowFlag(packId, key, value)
+    local pack = self:GetPack(packId)
+    if not pack or (key ~= "showOnList" and key ~= "showOnWorld" and key ~= "showOnMinimap") then
+        return
+    end
+    local flag = value and true or false
+    if IsShippedPack(pack) then
+        PackPrefs(packId)[key] = flag
+    else
+        pack[key] = flag
+        pack.modified = GetServerTime()
+    end
+    ns.WayPins:NotifyChanged()
+end
+
 local function SerializeValue(val)
     if type(val) == "string" then
         return format("%q", val)
@@ -381,6 +428,9 @@ function Packs:BuildDisplayPin(pack, pin)
         source      = "pack",
         sourceKey   = pack.id .. ":" .. pin.id,
         storage     = "account",
+        showOnList     = pin.showOnList,
+        showOnWorld    = pin.showOnWorld,
+        showOnMinimap  = pin.showOnMinimap,
     }
 end
 
@@ -398,7 +448,7 @@ function Packs:AppendEnabledPinsForMap(out, mapID)
         return
     end
     for _, pack in ipairs(self:GetAllPacks()) do
-        if pack.enabled ~= false then
+        if self:IsEnabled(pack) then
             for _, pin in ipairs(pack.pins) do
                 if tonumber(pin.mapID) == mapID then
                     tinsert(out, self:BuildDisplayPin(pack, pin))
@@ -446,11 +496,16 @@ end
 
 function Packs:SetEnabled(packId, enabled)
     local pack = self:GetPack(packId)
-    if not pack or IsShippedPack(pack) then
+    if not pack then
         return
     end
-    pack.enabled = enabled and true or false
-    pack.modified = GetServerTime()
+    local flag = enabled and true or false
+    if IsShippedPack(pack) then
+        PackPrefs(packId).enabled = flag
+    else
+        pack.enabled = flag
+        pack.modified = GetServerTime()
+    end
     Notify()
 end
 
@@ -582,6 +637,9 @@ function Packs:AddPin(packId, fields)
         mapID  = mapID,
         x      = x,
         y      = y,
+        showOnList     = fields.showOnList ~= false,
+        showOnWorld    = fields.showOnWorld ~= false,
+        showOnMinimap  = fields.showOnMinimap ~= false,
     }
     if HasPinLook(fields) then
         row.icon = CopyIconOptional(fields.icon)
@@ -633,6 +691,9 @@ function Packs:SaveDisplayPin(display)
         pin.title = display.title
     end
     pin.note = CopyNote(display.description or display.note)
+    pin.showOnList = display.showOnList ~= false
+    pin.showOnWorld = display.showOnWorld ~= false
+    pin.showOnMinimap = display.showOnMinimap ~= false
     if display.usePackLook then
         ClearPinLook(pin)
     else

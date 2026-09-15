@@ -12,7 +12,6 @@ local GetCVar, GetPlayerFacing, IsControlKeyDown = GetCVar, GetPlayerFacing, IsC
 local MenuUtil, GameTooltip, GameTooltip_Hide = MenuUtil, GameTooltip, GameTooltip_Hide
 local GetCursorPosition, UIParent = GetCursorPosition, UIParent
 local OpenWorldMap, securecallfunction, securecallmethod = OpenWorldMap, securecallfunction, securecallmethod
-local LibStub = LibStub
 local CreateFromMixins, Mixin = CreateFromMixins, Mixin
 local CreateUnsecuredRegionPoolInstance = CreateUnsecuredRegionPoolInstance
 local MapCanvasDataProviderMixin, MapCanvasPinMixin = MapCanvasDataProviderMixin, MapCanvasPinMixin
@@ -25,8 +24,8 @@ local Minimap = Minimap
 -- dx/dy from Location.WorldDelta against C_Minimap.GetViewRadius so a landmark
 -- stays put while you walk. Out-of-range pins sit on the rim. Clicking a pin
 -- sets the Blizzard user waypoint. Arrival clears that live track only.
--- The map-chrome button parents to GetCanvasContainer like ATT and sits under
--- ATT's button when that addon is loaded; otherwise it uses ATT's Retail slot.
+-- The map-chrome button parents to GetCanvasContainer and sits under the
+-- lowest icon already in that top-right stack.
 -- ============================================================================
 
 local WayPinsMap = {}
@@ -59,10 +58,14 @@ local placingPin = false
 local placeCatcher
 local placeGhost
 
--- ATT's retail world-map button: parent GetCanvasContainer(), TOPRIGHT (-1, -65), 36x36.
-local ATT_MAP_BTN_X = -1
-local ATT_MAP_BTN_Y = -65
-local ATT_MAP_BTN_GAP = -2
+-- Top-right map-chrome stack: first slot when empty, then under the lowest icon.
+local MAP_BTN_X = -1
+local MAP_BTN_FIRST_Y = -2
+local MAP_BTN_GAP = -2
+local MAP_BTN_MIN = 20
+local MAP_BTN_MAX = 48
+local MAP_BTN_EDGE = 8
+local MAP_BTN_STACK_DEPTH = 280
 
 local function PinVisible(data)
     if soloPinID and data.id ~= soloPinID then
@@ -77,8 +80,8 @@ local pendingReturnId
 local deleteConfirm
 local pendingDeleteId
 
-local function PinsForMap(mapID)
-    local pins = ns.WayPins:GetForMap(mapID)
+local function PinsForMap(mapID, surface)
+    local pins = ns.WayPins:GetForMap(mapID, surface)
     if not previewDraft or tonumber(previewDraft.mapID) ~= tonumber(mapID) then
         return pins
     end
@@ -449,9 +452,6 @@ function WayPinsMap:ShowPinMenu(owner, data, opts)
                 WayPinsMap:OpenPinTab(data.id)
             end)
         end
-        rootDescription:CreateButton(L["WAYPINS_ADD_TO_ZONE"], function()
-            ns.WayPins:AttachToZoneNotes(data.id)
-        end)
         if soloPinID == data.id then
             rootDescription:CreateButton(L["WAYPINS_SHOW_ALL"], function()
                 WayPinsMap:ClearSolo()
@@ -578,7 +578,7 @@ function WayPinsDataProviderMixin:RefreshAllData()
     local mapID = self:GetMap():GetMapID()
     if not mapID then return end
 
-    local pins = PinsForMap(mapID)
+    local pins = PinsForMap(mapID, "world")
     for _, data in ipairs(pins) do
         if PinVisible(data) then
             local x = (data.x or 0) / 100
@@ -674,7 +674,7 @@ local function SyncMinimapPinSet(mapID)
 
     if mapID and Visual.ShowMinimap() then
         local animate = Visual.MinimapAnimate()
-        for _, data in ipairs(PinsForMap(mapID)) do
+        for _, data in ipairs(PinsForMap(mapID, "minimap")) do
             if PinVisible(data) then
                 local key = MinimapPinKey(data)
                 local pin = minimapActive[key]
@@ -981,52 +981,52 @@ local function MapButtonParent()
     return WorldMapFrame:GetCanvasContainer() or WorldMapFrame
 end
 
-local function IsATTMapButton(frame)
-    if not frame or not frame:IsShown() then
+local function IsTopRightStackIcon(frame, parent)
+    if frame == mapButton or not frame:IsShown() then
         return false
     end
-    local name = frame:GetName()
-    if type(name) == "string" and name:find("AllTheThings", 1, true) then
-        return true
+    local w, h = frame:GetWidth(), frame:GetHeight()
+    if w < MAP_BTN_MIN or w > MAP_BTN_MAX or h < MAP_BTN_MIN or h > MAP_BTN_MAX then
+        return false
     end
-    local tex = frame.texture
-    if tex then
-        local path = tex:GetTexture()
-        if type(path) == "string" and path:find("AllTheThings", 1, true) then
-            return true
-        end
+    local parentRight, parentTop = parent:GetRight(), parent:GetTop()
+    local frameRight, frameTop = frame:GetRight(), frame:GetTop()
+    if not parentRight or not parentTop or not frameRight or not frameTop then
+        return false
     end
-    return false
+    if abs(frameRight - parentRight) > MAP_BTN_EDGE then
+        return false
+    end
+    if (parentTop - frameTop) > MAP_BTN_STACK_DEPTH then
+        return false
+    end
+    return true
 end
 
-local function ScanChildrenForATT(parent)
+local function ScanStack(parent, lowest, lowestBottom)
     if not parent then
-        return nil
+        return lowest, lowestBottom
     end
     local children = { parent:GetChildren() }
     for i = 1, #children do
-        if IsATTMapButton(children[i]) then
-            return children[i]
-        end
-    end
-    return nil
-end
-
-local function FindATTWorldMapButton()
-    local named = _G["AllTheThings-WorldMap"]
-    if IsATTMapButton(named) then
-        return named
-    end
-    local krowi = LibStub("Krowi_WorldMapButtons-1.4", true)
-    if krowi and krowi.Buttons then
-        for _, btn in ipairs(krowi.Buttons) do
-            if IsATTMapButton(btn) then
-                return btn
+        local child = children[i]
+        if IsTopRightStackIcon(child, parent) then
+            local bottom = child:GetBottom()
+            if bottom and (not lowestBottom or bottom < lowestBottom) then
+                lowest = child
+                lowestBottom = bottom
             end
         end
     end
-    return ScanChildrenForATT(WorldMapFrame)
-        or ScanChildrenForATT(WorldMapFrame:GetCanvasContainer())
+    return lowest, lowestBottom
+end
+
+local function LowestTopRightStackIcon(parent)
+    local lowest, lowestBottom = ScanStack(parent)
+    if WorldMapFrame and parent ~= WorldMapFrame then
+        lowest, lowestBottom = ScanStack(WorldMapFrame, lowest, lowestBottom)
+    end
+    return lowest
 end
 
 local function AnchorMapButton()
@@ -1036,11 +1036,11 @@ local function AnchorMapButton()
         mapButton:SetParent(parent)
     end
     mapButton:ClearAllPoints()
-    local att = FindATTWorldMapButton()
-    if att then
-        mapButton:SetPoint("TOP", att, "BOTTOM", 0, ATT_MAP_BTN_GAP)
+    local below = LowestTopRightStackIcon(parent)
+    if below then
+        mapButton:SetPoint("TOP", below, "BOTTOM", 0, MAP_BTN_GAP)
     else
-        mapButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", ATT_MAP_BTN_X, ATT_MAP_BTN_Y)
+        mapButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", MAP_BTN_X, MAP_BTN_FIRST_Y)
     end
     mapButton:SetFrameStrata("HIGH")
     mapButton:SetFrameLevel(parent:GetFrameLevel() + 20)
@@ -1132,6 +1132,7 @@ local function WireWorldMap()
     end)
     WorldMapFrame:HookScript("OnShow", function()
         C_Timer.After(0, AnchorMapButton)
+        C_Timer.After(0.15, AnchorMapButton)
         PaintMapButtonIcon()
         if mapButton then
             if Visual.Enabled() then
@@ -1187,10 +1188,6 @@ local function WireWorldMap()
             end)
         end)
     end
-
-    OneWoW_Notes:RegisterAddonLoadedWatcher("AllTheThings", function()
-        AnchorMapButton()
-    end)
 end
 
 function WayPinsMap:Refresh()

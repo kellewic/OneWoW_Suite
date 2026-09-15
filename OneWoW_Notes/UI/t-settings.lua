@@ -184,6 +184,20 @@ function ns.UI.CreateSettingsTab(parent)
     )
     yOffset = yOffset - 70
 
+    CreateDetectionRow(
+        scrollChild,
+        "SETTINGS_ZONE_PINNED_WINDOW",
+        "SETTINGS_ZONE_PINNED_WINDOW_DESC",
+        function() return ns.Zones:IsPinnedWindowEnabled() end,
+        function()
+            local nextState = not ns.Zones:IsPinnedWindowEnabled()
+            ns.Zones:SetPinnedWindowEnabled(nextState)
+            return nextState
+        end,
+        yOffset
+    )
+    yOffset = yOffset - 70
+
     -- Vendor collectible capture: off | prompt | auto. A dropdown rather
     -- than a toggle because it is tri-state; changing it reconciles the merchant
     -- subscription via ns.CollectiblesMerchant.

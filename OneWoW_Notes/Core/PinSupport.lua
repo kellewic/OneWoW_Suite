@@ -83,6 +83,9 @@ function PinSupport.ApplyAllPinScales()
             pin:RefreshLayout()
         end
     end
+    if ns.WayPinsCompanion and ns.WayPinsCompanion.ApplyScale then
+        ns.WayPinsCompanion:ApplyScale()
+    end
 end
 
 function PinSupport.CachePinSize(pin)
@@ -244,6 +247,96 @@ function PinSupport.ApplyOpacityBackdrop(frame, color, alpha, borderColor)
         frame:SetBackdropBorderColor(borderColor[1], borderColor[2], borderColor[3], 1)
     end
 end
+
+-- Character / bank / professions sit on MEDIUM. HIGH (and MEDIUM at
+-- Notes window-stack levels) paints over them. Drop overlays to LOW
+-- while those panels are open; restore MEDIUM when they close.
+local COVER_PANEL_NAMES = {
+    CharacterFrame = true,
+    BankFrame = true,
+    GuildBankFrame = true,
+    ProfessionsFrame = true,
+    ProfessionsBookFrame = true,
+}
+
+local OVERLAY_STRATA = "MEDIUM"
+local COVERED_STRATA = "LOW"
+local coverHooksReady = false
+local hookedCoverFrames = {}
+
+local function WatchCoverFrame(frame)
+    if not frame or hookedCoverFrames[frame] then
+        return
+    end
+    hookedCoverFrames[frame] = true
+    frame:HookScript("OnShow", PinSupport.ApplyAllOverlayStrata)
+    frame:HookScript("OnHide", PinSupport.ApplyAllOverlayStrata)
+end
+
+function PinSupport.CoveringGamePanelShown()
+    for name in pairs(COVER_PANEL_NAMES) do
+        local panel = _G[name]
+        if panel and panel:IsShown() then
+            return true
+        end
+    end
+    return false
+end
+
+function PinSupport.OverlayStrata()
+    if PinSupport.CoveringGamePanelShown() then
+        return COVERED_STRATA
+    end
+    return OVERLAY_STRATA
+end
+
+function PinSupport.ApplyOverlayStrata(frame)
+    if not frame then return end
+    frame:SetFrameStrata(PinSupport.OverlayStrata())
+end
+
+function PinSupport.ApplyAllOverlayStrata()
+    local strata = PinSupport.OverlayStrata()
+    if ns.zonePins then
+        for _, pin in pairs(ns.zonePins) do
+            if pin then
+                pin:SetFrameStrata(strata)
+            end
+        end
+    end
+    if ns.WayPinsCompanion and ns.WayPinsCompanion.ApplyOverlayStrata then
+        ns.WayPinsCompanion:ApplyOverlayStrata(strata)
+    end
+end
+
+local function WatchNamedCoverFrames()
+    for name in pairs(COVER_PANEL_NAMES) do
+        WatchCoverFrame(_G[name])
+    end
+end
+
+local function EnsureCoverPanelHooks()
+    if coverHooksReady then return end
+    coverHooksReady = true
+    local function OnPanelToggle(frame)
+        if type(frame) ~= "table" or not frame.GetName then
+            return
+        end
+        local name = frame:GetName()
+        if name and COVER_PANEL_NAMES[name] then
+            WatchCoverFrame(frame)
+            PinSupport.ApplyAllOverlayStrata()
+        end
+    end
+    hooksecurefunc("ShowUIPanel", OnPanelToggle)
+    hooksecurefunc("HideUIPanel", OnPanelToggle)
+    WatchNamedCoverFrames()
+    EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", WatchNamedCoverFrames)
+    EventUtil.ContinueOnAddOnLoaded("Blizzard_ProfessionsBook", WatchNamedCoverFrames)
+    EventUtil.ContinueOnAddOnLoaded("Blizzard_GuildBankUI", WatchNamedCoverFrames)
+end
+
+EnsureCoverPanelHooks()
 
 function PinSupport.EnsureWorldMapHook()
     if worldMapHooked then return end

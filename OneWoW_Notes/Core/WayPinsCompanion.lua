@@ -12,9 +12,9 @@ local IsControlKeyDown = IsControlKeyDown
 -- ============================================================================
 -- WayPinsCompanion
 -- ============================================================================
--- List of OneWay Pins for the current map, docked to the right of a Zone Notes
--- pinned window (or filling it when Show Zone Notes is off). Chrome copies the
--- host note so the two boxes read as one. One companion per map.
+-- List of OneWay Pins for the current map. Pins owns this window. When a zone
+-- note is also pinned, the list docks beside it (or fills it when Show Zone
+-- Notes is off). Otherwise it is a standalone overlay. One list per map.
 -- ============================================================================
 
 local Companion = {}
@@ -23,10 +23,16 @@ ns.WayPinsCompanion = Companion
 local ROW_HEIGHT = 26
 local COMPANION_WIDTH = 220
 
-local TITLE_BACKDROP = {
-    bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-    insets = { left = 0, right = 0, top = 0, bottom = 0 },
-}
+local C = OneWoW_GUI.Constants
+
+local function ApplyButtonTheme(btn)
+    if not btn then return end
+    btn:SetBackdropColor(OneWoW_GUI:GetThemeColor("BTN_NORMAL"))
+    btn:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BTN_BORDER"))
+    if btn.text then
+        btn.text:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+    end
+end
 
 local frame
 local hostFrame
@@ -34,13 +40,37 @@ local rowPool = {}
 local activeRows = {}
 local pausedForMap = false
 local restoreHosts = {}
+local listDismissUntil = {}
+local standaloneCollapsed = false
+local eventsReady = false
+
+local function ApplyMinimizeVisual()
+    local btn = frame and frame.minimizeBtn
+    if not btn or not btn.text then return end
+    if hostFrame then
+        btn.text:SetText(hostFrame.collapsed and "+" or "-")
+    else
+        btn.text:SetText(standaloneCollapsed and "+" or "-")
+    end
+end
 
 local function HostHidesNote(host)
     if not host or not host.noteId or not ns.Zones then
         return false
     end
     local zd = ns.Zones:GetZone(host.noteId)
-    return Visual.Enabled() and zd and zd.hideZoneNote == true and zd.showWayPins ~= false
+    return zd and zd.hideZoneNote == true
+end
+
+local function ListDismissed(mapID)
+    local untilT = mapID and listDismissUntil[mapID]
+    return untilT and GetTime() < untilT
+end
+
+local function DismissListForMap(mapID)
+    if mapID then
+        listDismissUntil[mapID] = GetTime() + 1800
+    end
 end
 
 local function HostHidesScrollBar(host)
@@ -66,9 +96,14 @@ end
 local function EnsureFrame()
     if frame then return frame end
 
-    frame = CreateFrame("Frame", "OneWoW_WayPinsCompanion", UIParent, "BackdropTemplate")
-    frame:SetWidth(COMPANION_WIDTH)
-    frame:SetHeight(200)
+    frame = OneWoW_GUI:CreateFrame(UIParent, {
+        name = "OneWoW_WayPinsCompanion",
+        width = COMPANION_WIDTH,
+        height = 200,
+        backdrop = C.BACKDROP_INNER,
+        bgColor = "BG_PRIMARY",
+        borderColor = "BORDER_DEFAULT",
+    })
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
     frame:Hide()
@@ -76,9 +111,14 @@ local function EnsureFrame()
         Companion:RefreshRows()
     end)
 
+    frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
+    frame:SetBackdrop(C.BACKDROP_SOFT)
     frame:SetScript("OnDragStart", function()
         if hostFrame and hostFrame:IsMovable() then
             hostFrame:StartMoving()
+        elseif not hostFrame then
+            frame:StartMoving()
         end
     end)
     frame:SetScript("OnDragStop", function()
@@ -87,6 +127,10 @@ local function EnsureFrame()
             if hostFrame.SaveGeometry then
                 hostFrame:SaveGeometry()
             end
+        else
+            frame:StopMovingOrSizing()
+            local point, _, rel, x, y = frame:GetPoint(1)
+            ns.db.global.waypinCompanionPos = { point, rel, x, y }
         end
     end)
     frame:SetScript("OnMouseUp", function(myself, button)
@@ -108,13 +152,16 @@ local function EnsureFrame()
     local titleBar = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     titleBar:SetPoint("TOPLEFT", 4, -4)
     titleBar:SetPoint("TOPRIGHT", -4, -4)
-    titleBar:SetHeight(20)
-    titleBar:SetBackdrop(TITLE_BACKDROP)
+    titleBar:SetHeight(24)
+    titleBar:SetBackdrop(C.BACKDROP_SIMPLE)
+    titleBar:SetBackdropColor(OneWoW_GUI:GetThemeColor("TITLEBAR_BG"))
     titleBar:EnableMouse(true)
     titleBar:RegisterForDrag("LeftButton")
     titleBar:SetScript("OnDragStart", function()
         if hostFrame and hostFrame:IsMovable() then
             hostFrame:StartMoving()
+        elseif not hostFrame then
+            frame:StartMoving()
         end
     end)
     titleBar:SetScript("OnDragStop", function()
@@ -123,6 +170,10 @@ local function EnsureFrame()
             if hostFrame.SaveGeometry then
                 hostFrame:SaveGeometry()
             end
+        else
+            frame:StopMovingOrSizing()
+            local point, _, rel, x, y = frame:GetPoint(1)
+            ns.db.global.waypinCompanionPos = { point, rel, x, y }
         end
     end)
     titleBar:SetScript("OnMouseUp", function(myself, button)
@@ -142,41 +193,36 @@ local function EnsureFrame()
     end)
     frame.titleBar = titleBar
 
-    local closeBtn = CreateFrame("Button", nil, titleBar)
-    closeBtn:SetSize(16, 16)
+    local closeBtn = OneWoW_GUI:CreateButton(titleBar, { text = "X", width = 20, height = 20 })
     closeBtn:SetPoint("RIGHT", -2, 0)
-    closeBtn:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
-    closeBtn:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
-    closeBtn:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight")
     closeBtn:SetScript("OnClick", function()
         if hostFrame and HostHidesNote(hostFrame) and hostFrame.closeBtn then
             hostFrame.closeBtn:Click()
             return
         end
-        Companion:CollapseHost()
+        Companion:DismissList()
     end)
     frame.closeBtn = closeBtn
 
-    local minimizeBtn = CreateFrame("Button", nil, titleBar)
-    minimizeBtn:SetSize(16, 16)
+    local minimizeBtn = OneWoW_GUI:CreateButton(titleBar, { text = "-", width = 20, height = 20 })
     minimizeBtn:SetPoint("RIGHT", closeBtn, "LEFT", -2, 0)
-    minimizeBtn:SetNormalTexture("Interface\\Buttons\\UI-MinusButton-UP")
-    minimizeBtn:SetPushedTexture("Interface\\Buttons\\UI-MinusButton-UP")
-    minimizeBtn:SetHighlightTexture("Interface\\Buttons\\UI-MinusButton-UP")
     minimizeBtn:SetScript("OnClick", function()
         if hostFrame and hostFrame.ToggleCollapsed then
             hostFrame:ToggleCollapsed()
+            return
         end
+        standaloneCollapsed = not standaloneCollapsed
+        Companion:ApplyStandaloneLayout()
+        ApplyMinimizeVisual()
     end)
     minimizeBtn:SetScript("OnEnter", function(myself)
         PinSupport.ShowTooltip(myself, "ANCHOR_BOTTOM", MINIMIZE)
     end)
     minimizeBtn:SetScript("OnLeave", PinSupport.HideTooltip)
-    minimizeBtn:Hide()
     frame.minimizeBtn = minimizeBtn
 
-    local addBtn = OneWoW_GUI:CreateFitTextButton(titleBar, { text = ADD, height = 18, minWidth = 36 })
-    addBtn:SetPoint("RIGHT", closeBtn, "LEFT", -2, 0)
+    local addBtn = OneWoW_GUI:CreateFitTextButton(titleBar, { text = ADD, height = 20, minWidth = 36 })
+    addBtn:SetPoint("RIGHT", minimizeBtn, "LEFT", -2, 0)
     addBtn:SetScript("OnClick", function(myself)
         ns.WayPinsMap:ShowAddMenu(myself)
     end)
@@ -188,6 +234,10 @@ local function EnsureFrame()
     end)
     addBtn:SetScript("OnLeave", GameTooltip_Hide)
     frame.addBtn = addBtn
+    ApplyButtonTheme(closeBtn)
+    ApplyButtonTheme(minimizeBtn)
+    ApplyButtonTheme(addBtn)
+    ApplyMinimizeVisual()
 
     local title = OneWoW_GUI:CreateFS(titleBar, 12)
     title:SetPoint("LEFT", 5, 0)
@@ -200,7 +250,7 @@ local function EnsureFrame()
 
     local scroll, child = OneWoW_GUI:CreateScrollFrame(frame, {})
     scroll:ClearAllPoints()
-    scroll:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -28)
+    scroll:SetPoint("TOPLEFT", frame, "TOPLEFT", 8, -32)
     scroll:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -8, 8)
     frame.scroll = scroll
     frame.child = child
@@ -211,17 +261,42 @@ local function EnsureFrame()
         end
     end)
 
+    if not eventsReady then
+        eventsReady = true
+        local ev = CreateFrame("Frame")
+        ev:RegisterEvent("PET_BATTLE_OPENING_START")
+        ev:RegisterEvent("PET_BATTLE_CLOSE")
+        ev:RegisterEvent("PLAYER_ENTERING_WORLD")
+        ev:SetScript("OnEvent", function()
+            Companion:Sync()
+        end)
+        OneWoW.Restriction.RegisterStateCallback("OneWoW_Notes.WayPinsList", function()
+            Companion:Sync()
+        end)
+    end
+
     return frame
 end
 
 function Companion:PaintOpacity(bgColor, alpha, borderColor, titleBarColor)
     if not frame then return end
-    PinSupport.ApplyOpacityBackdrop(frame, bgColor, alpha, borderColor)
+    if hostFrame then
+        PinSupport.ApplyOpacityBackdrop(frame, bgColor, alpha, borderColor)
+    else
+        frame:SetBackdrop(C.BACKDROP_INNER)
+        frame:SetBackdropColor(bgColor[1], bgColor[2], bgColor[3], alpha or 1)
+        if borderColor then
+            frame:SetBackdropBorderColor(borderColor[1], borderColor[2], borderColor[3], 1)
+        end
+    end
     if frame.titleBar and titleBarColor then
-        frame.titleBar:SetBackdrop(TITLE_BACKDROP)
+        frame.titleBar:SetBackdrop(C.BACKDROP_SIMPLE)
         frame.titleBar:SetBackdropColor(titleBarColor[1], titleBarColor[2], titleBarColor[3], 0.8)
     end
     frame.title:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+    ApplyButtonTheme(frame.closeBtn)
+    ApplyButtonTheme(frame.minimizeBtn)
+    ApplyButtonTheme(frame.addBtn)
 end
 
 local function ApplyHostChrome(host)
@@ -232,12 +307,15 @@ local function ApplyHostChrome(host)
     PinSupport.ApplyOpacityBackdrop(frame, { r, g, b }, alpha, { br, bg, bb })
     if host.titleBar then
         local tr, tg, tb, ta = host.titleBar:GetBackdropColor()
-        frame.titleBar:SetBackdrop(TITLE_BACKDROP)
+        frame.titleBar:SetBackdrop(C.BACKDROP_SIMPLE)
         frame.titleBar:SetBackdropColor(tr, tg, tb, ta or 0.8)
     end
     frame.title:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+    ApplyButtonTheme(frame.closeBtn)
+    ApplyButtonTheme(frame.minimizeBtn)
+    ApplyButtonTheme(frame.addBtn)
     frame:SetParent(host)
-    frame:SetFrameStrata(host:GetFrameStrata())
+    PinSupport.ApplyAllOverlayStrata()
     frame:SetFrameLevel(host:GetFrameLevel() + 1)
 end
 
@@ -423,7 +501,7 @@ function Companion:RefreshRows()
     wipe(activeRows)
 
     local mapID = Location.GetPlayerMapID()
-    local pins = ns.WayPins:GetForMap(mapID)
+    local pins = ns.WayPins:GetForMap(mapID, "list")
     local y = 0
     for _, pin in ipairs(pins) do
         local row = AcquireRow(frame.child)
@@ -442,17 +520,8 @@ function Companion:RefreshRows()
     ApplyScrollBarVisibility(hostFrame)
 end
 
-function Companion:CollapseHost()
-    if hostFrame and hostFrame.noteId and ns.Zones then
-        local zd = ns.Zones:GetZone(hostFrame.noteId)
-        if zd then
-            zd.showWayPins = false
-            ns.Zones:SaveZone(hostFrame.noteId, zd)
-        end
-        if hostFrame.showWayPinsCB then
-            hostFrame.showWayPinsCB:SetChecked(false)
-        end
-    end
+function Companion:DismissList()
+    DismissListForMap(Location.GetPlayerMapID())
     local host = hostFrame
     self:Hide()
     if host then
@@ -472,6 +541,8 @@ function Companion:ApplyTheme()
     if frame and hostFrame then
         ApplyHostChrome(hostFrame)
         self:ApplyClusterLayout(hostFrame)
+    elseif frame and frame:IsShown() then
+        self:ApplyStandaloneLayout()
     end
     if frame and frame:IsShown() then
         self:RefreshRows()
@@ -535,13 +606,91 @@ function Companion:ApplyScrollBarVisibility(host)
     ApplyScrollBarVisibility(host)
 end
 
+function Companion:ApplyOverlayStrata(strata)
+    if not frame then return end
+    frame:SetFrameStrata(strata or PinSupport.OverlayStrata())
+end
+
+function Companion:ApplyScale()
+    if not frame then return end
+    if hostFrame then
+        frame:SetScale(1)
+        return
+    end
+    PinSupport.ApplyPinScale(frame)
+end
+
+function Companion:ApplyStandaloneLayout()
+    if not frame or hostFrame then return end
+    frame:SetParent(UIParent)
+    PinSupport.ApplyOverlayStrata(frame)
+    frame:ClearAllPoints()
+    local pos = ns.db.global.waypinCompanionPos
+    if type(pos) == "table" and pos[1] then
+        frame:SetPoint(pos[1], UIParent, pos[2] or pos[1], pos[3] or 0, pos[4] or 0)
+    else
+        frame:SetPoint("RIGHT", UIParent, "RIGHT", -40, 0)
+    end
+    frame:SetBackdrop(C.BACKDROP_INNER)
+    frame:SetBackdropColor(OneWoW_GUI:GetThemeColor("BG_PRIMARY"))
+    frame:SetBackdropBorderColor(OneWoW_GUI:GetThemeColor("BORDER_DEFAULT"))
+    if frame.titleBar then
+        frame.titleBar:SetBackdrop(C.BACKDROP_SIMPLE)
+        frame.titleBar:SetBackdropColor(OneWoW_GUI:GetThemeColor("TITLEBAR_BG"))
+    end
+    if frame.title then
+        frame.title:SetTextColor(OneWoW_GUI:GetThemeColor("ACCENT_PRIMARY"))
+    end
+    ApplyButtonTheme(frame.closeBtn)
+    ApplyButtonTheme(frame.minimizeBtn)
+    ApplyButtonTheme(frame.addBtn)
+    if standaloneCollapsed then
+        if frame.scroll then frame.scroll:Hide() end
+        frame:SetHeight(32)
+    else
+        if frame.scroll then frame.scroll:Show() end
+        frame:SetHeight(240)
+    end
+    frame:SetWidth(COMPANION_WIDTH)
+    if frame.minimizeBtn then
+        frame.minimizeBtn:Show()
+    end
+    ApplyMinimizeVisual()
+    self:ApplyScale()
+end
+
+function Companion:ShowStandalone()
+    EnsureFrame()
+    hostFrame = nil
+    frame:Show()
+    self:ApplyStandaloneLayout()
+    self:RefreshRows()
+end
+
 function Companion:ShowDocked(host)
     EnsureFrame()
     hostFrame = host
+    standaloneCollapsed = false
+    frame:SetScale(1)
     ApplyHostChrome(host)
     frame:Show()
     self:ApplyClusterLayout(host)
     self:RefreshRows()
+end
+
+local function WantPinList()
+    if not Visual.ShowZoneList() then
+        return false
+    end
+    if Visual.HideListHere() then
+        return false
+    end
+    local mapID = Location.GetPlayerMapID()
+    if ListDismissed(mapID) then
+        return false
+    end
+    local pins = ns.WayPins:GetForMap(mapID, "list")
+    return pins[1] ~= nil
 end
 
 function Companion:Sync()
@@ -556,11 +705,13 @@ function Companion:Sync()
     end
 
     local host
+    local collapsedHost
     if ns.zonePins then
-        for noteId, pinFrame in pairs(ns.zonePins) do
-            if pinFrame and pinFrame:IsShown() and not pinFrame.collapsed then
-                local zd = ns.Zones:GetZone(noteId)
-                if zd and zd.showWayPins ~= false then
+        for _, pinFrame in pairs(ns.zonePins) do
+            if pinFrame and pinFrame:IsShown() then
+                if pinFrame.collapsed then
+                    collapsedHost = pinFrame
+                else
                     host = pinFrame
                     break
                 end
@@ -568,8 +719,27 @@ function Companion:Sync()
         end
     end
 
-    if host then
+    local wantList = WantPinList()
+    if wantList and host then
         self:ShowDocked(host)
+    elseif wantList and collapsedHost then
+        local previous = hostFrame
+        self:Hide()
+        if previous and previous.ApplyClusterLayout then
+            previous:ApplyClusterLayout()
+        end
+        return
+    elseif wantList then
+        local previous = hostFrame
+        if previous and previous.ApplyClusterLayout then
+            hostFrame = nil
+            if previous._widthBeforeHideNote then
+                previous:SetWidth(previous._widthBeforeHideNote)
+                previous._widthBeforeHideNote = nil
+            end
+            previous:ApplyClusterLayout()
+        end
+        self:ShowStandalone()
     else
         local previous = hostFrame
         self:Hide()
@@ -577,4 +747,5 @@ function Companion:Sync()
             previous:ApplyClusterLayout()
         end
     end
+    PinSupport.ApplyAllOverlayStrata()
 end

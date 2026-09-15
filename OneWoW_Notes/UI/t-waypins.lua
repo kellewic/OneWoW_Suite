@@ -552,15 +552,6 @@ function ns.UI.CreateWayPinsTab(parent)
     end)
     detailWidgets.editBtn = editBtn
 
-    local zoneBtn = OneWoW_GUI:CreateFitTextButton(header, { text = L["WAYPINS_ADD_TO_ZONE"], height = 24 })
-    zoneBtn:SetPoint("RIGHT", editBtn, "LEFT", -6, 0)
-    zoneBtn:SetScript("OnClick", function()
-        if selectedID then
-            ns.WayPins:AttachToZoneNotes(selectedID)
-        end
-    end)
-    detailWidgets.zoneBtn = zoneBtn
-
     local delBtn = OneWoW_GUI:CreateFitTextButton(header, { text = DELETE, height = 24 })
     delBtn:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 10, 8)
     delBtn:SetScript("OnClick", function()

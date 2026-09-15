@@ -226,7 +226,7 @@ function Panel:RefreshRows()
 
     local parent = usingLegend and category or fallback.child
     local mapID = WorldMapFrame:GetMapID()
-    local pins = ns.WayPins:GetForMap(mapID)
+    local pins = ns.WayPins:GetForMap(mapID, "world")
     local y = usingLegend and 4 or 0
     for _, pin in ipairs(pins) do
         local row = AcquireRow(parent)

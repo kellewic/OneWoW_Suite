@@ -7,17 +7,14 @@ local PinSupport = ns.PinSupport
 local ZonePins = {}
 ns.ZonePins = ZonePins
 
-local TEX_COLLAPSE = "Interface\\Buttons\\UI-MinusButton-UP"
-local TEX_EXPAND   = "Interface\\Buttons\\UI-PlusButton-UP"
 local TITLEBAR_DOUBLE_CLICK = 0.4
 
 local function ApplyMinimizeVisual(pin)
     local btn = pin.minimizeBtn
     if not btn then return end
-    local tex = pin.collapsed and TEX_EXPAND or TEX_COLLAPSE
-    btn:SetNormalTexture(tex)
-    btn:SetPushedTexture(tex)
-    btn:SetHighlightTexture(tex)
+    if btn.text then
+        btn.text:SetText(pin.collapsed and "+" or "-")
+    end
 end
 
 local function CollapsedHeight(pin)
@@ -231,7 +228,7 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
 
     local titleText = OneWoW_GUI:CreateFS(titleBar, 10)
     titleText:SetPoint("LEFT",  titleBar, "LEFT",  5, 0)
-    titleText:SetPoint("RIGHT", titleBar, "RIGHT", -44, 0)
+    titleText:SetPoint("RIGHT", titleBar, "RIGHT", -48, 0)
     titleText:SetText(ns.Zones and ns.Zones:FormatTitleFromData(zoneData) or zoneName)
     titleText:SetJustifyH("LEFT")
     titleText:SetTextColor(titleColor[1], titleColor[2], titleColor[3], 1)
@@ -246,12 +243,8 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
     end
 
     -- Close button — sets dismissedUntil 30 min so it won't re-open on re-enter
-    local closeBtn = CreateFrame("Button", nil, titleBar)
-    closeBtn:SetSize(16, 16)
+    local closeBtn = OneWoW_GUI:CreateButton(titleBar, { text = "X", width = 20, height = 20 })
     closeBtn:SetPoint("RIGHT", titleBar, "RIGHT", -2, 0)
-    closeBtn:SetNormalTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Up")
-    closeBtn:SetPushedTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Down")
-    closeBtn:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight")
     closeBtn:SetScript("OnClick", function()
         -- Dismiss for 30 minutes so zone re-entry doesn't immediately re-open it
         if ns.Zones then
@@ -265,12 +258,8 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
     end)
     pin.closeBtn = closeBtn
 
-    local minimizeBtn = CreateFrame("Button", nil, titleBar)
-    minimizeBtn:SetSize(16, 16)
+    local minimizeBtn = OneWoW_GUI:CreateButton(titleBar, { text = "-", width = 20, height = 20 })
     minimizeBtn:SetPoint("RIGHT", closeBtn, "LEFT", -2, 0)
-    minimizeBtn:SetNormalTexture(TEX_COLLAPSE)
-    minimizeBtn:SetPushedTexture(TEX_COLLAPSE)
-    minimizeBtn:SetHighlightTexture(TEX_COLLAPSE)
     minimizeBtn:SetScript("OnClick", function()
         pin:ToggleCollapsed()
     end)
@@ -627,22 +616,6 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
     end
     pin.lockMoveCB = lockMoveCB
 
-    local showWayPinsCB = OneWoW_GUI:CreateCheckbox(hoverPanel, {
-        label = L["WAYPINS_SHOW_PINS"],
-        checked = zoneData.showWayPins ~= false,
-        onClick = function(myself)
-            zoneData.showWayPins = myself:GetChecked() and true or false
-            ns.Zones:SaveZone(zoneName, zoneData)
-            if ns.WayPinsCompanion then
-                ns.WayPinsCompanion:Sync()
-            end
-            if pin.RefreshLayout then
-                pin:RefreshLayout()
-            end
-        end,
-    })
-    pin.showWayPinsCB = showWayPinsCB
-
     local showNoteCB = OneWoW_GUI:CreateCheckbox(hoverPanel, {
         label = L["WAYPINS_SHOW_NOTE"],
         checked = zoneData.hideZoneNote ~= true,
@@ -658,10 +631,6 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
         end,
     })
     pin.showNoteCB = showNoteCB
-    if not ns.WayPinsVisual.Enabled() then
-        showWayPinsCB:Hide()
-        showNoteCB:Hide()
-    end
 
     local hideScrollCB = OneWoW_GUI:CreateCheckbox(hoverPanel, {
         label = L["WAYPINS_HIDE_SCROLLBAR"],
@@ -703,10 +672,7 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
             { control = alphaSlider, fill = true },
             { control = lockMoveCB },
         }
-        if ns.WayPinsVisual.Enabled() then
-            tinsert(items, { control = showWayPinsCB })
-            tinsert(items, { control = showNoteCB })
-        end
+        tinsert(items, { control = showNoteCB })
         tinsert(items, { control = hideScrollCB })
         PinSupport.LayoutHoverPanel(hoverPanel, items)
         hoverPanel:Show()
@@ -883,6 +849,7 @@ function ZonePins:CreateZonePin(zoneName, zoneData)
     if ns.BringWindowToFront then
         ns:BringWindowToFront(pin)
     end
+    PinSupport.ApplyOverlayStrata(pin)
 
     if ns.WayPinsCompanion then
         ns.WayPinsCompanion:Sync()
@@ -998,22 +965,10 @@ function ZonePins:RefreshSyncPins()
 end
 
 function ZonePins:ApplyWayPinsEnabled()
-    local on = ns.WayPinsVisual.Enabled()
     if not ns.zonePins then return end
     for _, pin in pairs(ns.zonePins) do
-        if pin.showWayPinsCB then
-            if on then
-                pin.showWayPinsCB:Show()
-            else
-                pin.showWayPinsCB:Hide()
-            end
-        end
         if pin.showNoteCB then
-            if on then
-                pin.showNoteCB:Show()
-            else
-                pin.showNoteCB:Hide()
-            end
+            pin.showNoteCB:Show()
         end
         if pin.RefreshLayout then
             pin:RefreshLayout()

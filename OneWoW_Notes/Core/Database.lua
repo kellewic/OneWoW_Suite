@@ -28,6 +28,13 @@ local defaults = {
         waypinShowMinimap      = true,
         waypinMinimapAnimate   = false,
         waypinShowMapPanel     = true,
+        waypinShowZoneList     = true,
+        waypinHideInInstances  = true,
+        waypinHideInDelves     = true,
+        waypinHideInPetBattles = true,
+        waypinHideInBattlegrounds = true,
+        waypinPackPrefs        = {},
+        waypinCompanionPos     = nil,
         waypinMapClickEnabled  = true,
         waypinMapClick         = "ctrlRight",
         pinPacks               = {},
@@ -50,6 +57,7 @@ local defaults = {
             waypins = { by = "name", ascending = true },
         },
         zoneAlertsEnabled  = true,
+        zonePinnedWindowEnabled = true,
         sortCompletedTasks = false,
         -- Vendor collectible capture: off | prompt | auto. A subscription
         -- decision, reconciled by ns.CollectiblesMerchant:ApplySubscription().

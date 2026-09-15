@@ -200,6 +200,65 @@ function Visual.ShowMinimap()
     return Visual.Enabled() and ns.db.global.waypinShowMinimap ~= false
 end
 
+function Visual.ShowZoneList()
+    return Visual.Enabled() and ns.db.global.waypinShowZoneList ~= false
+end
+
+local SURFACE_KEYS = {
+    list = "showOnList",
+    world = "showOnWorld",
+    minimap = "showOnMinimap",
+}
+
+--- True when this pin (and its pack, if any) should draw on a surface.
+---@param pin table
+---@param surface string "list"|"world"|"minimap"
+---@return boolean
+function Visual.PinShowsOn(pin, surface)
+    local key = SURFACE_KEYS[surface]
+    if not key or type(pin) ~= "table" then
+        return true
+    end
+    if pin[key] == false then
+        return false
+    end
+    local packId = pin.packId
+    if packId and ns.WayPinPacks then
+        local pack = ns.WayPinPacks:GetPack(packId)
+        if pack and not ns.WayPinPacks:ShowsOn(pack, key) then
+            return false
+        end
+    end
+    return true
+end
+
+--- Hide the Pins list in places where it gets in the way.
+---@return boolean
+function Visual.HideListHere()
+    local db = ns.db.global
+    if db.waypinHideInPetBattles ~= false and C_PetBattles.IsInBattle() then
+        return true
+    end
+    local inInstance, instanceType = IsInInstance()
+    local inDelve = C_PartyInfo.IsDelveInProgress()
+    if db.waypinHideInBattlegrounds ~= false then
+        if instanceType == "pvp" or instanceType == "arena"
+            or OneWoW.Restriction.IsTypeActive(Enum.AddOnRestrictionType.PvPMatch)
+        then
+            return true
+        end
+    end
+    if db.waypinHideInDelves ~= false and inDelve then
+        return true
+    end
+    if db.waypinHideInInstances ~= false and inInstance and not inDelve
+        and instanceType ~= "pvp" and instanceType ~= "arena"
+    then
+        return true
+    end
+    return false
+end
+
 function Visual.MinimapAnimate()
     return Visual.Enabled() and ns.db.global.waypinMinimapAnimate == true
 end

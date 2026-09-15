@@ -276,6 +276,9 @@ local function CollectDraft(look)
         packId      = fields.packId,
         packPinId   = fields.packPinId,
         usePackLook = fields.packPin and fields.usePackLook,
+        showOnList     = fields.showOnListCb:GetChecked() and true or false,
+        showOnWorld    = fields.showOnWorldCb:GetChecked() and true or false,
+        showOnMinimap  = fields.showOnMinimapCb:GetChecked() and true or false,
     }
 end
 
@@ -458,6 +461,19 @@ local function EnsureDialog()
     end
     fields.storageDD = storeDD
 
+    fields.showOnListCb = OneWoW_GUI:CreateCheckbox(content, {
+        label = L["WAYPINS_SHOW_ON_LIST"],
+        checked = true,
+    })
+    fields.showOnWorldCb = OneWoW_GUI:CreateCheckbox(content, {
+        label = L["WAYPINS_SHOW_WORLD"],
+        checked = true,
+    })
+    fields.showOnMinimapCb = OneWoW_GUI:CreateCheckbox(content, {
+        label = L["WAYPINS_SHOW_MINIMAP"],
+        checked = true,
+    })
+
     fields.worldSizeLabel = OneWoW_GUI:CreateFS(content, 11)
     fields.worldSizeLabel:SetText(L["WAYPINS_SIZE_WORLD"])
     fields.worldSizeLabel:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
@@ -600,6 +616,10 @@ local function EnsureDialog()
         fields.y:SetShown(showIdentity)
         fields.storageDD:SetShown(showIdentity and not packPin)
         fields.usePackLookCb:SetShown(packPin)
+        local showFlags = showIdentity
+        fields.showOnListCb:SetShown(showFlags)
+        fields.showOnWorldCb:SetShown(showFlags)
+        fields.showOnMinimapCb:SetShown(showFlags)
         fields.worldSizeLabel:SetShown(showVisuals)
         fields.miniSizeLabel:SetShown(showVisuals)
         fields.sizeSlider:SetShown(showVisuals)
@@ -639,6 +659,12 @@ local function EnsureDialog()
                 Place(fields.storageDD, DIALOG_PAD, y)
                 y = y - 28
             end
+            Place(fields.showOnListCb, 10, y)
+            y = y - 24
+            Place(fields.showOnWorldCb, 10, y)
+            y = y - 24
+            Place(fields.showOnMinimapCb, 10, y)
+            y = y - 28
         end
 
         if showVisuals then
@@ -770,6 +796,9 @@ function ns.UI.OpenWayPinDialog(seed)
     fields.effectDD:SetSelected(fields.bgEffect)
     fields.bgCheck:SetChecked(bgEnabled)
     fields.usePackLookCb:SetChecked(fields.usePackLook)
+    fields.showOnListCb:SetChecked(seed.showOnList ~= false)
+    fields.showOnWorldCb:SetChecked(seed.showOnWorld ~= false)
+    fields.showOnMinimapCb:SetChecked(seed.showOnMinimap ~= false)
     seeding = false
 
     if fields.packLook then

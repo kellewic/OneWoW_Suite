@@ -254,7 +254,7 @@ local function EnsurePane(parent)
     local options = ns.UI.CreateThemedBar(nil, pane)
     options:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -8)
     options:SetPoint("TOPRIGHT", header, "BOTTOMRIGHT", 0, -8)
-    options:SetHeight(124)
+    options:SetHeight(196)
     widgets.options = options
 
     local enableLabel = OneWoW_GUI:CreateFS(options, 12)
@@ -330,6 +330,42 @@ local function EnsurePane(parent)
     lockCb:SetPoint("LEFT", removeBtn, "RIGHT", 12, 0)
     widgets.lockCb = lockCb
 
+    local showListCb = OneWoW_GUI:CreateCheckbox(options, {
+        label = L["WAYPINS_SHOW_ON_LIST"],
+        checked = true,
+        onClick = function(myself)
+            if currentPackId then
+                ns.WayPinPacks:SetShowFlag(currentPackId, "showOnList", myself:GetChecked())
+            end
+        end,
+    })
+    showListCb:SetPoint("TOPLEFT", 12, -108)
+    widgets.showListCb = showListCb
+
+    local showWorldCb = OneWoW_GUI:CreateCheckbox(options, {
+        label = L["WAYPINS_SHOW_WORLD"],
+        checked = true,
+        onClick = function(myself)
+            if currentPackId then
+                ns.WayPinPacks:SetShowFlag(currentPackId, "showOnWorld", myself:GetChecked())
+            end
+        end,
+    })
+    showWorldCb:SetPoint("TOPLEFT", showListCb, "BOTTOMLEFT", 0, -2)
+    widgets.showWorldCb = showWorldCb
+
+    local showMiniCb = OneWoW_GUI:CreateCheckbox(options, {
+        label = L["WAYPINS_SHOW_MINIMAP"],
+        checked = true,
+        onClick = function(myself)
+            if currentPackId then
+                ns.WayPinPacks:SetShowFlag(currentPackId, "showOnMinimap", myself:GetChecked())
+            end
+        end,
+    })
+    showMiniCb:SetPoint("TOPLEFT", showWorldCb, "BOTTOMLEFT", 0, -2)
+    widgets.showMiniCb = showMiniCb
+
     local listHeader = OneWoW_GUI:CreateFS(pane, 12)
     listHeader:SetPoint("TOPLEFT", options, "BOTTOMLEFT", 4, -10)
     listHeader:SetText(L["WAYPINS_PACK_PINS"])
@@ -395,8 +431,11 @@ function ns.UI.PaintWayPinPackPane()
     end
     local sourceKey = pack.source == "import" and "WAYPINS_PACK_SOURCE_IMPORT" or "WAYPINS_PACK_SOURCE_USER"
     widgets.source:SetText(string.format("%s: %s", L["WAYPINS_PACK_SOURCE"], L[sourceKey]))
-    widgets.enableRefresh(true, pack.enabled ~= false)
+    widgets.enableRefresh(true, ns.WayPinPacks:IsEnabled(pack))
     widgets.lockCb:SetChecked(pack.orderLocked == true)
+    widgets.showListCb:SetChecked(ns.WayPinPacks:ShowsOn(pack, "showOnList"))
+    widgets.showWorldCb:SetChecked(ns.WayPinPacks:ShowsOn(pack, "showOnWorld"))
+    widgets.showMiniCb:SetChecked(ns.WayPinPacks:ShowsOn(pack, "showOnMinimap"))
     LayoutPinRows(pack)
     painting = false
     pane:Show()

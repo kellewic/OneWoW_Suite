@@ -43,7 +43,7 @@ function ns.UI.CreateZonesTab(parent)
     local controlPanel = ns.UI.CreateThemedBar(nil, parent)
     controlPanel:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
     controlPanel:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
-    controlPanel:SetHeight(45)
+    controlPanel:SetHeight(78)
 
     local addZoneBtn = OneWoW_GUI:CreateFitTextButton(controlPanel, { text = L["BUTTON_MANUAL_ENTRY"], height = 25, minWidth = 80 })
     addZoneBtn:SetPoint("TOPLEFT", controlPanel, "TOPLEFT", 10, -10)
@@ -272,6 +272,15 @@ function ns.UI.CreateZonesTab(parent)
         GameTooltip:Show()
     end)
     helpButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
+    local zoneWindowCb = OneWoW_GUI:CreateCheckbox(controlPanel, {
+        label = L["SETTINGS_ZONE_PINNED_WINDOW"],
+        checked = ns.Zones:IsPinnedWindowEnabled(),
+        onClick = function(myself)
+            ns.Zones:SetPinnedWindowEnabled(myself:GetChecked())
+        end,
+    })
+    zoneWindowCb:SetPoint("TOPLEFT", controlPanel, "TOPLEFT", 10, -48)
 
     local listingPanel = ns.UI.CreateThemedPanel(nil, parent)
     listingPanel:SetPoint("TOPLEFT", controlPanel, "BOTTOMLEFT", 0, -10)

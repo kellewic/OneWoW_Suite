@@ -13,8 +13,8 @@ local C_Map = C_Map
 -- WayPins
 -- ============================================================================
 -- Persistent OneWay Pin landmarks (mapID + percent coords + overlay icon).
--- Separate from zone notes (prose/todos). The zone pinned window hosts the
--- list; this module owns storage and CRUD.
+-- Separate from zone notes (prose/todos). This module owns storage and CRUD.
+-- The Pins list window is Pins-owned; a zone note docks beside it when both show.
 -- ============================================================================
 
 local WayPins = ns.DataModule:New("waypins", nil, {})
@@ -153,8 +153,9 @@ end
 
 --- Pins for a uiMapID, title-sorted.
 ---@param mapID number|nil
+---@param surface string|nil "list"|"world"|"minimap"; nil = every pin (editor lists)
 ---@return table[]
-function WayPins:GetForMap(mapID)
+function WayPins:GetForMap(mapID, surface)
     mapID = tonumber(mapID)
     local out = {}
     if not mapID or mapID == 0 then
@@ -176,6 +177,15 @@ function WayPins:GetForMap(mapID)
         end
         return ta < tb
     end)
+    if surface then
+        local filtered = {}
+        for _, pin in ipairs(out) do
+            if ns.WayPinsVisual.PinShowsOn(pin, surface) then
+                tinsert(filtered, pin)
+            end
+        end
+        return filtered
+    end
     return out
 end
 
@@ -223,6 +233,9 @@ function WayPins:Add(fields)
         minimapSize = tonumber(fields.minimapSize),
         source      = fields.source or "manual",
         sourceKey   = fields.sourceKey,
+        showOnList     = fields.showOnList ~= false,
+        showOnWorld    = fields.showOnWorld ~= false,
+        showOnMinimap  = fields.showOnMinimap ~= false,
         storage     = storage,
         created     = fields.created or GetServerTime(),
         modified    = GetServerTime(),
@@ -250,6 +263,9 @@ function WayPins:Save(pinID, pin)
     pin.effect = CopyEffect(pin.effect)
     pin.mapSize = tonumber(pin.mapSize)
     pin.minimapSize = tonumber(pin.minimapSize)
+    pin.showOnList = pin.showOnList ~= false
+    pin.showOnWorld = pin.showOnWorld ~= false
+    pin.showOnMinimap = pin.showOnMinimap ~= false
     pin.storage = pin.storage == "character" and "character" or "account"
     pin.modified = GetServerTime()
 
@@ -298,62 +314,6 @@ function WayPins:Track(pinID)
         return ns.WayPinsMap:TrackPin(pin)
     end
     return Location.SetWaypoint(pin.mapID, pin.x, pin.y, PERCENT_COORDS)
-end
-
---- Ensure a zone note exists for this pin's map, enable the floating window,
---- and show the OneWay Pins companion on it.
----@param pinID string
----@return string|nil noteId
-function WayPins:AttachToZoneNotes(pinID)
-    local pin = self:GetPin(pinID)
-    if not pin then return nil end
-
-    local mapID = tonumber(pin.mapID)
-    local mapInfo = mapID and C_Map.GetMapInfo(mapID)
-    local zoneName = (mapInfo and mapInfo.name) or ""
-    if zoneName == "" then return nil end
-
-    local noteId
-    for id, data in pairs(ns.Zones:GetAll()) do
-        if type(data) == "table" and tonumber(data.mapID) == mapID then
-            noteId = id
-            break
-        end
-    end
-    if not noteId then
-        noteId = ns.Zones:FindIdByParts(zoneName, "")
-    end
-
-    if not noteId then
-        noteId = ns.Zones:AddZone({
-            zone         = zoneName,
-            subzone      = "",
-            mapID        = mapID,
-            content      = "",
-            category     = "General",
-            storage      = pin.storage or "account",
-            pinEnabled   = true,
-            showWayPins  = true,
-            alertEnabled = false,
-        })
-    else
-        local zd = ns.Zones:GetZone(noteId)
-        zd.pinEnabled = true
-        zd.showWayPins = true
-        if not zd.mapID then
-            zd.mapID = mapID
-        end
-        ns.Zones:SaveZone(noteId, zd)
-    end
-
-    local zd = ns.Zones:GetZone(noteId)
-    if zd and ns.ZonePins then
-        ns.ZonePins:ShowZonePin(noteId, zd)
-    end
-    if ns.WayPinsCompanion then
-        ns.WayPinsCompanion:Sync()
-    end
-    return noteId
 end
 
 function WayPins:MapDisplayName(mapID)

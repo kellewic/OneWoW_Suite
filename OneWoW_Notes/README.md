@@ -43,7 +43,8 @@ Annotate your zones and locations:
 - Add zone-specific notes (farming spots, quest chains)
 - Pin a zone note to the screen as a floating window
 - Minimize the pinned window to the title bar; that setting is remembered when you return to the zone
-- Optional Show Pins list of OneWay Pins for that map, docked beside the window
+- Zone Pinned Window on this tab (and Notes settings) shows or hides every floating zone window
+- The OneWay Pins list docks beside a pinned zone note when both want to show. Pins own that list (Show pin list in zone + Show on pinned window per pin or pack)
 - Uncheck Show Zone Notes to keep only that pin list (no blank notes pane). Hover bar sits under both boxes
 - Hide Scrollbar on the hover bar hides the pin list bar; the list still scrolls with the mouse wheel
 - Add Here / Find Location from the pin list (Add button or right-click empty space)
@@ -63,7 +64,7 @@ Persistent map landmarks (bank, craft tables, vendors, and anything you mark):
 - Open a pin for Go and Show Map (opens that pin's zone and sets a live waypoint). The world map button uses the OneWoW icon. Add Pin, then click the map (ghost pin and live coordinates). Add Here saves at your feet. Find Location is on that button too. Map Click Menu defaults to on with Ctrl-Right so a plain right-click stays with other addons
 - The world map Map Legend can list pins for the map you are viewing (OneWay Pins settings or the map button). Hover a name to highlight that pin. Pinned zone notes hide until you close the map
 - Edit title, optional description, icon (including Blizzard minimap tracking icons such as banker, mailbox, flight master, trainers, food, and reagents), world-map and minimap size, optional background, Effect (None / Zooming / Spinning / Both), and Background Scale (relative to the icon so map, minimap, and list match). Extra layers use more memory. Hover a pin in the zone list or map legend for title, description, and coordinates. Pins saved from Catalog Journal, Vendors, or Quests mention Catalog on the tooltip.
-- Add to Zone Notes to show the list beside a pinned zone window when you enter that zone. Uncheck Show Zone Notes to leave only the pin list. Hide Scrollbar hides the pin list bar; wheel scroll still works. Add / right-click empty space for Add Here and Find Location. Left-click to go, Ctrl-click to open the tab, right-click for more
+- Show pin list in zone (OneWay Pins settings, on by default) opens a list of pins marked Show on pinned window. No marked pins, no list. A pinned zone note still docks beside it. Each pin and pack also has Show on World Map and Show on Minimap (on by default). The list hides in instances, Delves, pet battles, and battlegrounds by default. Character, bank, guild bank, and professions windows draw in front of the list. Uncheck Show Zone Notes to leave only the list. Hide Scrollbar hides the pin list bar; wheel scroll still works. Add / right-click empty space for Add Here and Find Location. Left-click to go, Ctrl-click to open the tab, right-click for more
 - Disable minimap animations in OneWay Pins settings is on by default (the minimap does not play pin animations well)
 
 ### Items Tab

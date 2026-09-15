@@ -114,7 +114,7 @@ local function EnsureDialog()
         name            = "OneWoW_NotesWayPinSettings",
         title           = L["WAYPINS_SETTINGS_TITLE"],
         width           = 520,
-        height          = 560,
+        height          = 720,
         showScrollFrame = true,
         buttons         = {
             { text = CLOSE, onClick = function(f) f:Hide() end },
@@ -181,6 +181,86 @@ local function EnsureDialog()
     )
     legend.minHeight = 62
     tinsert(rows, legend)
+
+    local zoneList = CreateToggleRow(
+        content,
+        "WAYPINS_SHOW_ZONE_LIST",
+        "SETTINGS_WAYPINS_ZONE_LIST_DESC",
+        function() return ns.db.global.waypinShowZoneList ~= false end,
+        function()
+            ns.db.global.waypinShowZoneList = not (ns.db.global.waypinShowZoneList ~= false)
+            if ns.WayPinsCompanion then
+                ns.WayPinsCompanion:Sync()
+            end
+            return ns.db.global.waypinShowZoneList ~= false
+        end
+    )
+    zoneList.minHeight = 62
+    tinsert(rows, zoneList)
+
+    local hideInst = CreateToggleRow(
+        content,
+        "WAYPINS_HIDE_IN_INSTANCES",
+        "SETTINGS_WAYPINS_HIDE_INSTANCES_DESC",
+        function() return ns.db.global.waypinHideInInstances ~= false end,
+        function()
+            ns.db.global.waypinHideInInstances = not (ns.db.global.waypinHideInInstances ~= false)
+            if ns.WayPinsCompanion then
+                ns.WayPinsCompanion:Sync()
+            end
+            return ns.db.global.waypinHideInInstances ~= false
+        end
+    )
+    hideInst.minHeight = 62
+    tinsert(rows, hideInst)
+
+    local hideDelve = CreateToggleRow(
+        content,
+        "WAYPINS_HIDE_IN_DELVES",
+        "SETTINGS_WAYPINS_HIDE_DELVES_DESC",
+        function() return ns.db.global.waypinHideInDelves ~= false end,
+        function()
+            ns.db.global.waypinHideInDelves = not (ns.db.global.waypinHideInDelves ~= false)
+            if ns.WayPinsCompanion then
+                ns.WayPinsCompanion:Sync()
+            end
+            return ns.db.global.waypinHideInDelves ~= false
+        end
+    )
+    hideDelve.minHeight = 62
+    tinsert(rows, hideDelve)
+
+    local hidePet = CreateToggleRow(
+        content,
+        "WAYPINS_HIDE_IN_PET_BATTLES",
+        "SETTINGS_WAYPINS_HIDE_PET_BATTLES_DESC",
+        function() return ns.db.global.waypinHideInPetBattles ~= false end,
+        function()
+            ns.db.global.waypinHideInPetBattles = not (ns.db.global.waypinHideInPetBattles ~= false)
+            if ns.WayPinsCompanion then
+                ns.WayPinsCompanion:Sync()
+            end
+            return ns.db.global.waypinHideInPetBattles ~= false
+        end
+    )
+    hidePet.minHeight = 62
+    tinsert(rows, hidePet)
+
+    local hidePvp = CreateToggleRow(
+        content,
+        "WAYPINS_HIDE_IN_BATTLEGROUNDS",
+        "SETTINGS_WAYPINS_HIDE_BATTLEGROUNDS_DESC",
+        function() return ns.db.global.waypinHideInBattlegrounds ~= false end,
+        function()
+            ns.db.global.waypinHideInBattlegrounds = not (ns.db.global.waypinHideInBattlegrounds ~= false)
+            if ns.WayPinsCompanion then
+                ns.WayPinsCompanion:Sync()
+            end
+            return ns.db.global.waypinHideInBattlegrounds ~= false
+        end
+    )
+    hidePvp.minHeight = 62
+    tinsert(rows, hidePvp)
 
     local clickMenu = CreateToggleRow(
         content,
