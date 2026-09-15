@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "ptBR", {
     ["TRACKER_STEP_REQUIRES"]             = "Conclua os passos exigidos primeiro.",
     ["TRACKER_FL_EVENT_ID"]               = "ID de evento do calendário",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "Facção, profissão e evento do calendário ocultam isto quando não correspondem. Um ID de evento desconhecido permanece visível.",
+    ["TRACKER_GATE_HINT"]                 = "Facção, profissão e evento do calendário ocultam isto no rastreador fixado quando não correspondem. Nesta aba, cada seção e cada passo permanecem visíveis para você editar. Um ID de evento desconhecido permanece visível.",
     ["TRACKER_FL_REQUIRES"]               = "Passos exigidos",
     ["TRACKER_REQUIRES_COUNT"]            = "%d passos",
     ["TRACKER_REQUIRES_HINT"]             = "Marcar como concluído fica bloqueado até os passos selecionados serem concluídos.",

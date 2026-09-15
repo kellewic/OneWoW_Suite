@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "frFR", {
     ["TRACKER_STEP_REQUIRES"]             = "Terminez d'abord les étapes requises.",
     ["TRACKER_FL_EVENT_ID"]               = "ID d'événement du calendrier",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "La faction, le métier et l'événement du calendrier masquent ceci s'ils ne correspondent pas. Un ID d'événement inconnu reste visible.",
+    ["TRACKER_GATE_HINT"]                 = "La faction, le métier et l'événement du calendrier masquent ceci sur le suivi épinglé s'ils ne correspondent pas. Dans cet onglet, chaque section et chaque étape restent visibles pour que vous puissiez les modifier. Un ID d'événement inconnu reste visible.",
     ["TRACKER_FL_REQUIRES"]               = "Étapes requises",
     ["TRACKER_REQUIRES_COUNT"]            = "%d étapes",
     ["TRACKER_REQUIRES_HINT"]             = "Cocher cette étape est bloqué tant que les étapes sélectionnées ne sont pas terminées.",

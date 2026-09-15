@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "itIT", {
     ["TRACKER_STEP_REQUIRES"]             = "Completa prima i passi richiesti.",
     ["TRACKER_FL_EVENT_ID"]               = "ID evento del calendario",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "Fazione, professione e evento del calendario nascondono questo se non corrispondono. Un ID evento sconosciuto resta visibile.",
+    ["TRACKER_GATE_HINT"]                 = "Fazione, professione e evento del calendario nascondono questo sul tracker fissato se non corrispondono. In questa scheda ogni sezione e ogni passo restano visibili così puoi modificarli. Un ID evento sconosciuto resta visibile.",
     ["TRACKER_FL_REQUIRES"]               = "Passi richiesti",
     ["TRACKER_REQUIRES_COUNT"]            = "%d passi",
     ["TRACKER_REQUIRES_HINT"]             = "Non è possibile spuntare questo passo finché i passi selezionati non sono completati.",

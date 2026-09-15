@@ -865,10 +865,12 @@ function ns.UI.CreateTrackerTab(parent)
             yOffset = yOffset - 26
         end
 
+        -- Hub/editor shows every section and step so a master list stays
+        -- editable. Faction / profession / event gates apply on the pin only.
         local hasVisibleSections = false
         if list.listType ~= "farmvalue" then
             for _, sec in ipairs(list.sections or {}) do
-                if TE:IsSectionVisible(sec) and (not list.pinnedHideCompleted or TE:HasIncompleteVisibleStep(list.id, sec)) then
+                if not list.pinnedHideCompleted or TE:HasIncompleteStep(list.id, sec) then
                     hasVisibleSections = true
                     break
                 end
@@ -905,8 +907,7 @@ function ns.UI.CreateTrackerTab(parent)
         end
 
         for _, sec in ipairs(list.sections) do
-          if TE:IsSectionVisible(sec) then
-          if not list.pinnedHideCompleted or TE:HasIncompleteVisibleStep(list.id, sec) then
+          if not list.pinnedHideCompleted or TE:HasIncompleteStep(list.id, sec) then
             yOffset = yOffset - 8
 
             local secHeader = CreateFrame("Button", nil, detailScrollChild, "BackdropTemplate")
@@ -1013,7 +1014,7 @@ function ns.UI.CreateTrackerTab(parent)
 
           if not sec.collapsed then
             for stepIdx, step in ipairs(sec.steps or {}) do
-              if TE:IsStepVisible(step, sec) and not (list.pinnedHideCompleted and TD:IsStepComplete(list.id, sec.key, step.key)) then
+              if not (list.pinnedHideCompleted and TD:IsStepComplete(list.id, sec.key, step.key)) then
                 local sp = TD:GetStepProgress(list.id, sec.key, step.key)
                 local rosterCompleters = step.rosterMode and TD:GetRosterCompleters(list.id, step.key) or nil
                 local isComplete
@@ -1311,7 +1312,6 @@ function ns.UI.CreateTrackerTab(parent)
                 yOffset = yOffset - (math.max(30, rowHeight) + 4)
               end
             end
-          end
           end
           end
         end

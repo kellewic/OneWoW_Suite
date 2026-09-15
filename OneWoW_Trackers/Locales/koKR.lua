@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
     ["TRACKER_STEP_REQUIRES"]             = "먼저 필요한 단계를 완료하세요.",
     ["TRACKER_FL_EVENT_ID"]               = "달력 이벤트 ID",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "진영, 전문 기술, 달력 이벤트가 맞지 않으면 숨깁니다. 알 수 없는 이벤트 ID는 계속 표시됩니다.",
+    ["TRACKER_GATE_HINT"]                 = "진영, 전문 기술, 달력 이벤트가 맞지 않으면 고정된 추적기에서만 숨깁니다. 이 탭에서는 모든 구역과 단계를 볼 수 있어 계속 편집할 수 있습니다. 알 수 없는 이벤트 ID는 계속 표시됩니다.",
     ["TRACKER_FL_REQUIRES"]               = "선행 단계",
     ["TRACKER_REQUIRES_COUNT"]            = "%d개 단계",
     ["TRACKER_REQUIRES_HINT"]             = "선택한 단계를 완료하기 전에는 이 단계를 완료로 표시할 수 없습니다.",

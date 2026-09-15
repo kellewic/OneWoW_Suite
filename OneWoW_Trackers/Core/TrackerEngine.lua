@@ -10,7 +10,7 @@ local TD
 
 local pairs, ipairs, tonumber, tostring = pairs, ipairs, tonumber, tostring
 local tinsert, wipe = tinsert, wipe
-local format = format
+local format, strlower = format, strlower
 local time = time
 local UnitFactionGroup, CreateVector2D = UnitFactionGroup, CreateVector2D
 local C_MapExplorationInfo = C_MapExplorationInfo
@@ -110,7 +110,9 @@ end
 
 local function MatchesFaction(faction)
     if not faction or faction == "both" then return true end
-    return UnitFactionGroup("player") == faction
+    local playerFaction = UnitFactionGroup("player")
+    if not playerFaction then return false end
+    return strlower(playerFaction) == strlower(faction)
 end
 
 function TE:IsStepVisible(step, section)
@@ -146,6 +148,15 @@ function TE:IsSectionVisible(section)
         return false
     end
     return true
+end
+
+function TE:HasIncompleteStep(listID, section)
+    for _, step in ipairs(section.steps or {}) do
+        if not TD:IsStepComplete(listID, section.key, step.key) then
+            return true
+        end
+    end
+    return false
 end
 
 function TE:HasIncompleteVisibleStep(listID, section)

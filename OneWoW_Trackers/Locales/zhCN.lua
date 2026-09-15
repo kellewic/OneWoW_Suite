@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
     ["TRACKER_STEP_REQUIRES"]             = "请先完成所需的步骤。",
     ["TRACKER_FL_EVENT_ID"]               = "日历活动ID",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "阵营、专业和日历活动不匹配时会隐藏此项。未知的活动ID仍会显示。",
+    ["TRACKER_GATE_HINT"]                 = "阵营、专业和日历活动不匹配时，只在固定的追踪器上隐藏此项。此标签页中每个分区和步骤都会显示，方便编辑。未知的活动ID仍会显示。",
     ["TRACKER_FL_REQUIRES"]               = "前置步骤",
     ["TRACKER_REQUIRES_COUNT"]            = "%d个步骤",
     ["TRACKER_REQUIRES_HINT"]             = "在所选步骤完成前，无法将此项勾选为完成。",

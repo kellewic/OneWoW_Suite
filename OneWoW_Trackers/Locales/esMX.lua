@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
     ["TRACKER_STEP_REQUIRES"]             = "Completa primero los pasos requeridos.",
     ["TRACKER_FL_EVENT_ID"]               = "ID de evento del calendario",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "La facción, la profesión y el evento del calendario ocultan esto si no coinciden. Un ID de evento desconocido sigue visible.",
+    ["TRACKER_GATE_HINT"]                 = "La facción, la profesión y el evento del calendario ocultan esto en el rastreador fijado si no coinciden. En esta pestaña, cada sección y cada paso siguen visibles para que puedas editarlos. Un ID de evento desconocido sigue visible.",
     ["TRACKER_FL_REQUIRES"]               = "Pasos requeridos",
     ["TRACKER_REQUIRES_COUNT"]            = "%d pasos",
     ["TRACKER_REQUIRES_HINT"]             = "No se puede marcar como completado hasta que los pasos seleccionados estén completos.",

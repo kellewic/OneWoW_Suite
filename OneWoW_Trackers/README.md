@@ -9,7 +9,7 @@
 ### Tracker Lists
 - Create lists by type: guide, daily, weekly, todo, repeating, or farm value. Repeating lists clear after a custom hour interval.
 - Organize with topic-folder categories, favorites, and filters (including hide completed)
-- Author sections and steps with rich markup; import, export, and share lists
+- Author sections and steps; import, export, and share lists. Faction, profession, and holiday gates hide steps on the pinned window; the Trackers tab still shows every section and step so you can edit them.
 - Bundled presets and example lists to get started quickly
 
 ### Auto-Tracking

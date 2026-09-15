@@ -212,7 +212,7 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
     ["TRACKER_STEP_REQUIRES"]           = "Complete the required steps first.",
     ["TRACKER_FL_EVENT_ID"]             = "Calendar event ID",
     ["TRACKER_FH_EVENT_ID"]             = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]               = "Faction, profession, and calendar event hide this when they do not match. An unknown event ID stays visible.",
+    ["TRACKER_GATE_HINT"]               = "Faction, profession, and calendar event hide this on the pinned tracker when they do not match. In this tab every section and step stays visible so you can edit them. An unknown event ID stays visible.",
     ["TRACKER_FL_REQUIRES"]             = "Requires steps",
     ["TRACKER_REQUIRES_COUNT"]          = "%d steps",
     ["TRACKER_REQUIRES_HINT"]           = "Checking this off is blocked until the selected steps are complete.",

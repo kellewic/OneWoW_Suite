@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
     ["TRACKER_STEP_REQUIRES"]             = "Schließe zuerst die erforderlichen Schritte ab.",
     ["TRACKER_FL_EVENT_ID"]               = "Kalenderereignis-ID",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "Fraktion, Beruf und Kalenderereignis blenden dies aus, wenn sie nicht passen. Eine unbekannte Ereignis-ID bleibt sichtbar.",
+    ["TRACKER_GATE_HINT"]                 = "Fraktion, Beruf und Kalenderereignis blenden dies auf dem angehefteten Tracker aus, wenn sie nicht passen. In diesem Tab bleiben alle Abschnitte und Schritte sichtbar, damit Ihr sie bearbeiten könnt. Eine unbekannte Ereignis-ID bleibt sichtbar.",
     ["TRACKER_FL_REQUIRES"]               = "Erforderliche Schritte",
     ["TRACKER_REQUIRES_COUNT"]            = "%d Schritte",
     ["TRACKER_REQUIRES_HINT"]             = "Abhaken ist gesperrt, bis die ausgewählten Schritte abgeschlossen sind.",

@@ -209,7 +209,7 @@ OneWoW.Locale:Register(ADDON_NAME, "zhTW", {
     ["TRACKER_STEP_REQUIRES"]             = "請先完成所需的步驟。",
     ["TRACKER_FL_EVENT_ID"]               = "行事曆活動ID",
     ["TRACKER_FH_EVENT_ID"]               = "e.g. 1500",
-    ["TRACKER_GATE_HINT"]                 = "陣營、專業技能和行事曆活動不相符時會隱藏此項目。未知的活動ID仍會顯示。",
+    ["TRACKER_GATE_HINT"]                 = "陣營、專業技能和行事曆活動不相符時，只會在釘選的追蹤器上隱藏此項目。此分頁中每個區塊與步驟都會顯示，方便編輯。未知的活動ID仍會顯示。",
     ["TRACKER_FL_REQUIRES"]               = "前置步驟",
     ["TRACKER_REQUIRES_COUNT"]            = "%d個步驟",
     ["TRACKER_REQUIRES_HINT"]             = "在所選步驟完成前，無法將此項目勾選為完成。",
