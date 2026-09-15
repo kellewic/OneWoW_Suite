@@ -12,7 +12,7 @@
 
 * Create lists by type: guide, daily, weekly, todo, repeating, or farm value. Repeating lists clear after a custom hour interval you set.
 * Organize with categories (topic folders, not daily/weekly cadence), favorites, and filters. Hide Done drops finished lists; Hide completed on an open list (and on its pin) hides finished steps and empty sections. Clear resets search, type, category, and Hide Done.
-* Author sections and steps; import, export, and share lists. The step editor covers every shipped step type, including nested objectives. Typing an ID shows the name. Faction, profession, and holiday gates hide steps that do not apply; required steps must be done before you can check one off.
+* Author sections and steps; import, export, and share lists. The step editor covers every shipped step type, including nested objectives. Typing an ID shows the name. Faction, profession, and holiday gates hide steps that do not apply on the pinned window; the Trackers tab still shows every section and step so you can edit them. Required steps must be done before you can check one off.
 * Start from bundled presets and examples. Midnight Zone Rares builds a daily list of outdoor rares grouped by zone. Click a rare to set a waypoint when spawn coords are known. Create the list again if you already have one from before waypoints.
 
 ### Auto-tracking

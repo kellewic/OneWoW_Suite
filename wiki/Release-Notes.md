@@ -118,6 +118,11 @@
 #### Fixes
 - Instance toasts and Item Tracker still use Catalog Journal only when that data is already loaded. If it is not, they say Catalog not enabled. The Zone Card and AFK load the dungeon or zone you are standing in.
 
+#### Crafting Orders
+- Recrafting an item that already used a spark no longer asks you to provide another spark.
+- Compact View and Hide list scrollbar no longer crowd the next option when you use a large font.
+- Only show mats I still need starts unchecked. Check it if you want the list filtered.
+
 #### Auto Open
 - Auto Open now opens Torn Sack of Pet Supplies from the Crysa's Flyers daily.
 
@@ -135,6 +140,7 @@
 #### Fixes
 - Editing a step inside a dungeon or other instance no longer errors.
 - Kill a Dungeon or Raid Boss now shows Fill from current encounter when you add a new step. The first time, start the fight or fill just after the kill.
+- Horde-only or Alliance-only sections and steps show again on a character of that faction. Faction, profession, and holiday gates still hide steps on the pinned window. The Trackers tab shows every section and step so you can edit a master list or fix a wrong faction.
 
 ---
 
@@ -149,6 +155,17 @@
 #### Add Note
 - Add Note opens the create panel. Set the type there: Standard, Daily, or Weekly. Item notes stay on the Items tab. Farming is no longer created from this dialog.
 
+#### Zones
+- Zone Pinned Window on the Zones tab (and in Notes settings) shows or hides every floating zone note window.
+
+#### OneWay Pins
+- The world-map pin button sits under the other addon icons already in that stack.
+- The pin list is its own window when you enter a zone. It only lists pins and packs marked Show on pinned window. No marked pins, no list. A pinned zone note still docks beside it.
+- The list (and a docked zone note) sit behind the character, bank, guild bank, and professions windows.
+- Each pin and pack has Show on pinned window, Show on World Map, and Show on Minimap (on by default, including shipped packs).
+- Hide the list in instances, Delves, pet battles, and battlegrounds (on by default).
+- Add to Zone Notes is gone. Saving a pin does not create a zone note.
+
 ---
 
 ### Shopping List
@@ -160,7 +177,7 @@
 
 ---
 
-*No user-facing changes this release for Bags.*
+*No user-facing changes this release for Bags or Direct Deposit.*
 
 ---
 
