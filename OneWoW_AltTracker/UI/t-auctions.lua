@@ -1655,6 +1655,11 @@ function ns.UI.RefreshAuctionsStats(auctionsTab)
     local totalSold = 0
     local totalPosted = 0
 
+    local attention = OneWoW_AltTracker_API.GetAttentionSummary()
+    stats.expiring = attention.expiring
+    stats.expired = attention.expired
+    stats.goldWaiting = attention.goldWaiting
+
     for charKey, auctionData in pairs(OneWoW_AltTracker_Auctions_API.GetCharacters()) do
         local hasAuctions = false
 
@@ -1662,32 +1667,11 @@ function ns.UI.RefreshAuctionsStats(auctionsTab)
             hasAuctions = true
             stats.active = stats.active + #auctionData.activeAuctions
             stats.value = stats.value + (auctionData.totalAuctionValue or 0)
-
-            local serverTime = GetServerTime()
-            local twoHours = 7200
-            for _, auction in ipairs(auctionData.activeAuctions) do
-                if auction.endsAt then
-                    local timeLeft = auction.endsAt - serverTime
-                    if timeLeft > 0 and timeLeft < twoHours then
-                        stats.expiring = stats.expiring + 1
-                    end
-                end
-            end
         end
 
         if auctionData.activeBids and #auctionData.activeBids > 0 then
             hasAuctions = true
             stats.bids = stats.bids + #auctionData.activeBids
-        end
-
-        local storageData = OneWoW_AltTracker_Storage_API and OneWoW_AltTracker_Storage_API.GetCharacters()[charKey]
-        if storageData and storageData.mail and storageData.mail.mails then
-            for _, mailData in pairs(storageData.mail.mails) do
-                if mailData.sender and (mailData.sender == "Auction House" or mailData.sender == "The Auction House") and mailData.money and mailData.money > 0 then
-                    stats.goldWaiting = stats.goldWaiting + mailData.money
-                    hasAuctions = true
-                end
-            end
         end
 
         if auctionData.auctionHistory then
@@ -1696,8 +1680,6 @@ function ns.UI.RefreshAuctionsStats(auctionsTab)
                     totalSold = totalSold + 1
                     stats.goldEarned = stats.goldEarned + (event.salePrice or 0)
                     stats.likelySold = stats.likelySold + 1
-                elseif event.outcome == "expired" then
-                    stats.expired = stats.expired + 1
                 end
                 totalPosted = totalPosted + 1
             end

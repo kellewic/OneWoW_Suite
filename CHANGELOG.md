@@ -18,7 +18,13 @@
 
 ---
 
-*No user-facing changes this release for Home, AltTracker, DevTool, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
+# AltTracker
+## Auctions
+- Expired auction alerts only count listings still waiting at the AH or in the mail, not every expired listing in history.
+
+---
+
+*No user-facing changes this release for Home, DevTool, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
 
 ---
 

@@ -67,6 +67,9 @@
 #### Data
 - Quest completion from the old Catalog Quests pack is copied into the Quest Database. Vendor categories you set are copied into the NPC Database.
 
+#### Auctions
+- Expired auction alerts only count listings still waiting at the AH or in the mail, not every expired listing in history.
+
 ---
 
 ### DevTool

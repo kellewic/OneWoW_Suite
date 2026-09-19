@@ -79,7 +79,25 @@ local function MailLooksLikeAuction(mailData)
     return false
 end
 
+local function MailLooksLikeExpired(mailData)
+    local subject = mailData.subject
+    if type(subject) ~= "string" or subject == "" or EXPIRED_PATTERN == "" then
+        return false
+    end
+    return subject:find(EXPIRED_PATTERN) ~= nil
+end
+
+local function MailHasItems(mailData)
+    if mailData.hasItem then
+        return true
+    end
+    local items = mailData.items
+    return type(items) == "table" and next(items) ~= nil
+end
+
 --- Roster auction / mail attention for ESC and AFK alert cards.
+--- Expired is outstanding pickups only (ended listings still on the AH, or
+--- expired return mail), not the lifetime auctionHistory ledger.
 ---@return { expiring: number, expired: number, goldWaiting: number, altsWithMail: number }
 function OneWoW_AltTracker_API.GetAttentionSummary()
     local summary = { expiring = 0, expired = 0, goldWaiting = 0, altsWithMail = 0 }
@@ -98,14 +116,11 @@ function OneWoW_AltTracker_API.GetAttentionSummary()
             for _, auction in ipairs(auctionData.activeAuctions or {}) do
                 if auction.endsAt then
                     local timeLeft = auction.endsAt - serverTime
-                    if timeLeft > 0 and timeLeft < twoHours then
+                    if timeLeft <= 0 then
+                        summary.expired = summary.expired + 1
+                    elseif timeLeft < twoHours then
                         summary.expiring = summary.expiring + 1
                     end
-                end
-            end
-            for _, event in ipairs(auctionData.auctionHistory or {}) do
-                if event.outcome == "expired" then
-                    summary.expired = summary.expired + 1
                 end
             end
         end
@@ -123,6 +138,9 @@ function OneWoW_AltTracker_API.GetAttentionSummary()
                         hasMail = true
                         if (mailData.money or 0) > 0 and MailLooksLikeAuction(mailData) then
                             summary.goldWaiting = summary.goldWaiting + mailData.money
+                        end
+                        if MailLooksLikeExpired(mailData) and MailHasItems(mailData) then
+                            summary.expired = summary.expired + 1
                         end
                     end
                 end
