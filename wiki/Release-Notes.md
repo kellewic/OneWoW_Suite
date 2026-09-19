@@ -100,6 +100,7 @@
 - Info also shows weekly and daily reset timers, profession weeklies, rested XP, bag space, Hearthstone cooldown, and this week's bonus event. When there are no auction or mail alerts, each AFK session can add one extra line: session time, a collectible count, or a short tip.
 - Info matches Character and Zone: accent title, a summary strip for weekly reset, daily reset, and bag space, then icon rows with progress bars for profession weeklies and rested XP.
 - Daily and Weekly notes stay in Notes. They no longer appear on AFK. You can hide the gold dock behind the cards. Character, Zone, and Info cards grow with the game window and leave space in the middle for your character.
+- Your character stays in that middle gap. It no longer covers the Character, Zone, or Info cards.
 - Character Card fills the dock. If Zone and Info are taller, Character grows to that height so there is no empty space above it.
 
 #### Portals

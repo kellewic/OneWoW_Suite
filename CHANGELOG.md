@@ -12,7 +12,13 @@
 
 ---
 
-*No user-facing changes this release for Home, AltTracker, DevTool, QoL, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
+# QoL
+## AFK Panel
+- Your character on the AFK screen stays in the middle gap and no longer covers the Character, Zone, or Info cards.
+
+---
+
+*No user-facing changes this release for Home, AltTracker, DevTool, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
 
 ---
 

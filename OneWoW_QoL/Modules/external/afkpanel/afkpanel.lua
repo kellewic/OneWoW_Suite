@@ -16,6 +16,12 @@ local DOCK_PAD = 16
 local CARD_GAP = 8
 local HERE_H = 120
 local MODEL_GAP = 500
+local MODEL_INSET = 8
+-- Distance 1 fills a gap-sized PlayerModel. Higher values shrink the figure
+-- (the old 3.0 was for a 2x-screen widget).
+local MODEL_CAM_DISTANCE = 0.9
+local MODEL_LEVEL = 1
+local CHROME_LEVEL = 10
 local COL_MIN = 320
 local IDLE_KINDS = { "session", "mounts", "pets", "toys", "tip" }
 -- Must match #IDLE_TIP_KEYS in OneWoW StatusCards.
@@ -55,7 +61,7 @@ local function CreateTopBar(parent)
     topBar:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
     topBar:SetPoint("TOPRIGHT", parent, "TOPRIGHT", 0, 0)
     topBar:SetHeight(60)
-    topBar:SetFrameLevel(2)
+    topBar:SetFrameLevel(CHROME_LEVEL)
     topBar:SetBackdrop(backdrop)
     topBar:SetBackdropColor(unpack(PALETTE.BAR_DARK_BG))
     topBar:SetBackdropBorderColor(unpack(PALETTE.BAR_GOLD_BORDER))
@@ -79,17 +85,28 @@ function AFKPanelModule:ApplyDockBackground()
     end
 end
 
-local function ColumnWidth()
+local function DockMetrics()
     local inner = UIParent:GetWidth() - 2 * DOCK_PAD
     local minPair = COL_MIN * 2
     if inner < minPair + CARD_GAP then
-        return math.max(200, math.floor((inner - CARD_GAP) / 2))
+        local colW = math.max(200, math.floor((inner - CARD_GAP) / 2))
+        return colW, inner - 2 * colW
     end
     local gap = MODEL_GAP
     if inner < minPair + gap then
         gap = inner - minPair
     end
-    return math.floor((inner - gap) / 2)
+    return math.floor((inner - gap) / 2), gap
+end
+
+local function ColumnWidth()
+    local colW = DockMetrics()
+    return colW
+end
+
+local function ApplyModelCamera(model)
+    model:SetCamDistanceScale(MODEL_CAM_DISTANCE)
+    model:SetFacing(6)
 end
 
 function AFKPanelModule:ApplyCardWidths()
@@ -130,10 +147,10 @@ function AFKPanelModule:SetupFrames()
     afkFrame:Hide()
     self._afkFrame = afkFrame
 
-    CreateTopBar(afkFrame)
+    self._topBar = CreateTopBar(afkFrame)
 
     local bottomPanel = CreateFrame("Frame", nil, afkFrame, "BackdropTemplate")
-    bottomPanel:SetFrameLevel(2)
+    bottomPanel:SetFrameLevel(CHROME_LEVEL)
     bottomPanel:SetPoint("BOTTOMLEFT", afkFrame, "BOTTOMLEFT", 0, 0)
     bottomPanel:SetPoint("BOTTOMRIGHT", afkFrame, "BOTTOMRIGHT", 0, 0)
     bottomPanel:SetHeight(HERE_H + 2 * DOCK_PAD)
@@ -141,15 +158,19 @@ function AFKPanelModule:SetupFrames()
     self:ApplyDockBackground()
     OneWoW_GUI:RegisterFontRoot(bottomPanel)
 
+    -- PlayerModel paints its 3D mesh in the model frame's rectangle. Size it
+    -- to the dock's center gap (not 2x the screen) so the character cannot
+    -- cover the cards. Clip + a lower frame level keep any overflow behind chrome.
     local modelHolder = CreateFrame("Frame", nil, afkFrame)
-    modelHolder:SetSize(MODEL_GAP, MODEL_GAP)
-    modelHolder:SetPoint("CENTER", afkFrame, "CENTER", 0, 50)
+    modelHolder:SetFrameLevel(MODEL_LEVEL)
+    modelHolder:SetClipsChildren(true)
+    modelHolder:EnableMouse(false)
+    self._modelHolder = modelHolder
 
     local model = CreateFrame("PlayerModel", "OneWoW_QoL_AFKPlayerModel", modelHolder)
-    model:SetPoint("CENTER", modelHolder, "CENTER")
-    model:SetSize(UIParent:GetWidth() * 2, UIParent:GetHeight() * 2)
-    model:SetCamDistanceScale(3.0)
-    model:SetFacing(6)
+    model:SetFrameLevel(MODEL_LEVEL)
+    model:EnableMouse(false)
+    ApplyModelCamera(model)
     self._model = model
 
     local colW = ColumnWidth()
@@ -207,6 +228,25 @@ function AFKPanelModule:LayoutDock()
 
     self._herePanel:ClearAllPoints()
     self._herePanel:SetPoint("BOTTOMRIGHT", self._infoPanel, "TOPRIGHT", 0, CARD_GAP)
+    self:LayoutModel()
+end
+
+function AFKPanelModule:LayoutModel()
+    local holder = self._modelHolder
+    local model = self._model
+    if not holder or not model or not self._topBar or not self._bottomPanel then
+        return
+    end
+    if not self._youPanel or not self._infoPanel then
+        return
+    end
+    holder:ClearAllPoints()
+    holder:SetPoint("TOP", self._topBar, "BOTTOM", 0, 0)
+    holder:SetPoint("BOTTOM", self._bottomPanel, "TOP", 0, 0)
+    holder:SetPoint("LEFT", self._youPanel, "RIGHT", MODEL_INSET, 0)
+    holder:SetPoint("RIGHT", self._infoPanel, "LEFT", -MODEL_INSET, 0)
+    model:ClearAllPoints()
+    model:SetAllPoints(holder)
 end
 
 function AFKPanelModule:OnDisplaySizeChanged()
@@ -265,6 +305,7 @@ function AFKPanelModule:SetAFK(status)
         model.isIdle       = nil
         model.idleDuration = 40
         model:SetUnit("player")
+        ApplyModelCamera(model)
         model:SetAnimation(67)
         model:SetScript("OnUpdate", function(myself)
             AFKPanelModule:Model_OnUpdate(myself)
