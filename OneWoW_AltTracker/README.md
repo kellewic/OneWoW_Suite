@@ -113,19 +113,17 @@ AltTracker receives character data from specialized companion addons:
 - **OneWoW_AltTracker_Endgame** - Mythic Plus, raids, Great Vault, PVP
 - **OneWoW_AltTracker_Professions** - Profession skills, recipes, cooldowns
 - **OneWoW_AltTracker_Storage** - Bags, banks (personal, warband, guild), mail
+- **OneWoW_AltTracker_Accounting** - Gold and currency balances
 
 ---
 
 ## Customization
 
-### 14+ Theme Options
-Choose from Forest Green, Ocean Blue, Royal Purple, Crimson Red, Sunset Orange, Deep Teal, Golden Amber, Rose Pink, Slate Gray, Earth Brown, Midnight Black, and more.
-
-### Instant Theme Switching
-No UI reload required for theme changes. Switch themes on the fly.
+### Theme Options
+Suite color themes via **OneWoW** settings. Switch instantly with no reload.
 
 ### Multi-Language Support
-English, Korean, and more coming soon.
+Supports all 11 suite locales via **OneWoW**.
 
 ---
 

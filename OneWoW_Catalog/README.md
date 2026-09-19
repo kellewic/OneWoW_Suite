@@ -1,6 +1,6 @@
 # OneWoW - Catalog
 
-**A complete reference database for World of Warcraft content. Look up instances, encounters, vendors, professions, crafting recipes, collectibles, and housing decor.**
+**A complete reference database for World of Warcraft content. Look up instances, encounters, vendors, professions, crafting recipes, quests, collectibles, and housing decor.**
 
 ---
 
@@ -50,6 +50,13 @@ Complete profession and recipe database:
 - See skill ranks and where to learn a recipe when we know it, including the trainer or vendor name
 - Find recipes that use specific materials
 - Perfect for planning crafting projects
+
+### Quests Tab
+Quest database and completion tracking:
+- Browse quests for each expansion you have turned on
+- Opening the tab loads that expansion's quest data
+- Click a giver or turn-in to open that NPC; right-click a map ID to save a OneWay Pin
+- List cards use that expansion's Adventure Guide background, with a border for Campaign, Story, Legendary, and other quest types
 
 ### Item Search Tab
 Universal search across all item data:
@@ -126,11 +133,8 @@ This table is the canonical cross-module reference.
 
 ## Customization
 
-### 14+ Theme Options
-Choose from Forest Green, Ocean Blue, Royal Purple, Crimson Red, Sunset Orange, Deep Teal, Golden Amber, Rose Pink, Slate Gray, Earth Brown, Midnight Black, and more.
-
-### Instant Theme Switching
-No UI reload required for theme changes. Switch themes on the fly.
+### Theme Options
+Suite color themes via **OneWoW** settings. Switch instantly with no reload.
 
 ### Multi-Language Support
 Supports all 11 suite locales via **OneWoW** — see [LOCALES.md](../OneWoW/Docs/LOCALES.md).

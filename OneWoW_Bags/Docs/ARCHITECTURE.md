@@ -25,11 +25,9 @@ OneWoW_Bags is a unified bag/bank/guild bank replacement addon for World of Warc
 
 **SavedVariable:** `OneWoW_Bags_DB`, initialized via `OneWoW_GUI.DB:Init` in **single** mode (defaults and persisted data under `db.global`).
 
-**TOC:** `## Interface: 120005, 120007` (Retail + compatible build). `## LoadOnDemand: 1` — the suite core force-loads this unit via `OneWoW:EnsureLoaded` when Bags is enabled; lifecycle init runs through `OnAddonLoaded` / `OnPlayerLogin` on the thin lifecycle root `OneWoW_Bags` (not a per-file `ADDON_LOADED` frame).
+**TOC:** `## Interface: 120100` (Retail). `## LoadOnDemand: 1` — the suite core force-loads this unit via `OneWoW:EnsureLoaded` when Bags is enabled; lifecycle init runs through `OnAddonLoaded` / `OnPlayerLogin` on the thin lifecycle root `OneWoW_Bags` (not a per-file `ADDON_LOADED` frame).
 
 **Hard dependencies (`RequiredDeps`):** `OneWoW` (includes `OneWoW_GUI` global).
-
-**Optional integrations (`OptionalDeps`):** `TradeSkillMaster`, `Baganator` (profile import via `CategoryController`), `Masque` (item-icon skinning). Other suite addons (`OneWoW_AltTracker`, `OneWoW_ShoppingList`, etc.) integrate when present but are not TOC dependencies.
 
 **Optional integrations (`OptionalDeps`):** `TradeSkillMaster`, `Baganator` (profile import via `CategoryController`), `Masque` (item-icon skinning). Other suite addons (`OneWoW_AltTracker`, `OneWoW_ShoppingList`, etc.) integrate when present but are not TOC dependencies.
 
@@ -47,8 +45,8 @@ Locales\frFR.lua
 Locales\ruRU.lua
 Locales\deDE.lua
 
-Core\Profile.lua                   ← optional hot-path profiler (/owbprof); used by Categories, Bag/Bank sets, ItemButton
-Core\LayoutDebug.lua               ← /owblayout ring buffer for layout-scheduler diagnostics
+Core\Profile.lua                   ← optional hot-path profiler (/1wbprof); used by Categories, Bag/Bank sets, ItemButton
+Core\LayoutDebug.lua               ← /1wblayout ring buffer for layout-scheduler diagnostics
 Core\Constants.lua                 ← OneWoW_GUI:RegisterGUIConstants, icon sizes, pool prealloc size
 Core\SectionDefaults.lua           ← stable section IDs, builtin lists, OneWoW Bags catch-all section sync
 Core\Database.lua                  ← DB:Init, defaults, init bridges
@@ -180,7 +178,7 @@ OneWoW_Bags uses a **layered hybrid MVC** pattern. It is not strict MVC—some o
 │  Database (DB:Init, defaults, init bridges)                    │
 │  Events (non-Inventory runtime events; bag/bank/guild via OneWoW.Inventory) │
 │  Constants (GUI metrics, icon sizes)                         │
-│  Profile (optional /owbprof timings)                         │
+│  Profile (optional /1wbprof timings)                         │
 │  SectionDefaults (section IDs, builtin ordering, OWB section)  │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -433,7 +431,7 @@ Shared bottom-bar construction for `BankBar` and `GuildBankBar`: themed bar fram
 
 ### Profile (`Core\Profile.lua`)
 
-Optional sampling profiler toggled with **`/owbprof`** (`on` / `off` / `reset` / `dump`). Used by `Categories:GetItemCategory`, `ResolveBaseCategory`, `BankSet`/`BagSet` hot paths, and `ItemButton:OWB_FullUpdate`. Disabled by default (zero overhead).
+Optional sampling profiler toggled with **`/1wbprof`** (`on` / `off` / `reset` / `dump`). Used by `Categories:GetItemCategory`, `ResolveBaseCategory`, `BankSet`/`BagSet` hot paths, and `ItemButton:OWB_FullUpdate`. Disabled by default (zero overhead).
 
 ### ItemPool
 
@@ -775,31 +773,31 @@ Inventory windows share `WindowLayoutController:Refresh`, which runs `cleanup` (
 | Zone enter | `Events:OnPlayerEnteringWorld` | After zone load (not initial login), kicks the scheduler (`KickLayoutScheduler`) then refreshes each visible built UI (`bags` / `bank` / `guild`) immediately and again after 0.1s. |
 | Frame show | `WindowHelpers:AttachLayoutOnShow` | Hooks main window `OnShow` to request `show_onshow` when the backing set is already built (skipped while a warm `Show()` is laying out synchronously). |
 
-### Layout debug (`/owblayout`)
+### Layout debug (`/1wblayout`)
 
 [`Core/LayoutDebug.lua`](../Core/LayoutDebug.lua) records a ring buffer (64 entries) of layout scheduler decisions when enabled. Use after a blank-inventory repro:
 
 | Command | Action |
 |---------|--------|
-| `/owblayout on` | Enable recording (clears ring) |
-| `/owblayout off` | Disable recording |
-| `/owblayout clear` | Clear ring |
-| `/owblayout dump` | Print scheduler snapshot, per-GUI button stats (`hasItem` vs `IsShown`), and recent events |
+| `/1wblayout on` | Enable recording (clears ring) |
+| `/1wblayout off` | Disable recording |
+| `/1wblayout clear` | Clear ring |
+| `/1wblayout dump` | Print scheduler snapshot, per-GUI button stats (`hasItem` vs `IsShown`), and recent events |
 
-Hooks: `RequestLayoutRefresh`, `FlushPendingLayoutRefreshes` (exec / skip_hidden / skip_building / skip_in_progress / flush_drop_stale / reschedule), `KickLayoutScheduler` (`scheduler_kick`), `ScheduleOpenSafetyNet` (`safety_net_blank` / `safety_net_wedged`), `RunGuardedLayoutRefresh`, `RefreshLayout` early exits, `WindowLayoutController` (cleanup / filtered / layout_done / empty_filter). Ring `layout_done` rows include `filtShown`, `hasItem`, and `shown` for diagnosing blank-inventory reports via `/owblayout dump`.
+Hooks: `RequestLayoutRefresh`, `FlushPendingLayoutRefreshes` (exec / skip_hidden / skip_building / skip_in_progress / flush_drop_stale / reschedule), `KickLayoutScheduler` (`scheduler_kick`), `ScheduleOpenSafetyNet` (`safety_net_blank` / `safety_net_wedged`), `RunGuardedLayoutRefresh`, `RefreshLayout` early exits, `WindowLayoutController` (cleanup / filtered / layout_done / empty_filter). Ring `layout_done` rows include `filtShown`, `hasItem`, and `shown` for diagnosing blank-inventory reports via `/1wblayout dump`.
 
-### Overlay flash debug (`/owboverlay`)
+### Overlay flash debug (`/1wboverlay`)
 
 [`Core/OverlayFlashDebug.lua`](../Core/OverlayFlashDebug.lua) — live timeline (+offsets from guild open) for guild-bank Quality Border flashes. Correlate the visible flash with chat lines instead of guessing. The historical guild-bank flash (borders off ~350ms per slot-update wave) was `HideDynamicChildren` blind-hiding renderer-owned frames — fixed via the `onewow_overlayManaged` tag (see `ITEM_BUTTON.md`); a healthy open now ends with `skip_same=N qb_update=0`.
 
 | Command | Action |
 |---------|--------|
-| `/owboverlay on` | Enable live prints + ring (epoch reset) |
-| `/owboverlay quiet` | Ring only (no live spam) |
-| `/owboverlay off` | Disable |
-| `/owboverlay mark` | Reset epoch to now |
-| `/owboverlay clear` | Clear the ring (alias: `reset`) |
-| `/owboverlay dump` | Print ring |
+| `/1wboverlay on` | Enable live prints + ring (epoch reset) |
+| `/1wboverlay quiet` | Ring only (no live spam) |
+| `/1wboverlay off` | Disable |
+| `/1wboverlay mark` | Reset epoch to now |
+| `/1wboverlay clear` | Clear the ring (alias: `reset`) |
+| `/1wboverlay dump` | Print ring |
 
 Events: `dirty`, `layout_begin`/`layout_end` (ms + reason), `overlay_sched_*`, `pass_begin`/`pass_end` (keep/full/clean_skip/skip_same/qb_noop/qb_create/qb_update/qb_hide/async_sched), `async_paint` (late item-data loads). Guild layout reasons now include `slots_changed`, `warm_open`, `build_done`, etc.
 

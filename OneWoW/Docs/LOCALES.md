@@ -47,7 +47,7 @@ Check these in order; only fall through when the prior option genuinely doesn't 
 | load unit | `<Addon>/Locales/` | One addon's own strings (e.g. `OneWoW_Bags`) |
 | QoL module | `OneWoW_QoL/Modules/external/<id>/Locales/` | Scope is `OneWoW_QoL.<id>` (module-style header) |
 
-A key is **either shared or scoped, never both** (the disjoint contract — `/owlocale`
+A key is **either shared or scoped, never both** (the disjoint contract — `/1wlocale`
 reports collisions). A scoped key must not **shadow** a `shared` key with a *different*
 value, and a new shared key's name must not collide with an existing scoped key elsewhere
 that holds a different value (it would silently shadow `shared`).
@@ -158,7 +158,7 @@ root (Suite pre-commit calls the same scripts via `bin/run_devs.py`).
 | `locale_migrate.py` | Relocate keys between scopes (remove from src locales, insert into dst), e.g. core→`shared` or core→`OneWoW_QoL`. Inserts a `-- migrated from <scope> scope` provenance line on move. `--remove-migrate-comments all` (or `OneWoW,shared`, …) strips those lines after a scope move is settled. | Restructuring scopes; cleaning provenance after a move is complete. |
 | `check_no_g_literal.py` | Guard: forbids `_G.CLOSE` / `_G["CLOSE"]` (use the bare global). | CI / pre-commit. |
 | `check_tooltip_patterns.py` | **GlobalStrings match-source gate.** Builds `ITEM_SPELL_CHARGES` search patterns for all 11 Blizzard locales (`\|4` and plain `%d`); asserts use/equip/unique globals exist. Distinct from suite `locale-parity`. | When editing TooltipScanner or refreshing GlobalStrings. **Wired as `tooltip-globalstrings-patterns`.** |
-| `/owlocale` (in-game) | Per-scope key counts, shared/scope collisions, registered locales not in `SUPPORTED`. The only locale debug command (no debug builds). | In-client sanity check. |
+| `/1wlocale` (in-game) | Per-scope key counts, shared/scope collisions, registered locales not in `SUPPORTED`. The only locale debug command (no debug builds). | In-client sanity check. |
 
 ---
 

@@ -154,6 +154,8 @@ For gray quality only, use `#poor` / `#grey` / `#gray`.
 | `#miscellaneous` | `#misc` |
 | `#quest` | `#questitem` |
 | `#housing` | |
+| `#housingdecor` | `#itemdecor` |
+| `#dye` | `#housingdye` |
 | `#glyph` | |
 | `#wowtoken` | |
 

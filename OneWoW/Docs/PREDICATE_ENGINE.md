@@ -14,7 +14,7 @@ For the user-facing expression syntax (the full keyword catalog, operator semant
 local PE = OneWoW.PredicateEngine
 ```
 
-Every suite unit has `## RequiredDeps: OneWoW`, so the engine is guaranteed to be available by the time your file loads. (Inside the `OneWoW` core addon itself, take the namespace from the file vararg first: `local _, OneWoW = ...`.)
+Every suite unit has `## RequiredDeps: OneWoW`, so the engine is guaranteed to be available by the time your file loads. (Inside the `OneWoW` core addon itself, take `local ADDON_NAME, ns = ...` and use the published `OneWoW.PredicateEngine` global — do not rename the namespace vararg.)
 
 ---
 

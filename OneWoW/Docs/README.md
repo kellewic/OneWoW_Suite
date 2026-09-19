@@ -13,8 +13,21 @@ Contributor and integrator documentation for the suite.
 | [DATABASE.md](DATABASE.md) | `OneWoW_GUI.DB` — SavedVariables, defaults, init bridges, scope resolution |
 | [GUI.md](GUI.md) | `OneWoW_GUI` toolkit — components, themes, settings, window persistence |
 | [LOCALES.md](LOCALES.md) | Localization routing, scopes, Blizzard-term alignment, tooling |
+
+## Shared services
+
+| Document | Contents |
+|----------|----------|
 | [PREDICATE_ENGINE.md](PREDICATE_ENGINE.md) | Shared `OneWoW.PredicateEngine` — tokenizer, keywords, extension API |
 | [SEARCH_CATALOG.md](SEARCH_CATALOG.md) | Shared `OneWoW.SearchCatalog` — named expressions, former-name redirects, reference index, export/import |
+| [COLLECTIBLES.md](COLLECTIBLES.md) | Collectible identity, keys, live collection state |
+| [INVENTORY.md](INVENTORY.md) | Live bag/bank/guild-bank event funnel (`OneWoW.Inventory`) |
+| [MERCHANT.md](MERCHANT.md) | Merchant scan funnel (`OneWoW.Merchant`) |
+| [PROFESSION_RECIPE.md](PROFESSION_RECIPE.md) | Trade-skill recipe scan funnel (`OneWoW.ProfessionRecipe`) |
+| [TOOLTIP_SCANNER.md](TOOLTIP_SCANNER.md) | Structured tooltip line scanning (`OneWoW.TooltipScanner`) |
+| [GEAR_PROFICIENCY.md](GEAR_PROFICIENCY.md) | Class weapon/armor proficiency masks |
+| [GUILD_BANK_TRANSFER.md](GUILD_BANK_TRANSFER.md) | Bag-to-guild deposit plan and paced queue |
+| [CATDB_CONTRIBUTE.md](CATDB_CONTRIBUTE.md) | Player-found Catalog facts: addon `sync` flag, CompSync payload, merge into existing shards |
 
 ## Feature addons
 
@@ -24,13 +37,10 @@ Contributor and integrator documentation for the suite.
 | [OneWoW_QoL/DEVELOPERS.md](../../OneWoW_QoL/DEVELOPERS.md) | External QoL module authoring (`module.lua`, `ModuleRegistry`, locale scope) |
 | [OneWoW_QoL/MODULES.md](../../OneWoW_QoL/MODULES.md) | QoL external module catalog (36 modules by category) |
 | [OneWoW_Trackers/Docs/ARCHITECTURE.md](../../OneWoW_Trackers/Docs/ARCHITECTURE.md) | Tracker lists, engine, presets, farm value |
-| [OneWoW_Trackers/Docs/TRACKERS_IDEAS.md](../../OneWoW_Trackers/Docs/TRACKERS_IDEAS.md) | Trackers direction parking lot (not committed scope) |
-| [COLLECTIBLES.md](COLLECTIBLES.md) | Collectible identity, keys, live collection state |
-| [COLLECTIBLES_IDEAS.md](COLLECTIBLES_IDEAS.md) | Collectibles direction parking lot (not committed scope) |
 | [OneWoW_Mail/Docs/ARCHITECTURE.md](../../OneWoW_Mail/Docs/ARCHITECTURE.md) | Mail shell, shipments, send/collect pipeline, Storage in-transit |
-| [OneWoW_Catalog/Docs/CATDB.md](../../OneWoW_Catalog/Docs/CATDB.md) | Catalog databases (CatDB Zones / NPCs / Items / Quests / Tradeskills) |
-| [CATDB_CONTRIBUTE.md](CATDB_CONTRIBUTE.md) | Player-found Catalog facts: addon `sync` flag, CompSync payload, merge into existing shards |
-| [OneWoW_CatDB_QuestDBCurrent/Docs/ARCHITECTURE.md](../../OneWoW_CatDB_QuestDBCurrent/Docs/ARCHITECTURE.md) | Catalog quest store (current expansions) and scanner |
+| [OneWoW_Catalog/Docs/CATDB.md](../../OneWoW_Catalog/Docs/CATDB.md) | Catalog packs (per-expansion CatDB, Other, Tradeskills) and query APIs |
+
+Quest query APIs (`OneWoW_CatDB_QuestDBCurrent_API` and the archive alias) live on Catalog; there is no `OneWoW_CatDB_QuestDBCurrent` load unit.
 
 ## Contributing
 

@@ -76,11 +76,11 @@ Shared across the suite: **themes**, **11 locales**, and **SavedVariables** conv
 
 | Addon | Description | Docs |
 |-------|-------------|------|
-| [OneWoW_QoL](OneWoW_QoL/README.md) | Quality of life — 34 toggleable modules (automation, UI, social, economy) | [MODULES.md](OneWoW_QoL/MODULES.md) |
+| [OneWoW_QoL](OneWoW_QoL/README.md) | Quality of life — 36 toggleable modules (automation, UI, social, economy) | [MODULES.md](OneWoW_QoL/MODULES.md) |
 | [OneWoW_Bags](OneWoW_Bags/README.md) | Bag organization and inventory management | [Docs](OneWoW_Bags/Docs/README.md) |
 | [OneWoW_Notes](OneWoW_Notes/README.md) | Notes for players, NPCs, zones, items, collectibles, and quests | README |
 | [OneWoW_AltTracker](OneWoW_AltTracker/README.md) | Account-wide character, gold, profession, and progress tracking | README |
-| [OneWoW_Catalog](OneWoW_Catalog/README.md) | Reference database — instances, vendors, professions, recipes | README |
+| [OneWoW_Catalog](OneWoW_Catalog/README.md) | Reference database — instances, vendors, professions, recipes, quests, collectibles, housing | README |
 | [OneWoW_Trackers](OneWoW_Trackers/README.md) | Custom tracker lists — guides, dailies, todos, farm value | [Docs](OneWoW_Trackers/Docs/ARCHITECTURE.md) |
 | [OneWoW_ShoppingList](OneWoW_ShoppingList/README.md) | Shopping and crafting lists with account-wide stock checks | README |
 | [OneWoW_Mail](OneWoW_Mail/README.md) | Mailbox UI, collect/compose, and shipments to characters or roles | [Docs](OneWoW_Mail/Docs/ARCHITECTURE.md) |

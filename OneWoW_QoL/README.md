@@ -36,6 +36,7 @@ UI panels, map tools, bars, and screen customization.
 - **Frame Mover** — reposition Blizzard frames; Ctrl+Scroll to scale
 - **Hide Combat Error Spam** — suppress common red combat error text
 - **Inspect Gear** — gear list on inspect; save to Notes
+- **Icon Browser** — searchable icon picker for macros, bank tabs, and transmog outfits
 - **LFG Lockouts** — raid and dungeon lockouts beside Group Finder
 - **Map (Mini) Tools** — minimap shape, border, clock, zoom, and layout
 - **Map (World) Tools** — world map reveal, tints, coordinates, and comfort options
@@ -71,6 +72,7 @@ Clipboard and text tools.
 These ship with QoL core code (not separate external modules):
 
 - **Toggles** — searchable list of current game Options (gameplay, interface, nameplates, combat text, camera, chat, audio, graphics). Star a row to keep it at the top.
+- **Tooltips** — Collections status on the item type line, plus optional Item Tracker (where it is / where to get it when that Catalog pack is already loaded)
 - **Toast notifications** — New Collections (loot of uncollected collectibles), Upgrade Alerts, instance, and note alerts (`Features/`)
 - **Portal hub data** — hearthstones, teleports, and custom portals integrated with ESC Panel and the [OneWoW](../OneWoW/README.md) hub (`Portals/`)
 
@@ -109,6 +111,8 @@ Supports all 11 suite locales — see [LOCALES.md](../OneWoW/Docs/LOCALES.md).
 ## Slash Commands
 
 - `/1wqol` - Open Quality of Life
+- `/1wbb` - Toggle the Bag Bar module (QoL must be loaded)
+- `/1wcopytext` / `/1wct` - Copy Text (only while that module is enabled)
 
 ## Localization
 

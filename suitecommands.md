@@ -5,7 +5,7 @@ Scanned from `SLASH_*` assignments, `SlashCmdList[...]` handlers, and
 `OneWoW_GUI.DB:RegisterSlashCommand(...)` calls (excluding `Libs/` and
 `.wow_docs/`).
 
-**Last audited:** 2026-08-29
+**Last audited:** 2026-09-19
 
 > When you add, rename, or remove a slash command (or a subcommand), update
 > this file in the same change. See **Keeping this file current** at the bottom.
@@ -28,7 +28,7 @@ Scanned from `SLASH_*` assignments, `SlashCmdList[...]` handlers, and
 | OneWoW_Trackers | `/1wt` |
 | OneWoW_QoL | `/1wqol` · BagBar: `/1wbb` · CopyText: `/1wcopytext` `/1wct` |
 | OneWoW_DirectDeposit | `/1wdd` (`deposit` / `pause` / `stop`) |
-| OneWoW_ShoppingList | `/1wsl` |
+| OneWoW_ShoppingList | `/1wsl` (`show` / `hide` / `add` / `farm` / `help`) |
 | OneWoW_Mail | `/1wmail` · debug: `/1wmailtrace` |
 | OneWoW_Bags | `/1wbags` · debug: `/1wbprof` `/1wblayout` `/1wboverlay` |
 | OneWoW_Utility_DevTool | `/1wdt` · `/1wdev` |
@@ -188,6 +188,7 @@ Registered only while the CopyText module is **enabled**; cleared on disable.
 | `show` | Show window |
 | `hide` | Hide window |
 | `add <itemID>` | Add item to the active list (qty 1) |
+| `farm` / `farming` | Open the Farming tab |
 | _(none)_ | Toggle window |
 
 ---

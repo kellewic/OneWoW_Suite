@@ -50,6 +50,7 @@ flowchart TB
         QoL[OneWoW_QoL]
         ShoppingList[OneWoW_ShoppingList]
         DirectDeposit[OneWoW_DirectDeposit]
+        Mail[OneWoW_Mail]
         Bags[OneWoW_Bags]
     end
     OW --> Modules
@@ -61,6 +62,7 @@ flowchart TB
     Catalog --> CatDB
     AltTracker --> AltData
     Bags -.->|consumer pull| AltData
+    Mail -.->|consumer pull| AltData
     ShoppingList -.->|consumer pull| AltData
     ShoppingList -.->|consumer pull| CatDB
 
@@ -75,7 +77,7 @@ flowchart TB
 | Tier | Units | Loads | Mechanism |
 |---|---|---|---|
 | **1 — Core hub** | `OneWoW` | Always | Orchestrator, Manage Features, hub UI, shared engines, GUI toolkit (`OneWoW_GUI` global) |
-| **2 — Feature modules** | AltTracker, Catalog, Notes, Trackers, QoL, ShoppingList, DirectDeposit, Bags | On demand | `RequiredDeps: OneWoW` + `LoadOnDemand: 1` |
+| **2 — Feature modules** | AltTracker, Catalog, Notes, Trackers, QoL, ShoppingList, DirectDeposit, Mail, Bags | On demand | `RequiredDeps: OneWoW` + `LoadOnDemand: 1` |
 | **3 — Data stores** | `OneWoW_AltTracker_*`, `OneWoW_CatDB_*` | On demand | Owned under `ModuleManifest.stores`. Most AltTracker stores: `RequiredDeps: OneWoW` (consumers may load without the owning hub). **Exceptions:** Endgame still `RequiredDeps: …, OneWoW_AltTracker`; all Catalog packs `RequiredDeps: …, OneWoW_Catalog` (`parentRequiredStores`). Catalog Home / Manage Features stores are per-expansion CatDB addons, Other, and Tradeskills. Query APIs live on Catalog. `PackResolver` role loads return Catalog (or TradeSkillDB). |
 | **4 — Utility** | `OneWoW_Utility_DevTool` | On demand, opt-in | `RequiredDeps: OneWoW` + `LoadOnDemand: 1`; soft-opted-out on a fresh account and excluded from recommended preset; `loadPhase = "login"` when wanted |
 
@@ -83,7 +85,7 @@ Verified against current `.toc` files:
 
 | Load unit | RequiredDeps | OptionalDeps | LoadOnDemand |
 |---|---|---|---|
-| **OneWoW** | — | Auctionator, TradeSkillMaster | — |
+| **OneWoW** | — | Auctionator, Pawn, TradeSkillMaster | — |
 | **OneWoW_Notes** | OneWoW | — | 1 |
 | **OneWoW_AltTracker** | OneWoW | — | 1 |
 | **OneWoW_Catalog** | OneWoW | AllTheThings | 1 |
@@ -91,6 +93,7 @@ Verified against current `.toc` files:
 | **OneWoW_QoL** | OneWoW | — | 1 |
 | **OneWoW_ShoppingList** | OneWoW | — | 1 |
 | **OneWoW_DirectDeposit** | OneWoW | — | 1 |
+| **OneWoW_Mail** | OneWoW | — | 1 |
 | **OneWoW_Bags** | OneWoW | TradeSkillMaster, Baganator, Masque | 1 |
 | **OneWoW_Utility_DevTool** | OneWoW | !BugGrabber | 1 |
 | **OneWoW_AltTracker_\*** (except Endgame) | OneWoW | — | 1 |
@@ -104,7 +107,7 @@ enabled OptionalDeps when the consumer is `LoadAddOn`'d — bypassing soft opt-o
 and the login orchestrator. Suite integrations use nil-guards at call sites and,
 for explicit user actions, `OneWoW:WithAddon` / `EnsureLoaded` (§3.8).
 
-External third-party addons (TSM, Auctionator, Baganator, Masque, `!BugGrabber`)
+External third-party addons (TSM, Auctionator, Pawn, Baganator, Masque, `!BugGrabber`)
 remain valid OptionalDeps.
 
 ---
@@ -567,7 +570,7 @@ sub-row chrome but are **not** load units: Apply calls the feature setter
 `EnsureLoaded`. The row mutes when Notes is unchecked. AltTracker stores (except
 Endgame) toggle independently of their owning hub; Endgame and all Catalog packs
 stay parent-required (`parentRequiredStores` / TOC) and mute when the hub is
-off. Unticking Catalog stops every Catalog pack from loading. Consumer pulls (Bags → Storage/Character, ShoppingList →
+off. Unticking Catalog stops every Catalog pack from loading. Consumer pulls (Bags / Mail → Storage/Character, ShoppingList →
 Storage / TradeSkillDB) still show “required by …” and stay non-interactive while
 that consumer is on. Soft Apply writes per-store `SetFeatureOptOut` and
 `EnsureLoaded`s wanted-but-unloaded **eager** stores; cold start also
@@ -705,8 +708,8 @@ either `_requiresAddon == name` or `name` being a member of `_requiresAnyAddon`;
 off-screen ones rebuild lazily on next selection via the `_isPlaceholder`
 staleness check in `SelectSubTab`).
 
-Standalone-window modules (Bags, ShoppingList, DirectDeposit) open via slash commands,
-not hub sections.
+Standalone-window modules (Bags, ShoppingList, DirectDeposit, Mail) open via slash
+commands, not hub sections.
 
 **Settings Profiles** (`UI/t-profiles.lua` + `UI/t-charprofiles.lua`): one scroll with
 **UI & Addon Settings** then **Character Backup** (section headers, no mode toggle).
@@ -943,6 +946,14 @@ files live under `OneWoW/Services/` (a single TOC block; consumers reference the
 | `OneWoW.UIParent` | `Services/UIParent.lua` | Cinematic fullscreen overlays (AFK panel): refcounted `Hide`/`Restore` of Blizzard `UIParent`, plus re-sync of fragile FrameXML indicators (minimap mail icon) |
 | `OneWoW.Location` | `Services/Location.lua` | Trackers (steps, pins, exploration), Catalog Navigation waypoints, Notes NPCs, Vendors, AltTracker hearth — player map, 0-100 vs 0-1 conversion, `SetWaypoint` (`CanSetUserWaypointOnMap` + `opts.format` / `openMap` / `superTrack`), map-percent distance, world-yard `GetWorldPos` / `WorldDelta` / `MinimapOffset`. No pin rendering |
 | `OneWoW.StatusCards` | `Services/StatusCards.lua` | ESC Menu Panel and AFK Panel — flagged You / Here / Alerts / Info builders and collectors (mail, vault, Item Alert, AltTracker attention, AFK digest). Portrait+faction and Item Alert row are GUI widgets |
+| `OneWoW.Inventory` | `Services/Inventory.lua` | Live bag/bank/guild-bank event funnel + `ForEachSlot` / `GetBagIDs`; see [INVENTORY.md](INVENTORY.md) / §8.9 |
+| `OneWoW.GuildBankTransfer` | `Services/GuildBankTransfer.lua` | Bag→guild deposit plan + paced queue; see [GUILD_BANK_TRANSFER.md](GUILD_BANK_TRANSFER.md) / §8.10 |
+| `OneWoW.Restriction` | `Core/Restriction.lua` | Combat/restriction funnel; see §8.6 |
+| `OneWoW.CopyPaste` | `Core/CopyPaste.lua` | Copy/paste dialog service |
+| `OneWoW.CatalogData` | `Services/CatalogData.lua` | Catalog query facade over CatDB pack APIs |
+| `OneWoW.Disenchant` | `Services/disenchant.lua` | Shared disenchant heuristic (Bags / Mail / overlays) |
+| `OneWoW.AltScope` | `Services/AltScope.lua` | Account-wide character-key helpers for alt-scoped reads |
+| `OneWoW.ItemLevel` | `Services/ItemLevel.lua` | Shared item-level helpers |
 | `OneWoW.Locale` | `Services/LocaleService.lua` | Every addon (each registers its own scope, reads back a view) — see Localization below |
 
 Feature content that registers in from QoL: settings catalogs
@@ -971,7 +982,7 @@ modeled on `OneWoW_GUI:ApplyTheme` / `Constants.ACTIVE_THEME` (a metatable
   not write `L[key] or "fallback"`** — that masks misses. For genuinely optional
   strings (localize if present, else a dynamic value) use
   `OneWoW.Locale:GetOptional(scope, key)` (returns the value or `nil`).
-- **Disjoint contract:** a key is EITHER shared OR scoped, never both. `/owlocale`
+- **Disjoint contract:** a key is EITHER shared OR scoped, never both. `/1wlocale`
   (the sole locale-debug command — no debug builds) reports per-scope key counts,
   shared/scope collisions, and locales not in `SUPPORTED`.
 - **Language switching is centralized.** `OneWoW.Locale:SetLanguage(lang)` refolds
@@ -990,7 +1001,7 @@ modeled on `OneWoW_GUI:ApplyTheme` / `Constants.ACTIVE_THEME` (a metatable
   `ModuleRegistry:GetById("<id>")`, never a shared global.
 
 This is the **contract**. For the day-to-day practitioner guide — the locale tooling
-(`bin/locale_*`, `/owlocale`), the routing decision (Blizzard global → shared → scoped),
+(`bin/locale_*`, `/1wlocale`), the routing decision (Blizzard global → shared → scoped),
 what is intentionally *not* translated and why, and Blizzard-term alignment — see
 [`LOCALES.md`](LOCALES.md).
 
@@ -1006,8 +1017,8 @@ what is intentionally *not* translated and why, and Blizzard-term alignment — 
 | **Service** | Near-stateless utility on `_G.OneWoW` | `OverlayEngine`, `CopyPaste` (target) |
 
 **Hub vs contextual:** hub = tabs in OneWoW window; contextual = own window in
-gameplay context (Bags, ShoppingList, DirectDeposit, DevTool). Not binary — modules
-may register both.
+gameplay context (Bags, ShoppingList, DirectDeposit, Mail, DevTool). Not binary —
+modules may register both.
 
 ### Layering rules
 
@@ -1079,7 +1090,7 @@ size, flags)` with `fontSizeOffset` from `OneWoW_DB` (range −3..+5, floor 6).
 
 ### 8.5 Core settings funnel (`SettingsFeatureRegistry`)
 
-All reads and writes of `OneWoW.db.global.settings.*` (tooltips, overlays,
+All reads and writes of core `settings.*` (tooltips, overlays,
 toastalerts) route through `OneWoW.SettingsFeatureRegistry`
 (`Core/SettingsFeatureRegistry.lua`). Only that file and `Core/Database.lua`
 (defaults, init bridges) touch the tree directly — enforced by the

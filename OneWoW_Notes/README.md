@@ -112,7 +112,7 @@ Track mounts, pets, toys, transmog, and other collectibles you care about:
 - Mark important notes as favorites
 
 ### Customization
-- 14+ color themes to match your UI
+- Suite color themes via **OneWoW** settings
 - Adjustable note appearance
 - Pin colors to color-code information
 - Font size options for accessibility

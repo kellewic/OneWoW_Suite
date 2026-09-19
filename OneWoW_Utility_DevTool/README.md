@@ -6,7 +6,7 @@
 
 ## Requirements
 
-- **World of Warcraft Retail** with an interface version supported by the addon TOC (currently **120001** and **120005**; Midnight-era retail)
+- **World of Warcraft Retail** with an interface version supported by the addon TOC (currently **120100**)
 - **OneWoW** — Core hub addon (required; includes the shared UI toolkit)
 - **!BugGrabber** (optional) — if present, DevTool can mirror captured Lua errors into the Errors tab
 
@@ -30,6 +30,7 @@ lifecycle root `OneWoW_Utility_DevTool` exposes colon hooks only (`OnAddonLoaded
 | Command | Description              |
 |---------|--------------------------|
 | `/1wdt` | Toggle DevTool window    |
+| `/1wdt notice` | Reset and show the install notice |
 | `/1wdev` | Toggle DEVMODE (floating error list) |
 
 The addon also registers in the **Addon Compartment** (game menu) for quick access.

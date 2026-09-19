@@ -32,7 +32,7 @@ Re-open the feature picker anytime from **Settings → Manage Features** (link o
 
 | Feature | Command | What it does |
 |---------|---------|----------------|
-| [DevTools](DevTool) | `/1wdt` | Toggle the DevTools window |
+| [DevTools](DevTool) | `/1wdt` | Toggle the DevTools window. `notice` resets and shows the install notice. |
 | [DevTools](DevTool) | `/1wdev` | Toggle DEVMODE (floating error list; Copy All dumps this session) |
 
 ### Shopping List extras

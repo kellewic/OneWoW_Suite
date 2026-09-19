@@ -48,7 +48,7 @@ mean it keeps its own write path and record shape (see the Mail module below).
 **File:** `Modules/Bags.lua`
 
 **Collects:**
-- Bag IDs 0-4 (backpack + 4 bag slots)
+- Bag IDs 0-5 (backpack + 4 bag slots + reagent bag)
 - Each slot contains:
   - Item ID, Link, Name
   - Quality, Item Level

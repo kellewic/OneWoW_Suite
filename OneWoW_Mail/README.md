@@ -25,9 +25,6 @@ Reusable logistics plans for mailing items and gold:
 - Auto-run modes can plan on mailbox open and wait for review on Activity, or send according to shipment settings
 - Skip role members already successfully shipped this session
 
-### Other
-Supporting utilities on the Other tab (for example disenchantable dumps and excess-gold helpers) — explore once Mail is enabled.
-
 ---
 
 ## Installation

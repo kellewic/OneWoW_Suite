@@ -63,6 +63,8 @@ SC:GetById(kind, id)        --> entry
 SC:GetAll(kind)             --> entry[]         sorted by name, case-insensitive
 SC:ValidateName(kind, name) --> normalized, errorKey
 SC:ValidateWritableName(kind, name, exceptId?) --> normalized, errorKey
+SC:RegisterChangedCallback(id, fn)  -- fire after mutations (batched via WithBatch)
+SC:UnregisterChangedCallback(id)
 ```
 
 `Resolve` returning `status == "former"` is not an error — it resolved, through a redirect. It is the set a prune or a name reclaim would break, which is why the lint reports it separately from a genuine miss.

@@ -28,7 +28,7 @@ This wiki is the **player** reference — install, hub setup, slash commands, an
 | [Bags](Bags) | Bag organization, categories, and [search syntax](Bags-Search-Syntax) |
 | [QoL](QoL) | Dozens of toggleable quality-of-life modules |
 | [AltTracker](AltTracker) | Account-wide alts, gold, professions, progress |
-| [Catalog](Catalog) | Instances, vendors, professions, recipes, collectibles, housing |
+| [Catalog](Catalog) | Instances, vendors, professions, recipes, quests, collectibles, housing |
 | [Trackers](Trackers) | Custom lists — guides, dailies, todos, farm value |
 | [Notes](Notes) | Notes on players, NPCs, zones, items, collectibles, quests; OneWay Pins |
 | [Shopping List](Shopping-List) | Shopping and Farming lists with stock checks |

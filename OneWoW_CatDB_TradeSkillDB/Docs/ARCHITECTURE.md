@@ -19,7 +19,7 @@ character knows" is AltTracker Professions (`GetKnownRecipes` /
 
 **SavedVariable:** `OneWoW_CatDB_TradeSkillDB_DB`
 
-**RequiredDeps:** `OneWoW`. **LoadOnDemand:** yes (`## Group: OneWoW_Catalog`).
+**RequiredDeps:** `OneWoW`, `OneWoW_Catalog`. **LoadOnDemand:** yes (`## Group: OneWoW_Catalog`).
 Catalog marks CatDB packs `lazyStores`.
 
 **Public API:** `OneWoW_CatDB_TradeSkillDB_API`

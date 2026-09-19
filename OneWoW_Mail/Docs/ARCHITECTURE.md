@@ -16,12 +16,12 @@ Player overview and install: [`../README.md`](../README.md).
 
 | Area | Role |
 |------|------|
-| `UI/Shell.lua` | Hide Blizzard `MailFrame`, tab host (Inbox / Compose / Shipments / Other); `useBlizzardUI` chrome swap (WoW UI / One UI) |
+| `UI/Shell.lua` | Hide Blizzard `MailFrame`, tab host (Inbox / Compose / Shipments / Activity); `useBlizzardUI` chrome swap (WoW UI / One UI) |
 | `UI/Inbox.lua` | Filtered collect buttons, selection, Shift-loot / Ctrl-return |
 | `UI/Compose.lua` | OneWoW Compose chrome; hidden native `SendMailFrame` via NativeSend; success/fail → RunLog |
 | `Engine/NativeSend.lua` | Activate/deactivate `SetSendMailShowing` + park Blizzard send frame |
 | `UI/Shipments.lua` | Shipment editor (char/role target, distribute, PE match, keep/max/restock, restockSources) |
-| `UI/Other.lua` | DE dump, excess gold, session rake |
+| `UI/Activity.lua` | Pending-review groups, session activity log, process/discard, chat mirror |
 | `Engine/Collect.lua` | `C_Mail.IsCommandPending` paced take; COD/GM skip; per-mail + pass summary → RunLog |
 | `Engine/MailClassify.lua` | AH invoice + subject classification |
 | `Engine/AddressBook.lua` | Alts (all realms) + normalize + suggestions |

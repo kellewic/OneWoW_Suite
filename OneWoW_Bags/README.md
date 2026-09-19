@@ -40,7 +40,7 @@
 - Adjust icon size (small, medium, large, extra large)
 - Adjust number of columns
 - Scale bags, personal bank, warband bank, and guild bank independently
-- 14+ color themes for the UI (suite-wide via **OneWoW** settings)
+- Suite color themes (via **OneWoW** settings)
 
 ### Convenience Features
 - Auto-open when you visit vendors

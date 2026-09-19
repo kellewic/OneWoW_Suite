@@ -55,6 +55,7 @@ All ecosystem addons read/write through GUI. No more duplicate theme/language/mi
 - `minimap.hide` - minimap button visibility (default: false)
 - `minimap.theme` - faction icon: "horde", "alliance", or "neutral" (default: "horde")
 - `featureIcons.style` - suite feature faces: `"ring"` or `"ringless"` (default: `"ring"`). Ringless files are gold on transparent; `GetFeatureIcon` returns `plate = false` so Home, Manage Features, and collector skip the icon well. DevTools session errors tint that face red (`OneWoW:ApplyFeatureIconAlert`); click opens the Errors tab (`OneWoW:ResolveFeatureIconClick`). The logger fires `OneWoW_DevTool.ErrorAlert` when that state changes.
+- `moneyDisplay.useLetters` / `useGrouping` / `useRegionalNumbers` / `useWhiteValues` - gold/money formatting (defaults: letters off; grouping and regional numbers on; white values off). Changing any of these fires `OnMoneyDisplayChanged`.
 
 ### Get a setting
 ```lua
@@ -65,6 +66,7 @@ local offset = OneWoW_GUI:GetSetting("fontSizeOffset")  -- -3 to +5 (default 0)
 local hide   = OneWoW_GUI:GetSetting("minimap.hide")    -- true/false
 local icon   = OneWoW_GUI:GetSetting("minimap.theme")   -- "horde"/"alliance"/"neutral"
 local faces  = OneWoW_GUI:GetSetting("featureIcons.style") -- "ring" / "ringless"
+local letters = OneWoW_GUI:GetSetting("moneyDisplay.useLetters") -- gold letter abbreviations
 ```
 
 ### Set a setting (fires callbacks to all registered addons)
@@ -76,6 +78,7 @@ OneWoW_GUI:SetSetting("fontSizeOffset", 2)       -- range: -3 to +5
 OneWoW_GUI:SetSetting("minimap.hide", true)
 OneWoW_GUI:SetSetting("minimap.theme", "alliance")
 OneWoW_GUI:SetSetting("featureIcons.style", "ringless")
+OneWoW_GUI:SetSetting("moneyDisplay.useLetters", true)
 ```
 
 ### Register for settings change callbacks
@@ -104,6 +107,10 @@ end)
 
 OneWoW_GUI:RegisterSettingsCallback("OnFontChanged", myAddon, function(self, newFontKey)
     -- refresh your UI text with the new font
+end)
+
+OneWoW_GUI:RegisterSettingsCallback("OnMoneyDisplayChanged", myAddon, function(self, newValue)
+    -- refresh gold strings (any moneyDisplay.* key change)
 end)
 
 OneWoW_GUI:RegisterSettingsCallback("OnFontSizeChanged", myAddon, function(self, newOffset)
@@ -425,10 +432,10 @@ local px = OneWoW_GUI:GetSpacing("MD")
 ```
 XS=4, SM=8, MD=12, LG=16, XL=24
 
-### Available themes (24 total)
+### Available themes (25 total)
 green, blue, purple, red, orange, teal, gold, pink, dark, amber, cyan, slate,
 voidblack, charcoal, forestnight, obsidian, monochrome, twilight, neon,
-glassmorphic, lightmode, retro, fantasy, nightfae
+glassmorphic, lightmode, retro, fantasy, nightfae, highcontrast
 
 Order stored in `Constants.THEMES_ORDER`.
 
@@ -478,7 +485,7 @@ Addons can override or add GUI constants via `RegisterGUIConstants`. Missing key
 
 **Hub tab modules** (`OneWoW_Notes`, `OneWoW_QoL`, `OneWoW_Catalog`, `OneWoW_Trackers`, `OneWoW_AltTracker`) render inside `OneWoWMainWindow` and must **not** override `WINDOW_*`, `MIN_*`, `MAX_*`, or `LEFT_PANEL_WIDTH`. Use `RegisterGUIConstants({})` or only unit-specific keys (e.g. `CONTROL_PANEL_HEIGHT`, `SPECIAL_COLORS`).
 
-**Standalone-window addons** (`OneWoW_Bags`, `OneWoW_DirectDeposit`, `OneWoW_ShoppingList`, `OneWoW_Utility_DevTool`) may override window dimensions for their own frames.
+**Standalone-window addons** (`OneWoW_Bags`, `OneWoW_DirectDeposit`, `OneWoW_ShoppingList`, `OneWoW_Mail`, `OneWoW_Utility_DevTool`) may override window dimensions for their own frames.
 
 **Signature:** `OneWoW_GUI:RegisterGUIConstants(guiConstants)` — takes a table, returns a table with metatable.
 
@@ -1729,6 +1736,15 @@ When building **`OptionsSliderTemplate`** sliders manually (custom layout), call
 - **CreateItemAlertRow(parent, options)** — one-line Item Alert row (Shopping List, notes, Trackers, Farming). `SetHits` shows `Title: (N)`, hits left of ASCII `|`, idle icons on the right. Empty left uses Blizzard `NONE`; full right uses `manyLabel`. Optional `interactive` + `onClick`.
 - **CreateMailIcon(parent, options)** — mail icon
 - **CreateExpandedPanelGrid(ef, options)** — expanded panel grid
+- **CreateFavoriteToggleButton(parent, options)** — favorite star using `FAVORITE_ATLAS`
+- **CreateKeywordHelpButton(parent, options)** / **ShowKeywordHelp(editBox)** / **HideKeywordHelp()** / **AttachSearchTooltip(editBox, options)** — predicate-keyword help popover for search boxes
+- **CreateColorSwatch(parent, options)** — color picker swatch
+- **CreateIntegrationRow(parent, options)** — third-party integration status row
+- **CreateSelectableSubCard(parent, options)** — nested selectable card
+- **CreateIconGrid(parent, options)** / **CreatePositionGrid(parent, options)** — icon / position grids
+- **ShowCopyURLDialog(title, url)** / **ShowCopyLinksDialog(title, instructions, links)** — copy dialogs
+- **ShowReportDialog(opts)** / **HideReportDialog(key)** / **UpdateReportDialog(key, rows, width)** — diagnostic report dialog
+- **ConfirmCatalogWrite / ConfirmCatalogDelete / ConfirmCatalogRename / ConfirmCatalogClaim** (`GUI/CatalogConfirm.lua`) — Catalog write confirmations
 
 **Utility:**
 - `GetProgressColor(current, max)` — returns color from PROGRESS_COLORS (NONE/LOW/MID/FULL)

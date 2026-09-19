@@ -27,10 +27,6 @@ Reusable plans:
 * Role distribute: fill first, round-robin, or equal split
 * Auto-run can plan on mailbox open and hold for review on Activity
 
-### Other
-
-Supporting utilities (for example disenchantable dumps and excess-gold helpers) on the Other tab.
-
 ---
 
 ## Tips
