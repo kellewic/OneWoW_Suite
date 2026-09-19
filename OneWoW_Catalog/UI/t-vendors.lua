@@ -185,14 +185,6 @@ local function GetDataAddon()
     return ns.GetCatalogPackAPI("vendors")
 end
 
-local function GetCurrentPlayerZone()
-    local mapID = C_Map.GetBestMapForUnit("player")
-    if not mapID then return nil, nil end
-    local info = C_Map.GetMapInfo(mapID)
-    if not info then return nil, nil end
-    return info.name, mapID
-end
-
 ---@return table<number, boolean>|nil
 local function CollectPlayerMapIDs()
     local mapID = C_Map.GetBestMapForUnit("player")

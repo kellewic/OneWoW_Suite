@@ -128,7 +128,8 @@ end
 ---@param itemID number|string
 ---@param style string|nil
 ---@param extras table|nil
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function FarmList:AddItem(itemID, style, extras)
     itemID = tonumber(itemID)
     if not itemID or itemID <= 0 then
@@ -198,7 +199,8 @@ function FarmList:AddItem(itemID, style, extras)
 end
 
 ---@param itemID number|string
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function FarmList:RemoveItem(itemID)
     itemID = tonumber(itemID)
     if not itemID then return false, L["OWSL_INVALID_ITEM"] end
@@ -210,12 +212,14 @@ function FarmList:RemoveItem(itemID)
 end
 
 ---@param itemID number|string
----@param style string
----@return boolean
+---@param style string unused; rows stay farming
+---@return boolean ok
+---@return string|nil err
 function FarmList:SetStyle(itemID, style)
     local row = self:GetItem(itemID)
     if not row then return false, L["OWSL_LIST_NOT_FOUND"] end
-    row.style = STYLE_FARMING
+    style = STYLE_FARMING
+    row.style = style
     row.modified = GetServerTime()
     ScheduleRefresh()
     return true
@@ -223,7 +227,8 @@ end
 
 ---@param itemID number|string
 ---@param quantity number
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function FarmList:SetQuantity(itemID, quantity)
     local row = self:GetItem(itemID)
     if not row then return false, L["OWSL_LIST_NOT_FOUND"] end
@@ -235,7 +240,8 @@ end
 
 ---@param itemID number|string
 ---@param notes string|nil
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function FarmList:SetNotes(itemID, notes)
     local row = self:GetItem(itemID)
     if not row then return false, L["OWSL_LIST_NOT_FOUND"] end
@@ -248,7 +254,8 @@ end
 --- Copy farm quantity onto a named shopping list (keeps the farm row).
 ---@param itemID number|string
 ---@param listName string
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function FarmList:SendToShoppingList(itemID, listName)
     local row = self:GetItem(itemID)
     if not row then return false, L["OWSL_LIST_NOT_FOUND"] end
@@ -262,7 +269,8 @@ end
 ---@param itemID number|string
 ---@param listName string
 ---@param style string|nil
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function FarmList:AddFromShoppingList(itemID, listName, style)
     itemID = tonumber(itemID)
     if not itemID then return false, L["OWSL_INVALID_ITEM"] end

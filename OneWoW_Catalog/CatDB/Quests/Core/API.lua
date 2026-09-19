@@ -47,31 +47,6 @@ local function ExpansionNeedsArchive(expansionID)
         and expansionID <= ARCHIVE_EXPANSION_MAX
 end
 
-local archiveImported = false
-
-local function ImportArchiveData()
-    if archiveImported then
-        return
-    end
-    local archiveAPI = OneWoW_CatDB_QuestDBArchive_API
-    if not archiveAPI then
-        return
-    end
-    local quests = archiveAPI.GetAllQuests()
-    if quests then
-        ns:RegisterQuestData(quests)
-        archiveImported = true
-        if ns.shippedQuestIDs then
-            for questID in pairs(quests) do
-                ns.shippedQuestIDs[questID] = true
-            end
-        end
-        if ns.ApplyLearnedQuests then
-            ns:ApplyLearnedQuests()
-        end
-    end
-end
-
 --- Load Quest Archive when this expansion is Classic-Dragonflight, or when
 --- expansionID is -1 / nil (all-quest search).
 ---@param expansionID number|nil
@@ -81,7 +56,7 @@ local function EnsureArchiveLoaded(expansionID, shouldYield)
     if expansionID ~= nil and expansionID ~= -1 and not ExpansionNeedsArchive(expansionID) then
         return true
     end
-    OneWoW:EnsureCatalogPack("archive")
+    OneWoW:EnsureCatalogPack(ARCHIVE_HUB)
     if shouldYield then
         coroutine_yield()
     end
@@ -406,7 +381,7 @@ end
 --- Load the archive pack, then run callback.
 ---@param callback function
 function API.EnsureArchiveThen(callback)
-    OneWoW:EnsureCatalogPack("archive")
+    OneWoW:EnsureCatalogPack(ARCHIVE_HUB)
     if callback then
         callback()
     end

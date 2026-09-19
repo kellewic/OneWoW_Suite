@@ -1160,7 +1160,7 @@ function FirstRun:BuildPanel(parent, opts)
                         local descKey = StoreDescKey(store)
                         local rowSummary = descKey and L[descKey] or ""
                         local isOptional = manifest.storePolicy == "optional"
-                        local affectedKeys = STORE_AFFECTED_KEYS[store]
+                        local storeAffectedKeys = STORE_AFFECTED_KEYS[store]
 
                         local sub = OneWoW_GUI:CreateSelectableSubCard(listContainer, {
                             title = title,
@@ -1168,8 +1168,8 @@ function FirstRun:BuildPanel(parent, opts)
                             iconTexture = STORE_ICONS[store] or 5341597,
                             checked = storeSelections[store] and true or false,
                             interactive = isOptional,
-                            affectedText = (isOptional and affectedKeys) and L["WIZARD_WHATS_AFFECTED"] or nil,
-                            onAffectedClick = (isOptional and affectedKeys) and function()
+                            affectedText = (isOptional and storeAffectedKeys) and L["WIZARD_WHATS_AFFECTED"] or nil,
+                            onAffectedClick = (isOptional and storeAffectedKeys) and function()
                                 FirstRun:ShowStoreAffectedDialog(store)
                             end or nil,
                             onToggle = isOptional and function(_, checked)
@@ -1205,8 +1205,8 @@ function FirstRun:BuildPanel(parent, opts)
                                 local cb = OneWoW_GUI:CreateCheckbox(topicRow, {
                                     label = TopicLabel(topic),
                                     checked = topicSelections[store] and topicSelections[store][topic],
-                                    onClick = function(self)
-                                        local on = self:GetChecked() and true or false
+                                    onClick = function(myself)
+                                        local on = myself:GetChecked() and true or false
                                         topicSelections[store] = topicSelections[store] or {}
                                         topicSelections[store][topic] = on
                                         if on and not storeSelections[store] then

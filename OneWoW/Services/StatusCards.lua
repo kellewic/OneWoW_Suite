@@ -2481,19 +2481,19 @@ local function AcquireTaskText(panel, index, size)
     return fs
 end
 
-local function FitTaskList(panel, contentH)
+local function FitTaskList(panel, bodyH)
     local headerH = 0
     if panel.header:IsShown() and panel.header:GetText() ~= "" then
         headerH = (panel.header:GetStringHeight() or 12) + 8
     end
-    local body = math.max(22, contentH)
-    local contentH = PANEL_PADDING + headerH + body + 8
+    local body = math.max(22, bodyH)
+    local height = PANEL_PADDING + headerH + body + 8
     if panel.fixedHeight then
-        panel:SetHeight(math.max(panel.fixedHeight, contentH))
+        panel:SetHeight(math.max(panel.fixedHeight, height))
         return
     end
     local maxH = panel.maxHeight or TASKLIST_MAX_H
-    panel:SetHeight(math.min(maxH, contentH))
+    panel:SetHeight(math.min(maxH, height))
 end
 
 function StatusCards:CreateTaskList(parent, opts)
@@ -2572,7 +2572,7 @@ function StatusCards:RefreshTaskList(panel, notes)
     for _, fs in pairs(panel.contentTexts) do
         fs:Hide()
     end
-    local y, fsIndex = WriteTaskNotes(panel, notes, -5, 1, panel._width - 50)
+    local y = WriteTaskNotes(panel, notes, -5, 1, panel._width - 50)
     panel.scrollChild:SetHeight(math.abs(y) + 10)
     FitTaskList(panel, math.abs(y) + 10)
     panel:Show()

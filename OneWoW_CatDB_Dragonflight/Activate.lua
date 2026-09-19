@@ -1,1 +1,2 @@
-local ADDON_NAME = ...
+-- TOC terminator after Data/ and DataExtra/. Factories register at parse
+-- time; CatalogData:ActivateEnabled runs from EnsureRole once sinks exist.

@@ -99,14 +99,16 @@ end
 ---@param itemID number|string
 ---@param style string|nil ignored; rows are stored as farming
 ---@param extras table|nil
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function OneWoW_ShoppingList_API.AddFarmItem(itemID, style, extras)
     return ns.FarmList:AddItem(itemID, style, extras)
 end
 
 --- Remove an item from the Farming List.
 ---@param itemID number|string
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function OneWoW_ShoppingList_API.RemoveFarmItem(itemID)
     return ns.FarmList:RemoveItem(itemID)
 end
@@ -114,7 +116,8 @@ end
 --- Kept for CompSync / older callers. Style is always farming.
 ---@param itemID number|string
 ---@param style string
----@return boolean
+---@return boolean ok
+---@return string|nil err
 function OneWoW_ShoppingList_API.SetFarmStyle(itemID, style)
     return ns.FarmList:SetStyle(itemID, style)
 end

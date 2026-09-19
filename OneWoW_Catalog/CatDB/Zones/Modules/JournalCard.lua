@@ -279,11 +279,9 @@ local function NewWorldBossEncounter(encID, npcID, source)
     }
 end
 
---- Place one extra onto an already-hydrated card. Creates a boss / rare /
---- general row only on this card view. Does not add places or pins.
 ---@param inst table
----@param entry table
----@return boolean added
+---@param encounterID number
+---@return table|nil encounter
 local function FindEncounter(inst, encounterID)
     for i = 1, #inst.encounters do
         if inst.encounters[i].encounterID == encounterID then
@@ -293,6 +291,11 @@ local function FindEncounter(inst, encounterID)
     return nil
 end
 
+--- Place one extra onto an already-hydrated card. Creates a boss / rare /
+--- general row only on this card view. Does not add places or pins.
+---@param inst table
+---@param entry table
+---@return boolean added
 function Card.PlaceExtraOnCard(inst, entry)
     local itemID = entry.itemID
     if not inst or not itemID then

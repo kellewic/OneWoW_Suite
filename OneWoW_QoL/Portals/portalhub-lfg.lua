@@ -15,7 +15,6 @@ local dialog
 local secureBtn
 local pendingSpellID
 local pendingName
-local pendingShow
 local enabled = false
 
 local function IsPromptEnabled()
@@ -83,7 +82,6 @@ local function ApplySecureSpell()
 end
 
 local function HidePrompt()
-	pendingShow = nil
 	if not dialog or not dialog.frame:IsShown() then
 		return
 	end
@@ -99,16 +97,13 @@ local function ShowPrompt()
 		return
 	end
 	if OneWoW.Restriction.IsInCombat() then
-		pendingShow = true
 		OneWoW.Restriction.RunWhenUnrestricted("protected", "OneWoW_QoL.portalhub.lfgshow", ShowPrompt)
 		return
 	end
 	if OneWoW.Restriction.IsProtectedActionBlocked() then
-		pendingShow = true
 		OneWoW.Restriction.RunWhenUnrestricted("protected", "OneWoW_QoL.portalhub.lfgshow", ShowPrompt)
 		return
 	end
-	pendingShow = nil
 	dialog.nameFS:SetText(pendingName or "")
 	local nameHeight = dialog.nameFS:GetStringHeight()
 	if nameHeight < 16 then
@@ -122,7 +117,6 @@ end
 local function ClearPending()
 	pendingSpellID = nil
 	pendingName = nil
-	pendingShow = nil
 	OneWoW.Restriction.CancelWhenUnrestricted("OneWoW_QoL.portalhub.lfgshow")
 	OneWoW.Restriction.CancelWhenUnrestricted("OneWoW_QoL.portalhub.lfgattr")
 end
