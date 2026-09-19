@@ -40,6 +40,7 @@
 - View loot on an NPC opens that encounter on Zones. It no longer jumps to a city the NPC also visits.
 - Looking up a Battle for Azeroth item no longer errors when that expansion's Journal data loads. Journal cards and drop lines for that expansion work again.
 - In This Zone on Spires of Arak shows that zone, not The Blood Furnace.
+- Opening the profession window no longer errors when Tradeskills data has not loaded yet.
 
 #### Journal
 - This week's bountiful Delves still sort and filter as Delves. The type line says Bountiful and keeps the gold border and bountiful icon.
@@ -181,7 +182,7 @@
 
 ---
 
-- **Last Updated**: Sep 15, 2026
+- **Last Updated**: Sep 19, 2026
 
 ## R6.2609.0106
 

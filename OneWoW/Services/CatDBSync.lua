@@ -444,29 +444,6 @@ local function ArmQuestPack()
     end)
 end
 
-local function ArmTradeSkillPack()
-    if recipeLoadQueued then
-        return
-    end
-    local addon = ns.ResolveCatalogPack and ns:ResolveCatalogPack("tradeskills")
-    if not addon then
-        return
-    end
-    if C_AddOns.IsAddOnLoaded(addon) then
-        return
-    end
-    recipeLoadQueued = true
-    C_Timer.After(0, function()
-        recipeLoadQueued = false
-        if ns.EnsureLoaded then
-            ns:EnsureLoaded(addon)
-        end
-        if ns.ProfessionRecipe.IsTradeskillOpen() then
-            ScanVisibleRecipes(ns.ProfessionRecipe.GetLastScan())
-        end
-    end)
-end
-
 local function CaptureRecipeInfo(recipeID, scan)
     local info = C_TradeSkillUI.GetRecipeInfo(recipeID)
     local out = { id = recipeID }
@@ -527,6 +504,23 @@ local function ScanVisibleRecipes(scan)
             CatDBSync.LearnRecipe(recipeID, CaptureRecipeInfo(recipeID, scan))
         end
     end
+end
+
+local function ArmTradeSkillPack()
+    if recipeLoadQueued then
+        return
+    end
+    if C_AddOns.IsAddOnLoaded(ns:ResolveCatalogPack("tradeskills")) then
+        return
+    end
+    recipeLoadQueued = true
+    C_Timer.After(0, function()
+        recipeLoadQueued = false
+        ns:EnsureCatalogPack("tradeskills")
+        if ns.ProfessionRecipe.IsTradeskillOpen() then
+            ScanVisibleRecipes(ns.ProfessionRecipe.GetLastScan())
+        end
+    end)
 end
 
 local EVENT_ROLES = {
