@@ -7,12 +7,15 @@ local GetTime = GetTime
 local math = math
 local pairs = pairs
 local tinsert = tinsert
+local C_AuctionHouse = C_AuctionHouse
+local C_Item = C_Item
 
 ns.AHReplicateScanner = ns.AHReplicateScanner or {}
 local Scanner = ns.AHReplicateScanner
 
 local AHItemKeys = OneWoW.AHItemKeys
 local BATCH_SIZE = 250
+local EMPTY_REPLICATE_TIMEOUT = 90
 
 local scanState = nil
 local scanFrame = nil
@@ -53,8 +56,11 @@ end
 
 local function GetOrCreateScanFrame()
     if scanFrame then return scanFrame end
-    if not AuctionHouseFrame then return nil end
-    scanFrame = CreateFrame("Frame", "OneWoW_AHReplicateScanFrame", AuctionHouseFrame)
+    -- Do not parent this to AuctionHouseFrame: children of that secure frame
+    -- can miss REPLICATE_ITEM_LIST_UPDATE. The wait ticker also polls
+    -- GetNumReplicateItems so a scan still starts if another addon already
+    -- filled the replicate buffer (event already fired).
+    scanFrame = CreateFrame("Frame", "OneWoW_AHReplicateScanFrame")
     scanFrame:SetScript("OnEvent", function(_, event, ...)
         Scanner:HandleEvent(event, ...)
     end)
@@ -66,12 +72,9 @@ end
 
 function Scanner:HandleEvent(event)
     if event == "REPLICATE_ITEM_LIST_UPDATE" then
-        if scanFrame then scanFrame:UnregisterEvent("REPLICATE_ITEM_LIST_UPDATE") end
-        if scanState and scanState.waitingTicker then
-            scanState.waitingTicker:Cancel()
-            scanState.waitingTicker = nil
+        if C_AuctionHouse.GetNumReplicateItems() > 0 then
+            self:BeginCache()
         end
-        self:CacheScanData()
     elseif event == "AUCTION_HOUSE_CLOSED" or event == "AUCTION_HOUSE_DISABLED" then
         if scanFrame then
             scanFrame:UnregisterEvent("AUCTION_HOUSE_CLOSED")
@@ -90,15 +93,30 @@ function Scanner:IsScanning()
     return scanState and scanState.isScanning or false
 end
 
+function Scanner:BeginCache()
+    if not scanState or not scanState.isScanning or scanState.caching then
+        return
+    end
+    scanState.caching = true
+    if scanFrame then
+        scanFrame:UnregisterEvent("REPLICATE_ITEM_LIST_UPDATE")
+    end
+    if scanState.waitingTicker then
+        scanState.waitingTicker:Cancel()
+        scanState.waitingTicker = nil
+    end
+    self:CacheScanData()
+end
+
 function Scanner:StartScan(callback)
     if scanState and scanState.isScanning then return false end
     if not AuctionHouseFrame or not AuctionHouseFrame:IsShown() then return false end
 
     local frame = GetOrCreateScanFrame()
-    if not frame then return false end
 
     scanState = {
         isScanning = true,
+        caching = false,
         callback = callback,
         newEntries = ns.AHPriceCache:NewEntriesTable(),
         pendingRows = 0,
@@ -110,10 +128,14 @@ function Scanner:StartScan(callback)
     if callback then callback("scanStarted", 0) end
 
     scanState.waitingTicker = C_Timer.NewTicker(1, function()
-        if not scanState or not scanState.isScanning then return end
+        if not scanState or not scanState.isScanning or scanState.caching then return end
         local elapsed = math.floor(GetTime() - scanState.waitStartTime)
         if scanState.callback then
             scanState.callback("scanWaiting", 0.1, elapsed)
+        end
+        local n = C_AuctionHouse.GetNumReplicateItems()
+        if n > 0 or elapsed >= EMPTY_REPLICATE_TIMEOUT then
+            Scanner:BeginCache()
         end
     end)
 
@@ -123,6 +145,9 @@ function Scanner:StartScan(callback)
     frame:RegisterEvent("AUCTION_HOUSE_CLOSED")
     frame:RegisterEvent("AUCTION_HOUSE_DISABLED")
     C_AuctionHouse.ReplicateItems()
+    if C_AuctionHouse.GetNumReplicateItems() > 0 then
+        self:BeginCache()
+    end
 
     return true
 end

@@ -21,6 +21,7 @@
 # AltTracker
 ## Auctions
 - Expired auction alerts only count listings still waiting at the AH or in the mail, not every expired listing in history.
+- Full auction-house scans start processing once price data is ready, instead of staying on Waiting for auction data.
 
 ---
 
