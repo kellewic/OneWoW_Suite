@@ -142,6 +142,7 @@
 - Editing a step inside a dungeon or other instance no longer errors.
 - Kill a Dungeon or Raid Boss now shows Fill from current encounter when you add a new step. The first time, start the fight or fill just after the kill.
 - Horde-only or Alliance-only sections and steps show again on a character of that faction. Faction, profession, and holiday gates still hide steps on the pinned window. The Trackers tab shows every section and step so you can edit a master list or fix a wrong faction.
+- Starting a boss fight in an older dungeon or raid no longer errors.
 
 ---
 

@@ -150,6 +150,10 @@ function ns.SeasonData:ResolveRaid(raidEntry)
     if not journalInstanceID and type(mapID) == "number" then
         journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(mapID)
     end
+    journalInstanceID = tonumber(journalInstanceID)
+    if journalInstanceID and journalInstanceID < 1 then
+        journalInstanceID = nil
+    end
 
     if journalInstanceID then
         local _, _, _, _, btn, _, _, _, _, instanceMapID = EJ_GetInstanceInfo(journalInstanceID)
@@ -191,7 +195,8 @@ function ns.SeasonData:GetRaidEncounters(raidEntry)
     if not journalInstanceID then
         journalInstanceID = self:ResolveRaid(raidEntry)
     end
-    if not journalInstanceID then return {} end
+    journalInstanceID = tonumber(journalInstanceID)
+    if not journalInstanceID or journalInstanceID < 1 then return {} end
 
     EJ_SelectInstance(journalInstanceID)
     local encounters = {}

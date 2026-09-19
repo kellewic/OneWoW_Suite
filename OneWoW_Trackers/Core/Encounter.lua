@@ -28,6 +28,14 @@ local function SafeText(value)
     return value
 end
 
+-- GetInstanceForGameMap is nilable in the docs but returns 0 when the map has
+-- no Adventure Guide instance this session. EJ_SelectInstance(0) errors.
+local function JournalInstanceID(id)
+    id = tonumber(id)
+    if not id or id < 1 then return nil end
+    return id
+end
+
 local function InstanceMapID()
     local _, instanceType, _, _, _, _, _, instanceID = GetInstanceInfo()
     if instanceType == "none" then return nil end
@@ -44,7 +52,7 @@ local function JournalForDungeon(dungeonEncounterID, instanceMapID)
     instanceMapID = tonumber(instanceMapID)
     if not dungeonEncounterID or not instanceMapID then return nil end
 
-    local journalInstanceID = C_EncounterJournal.GetInstanceForGameMap(instanceMapID)
+    local journalInstanceID = JournalInstanceID(C_EncounterJournal.GetInstanceForGameMap(instanceMapID))
     if not journalInstanceID then return nil end
 
     EJ_SelectInstance(journalInstanceID)
@@ -130,6 +138,7 @@ function Enc.ResolveFromJournalID(journalEncounterID)
     if not name and not journalInstanceID then return nil end
 
     local dungeonEncounterID, mapID
+    journalInstanceID = JournalInstanceID(journalInstanceID)
     if journalInstanceID then
         EJ_SelectInstance(journalInstanceID)
         local i = 1

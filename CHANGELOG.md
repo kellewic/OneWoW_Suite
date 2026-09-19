@@ -6,7 +6,13 @@
 
 ---
 
-*No user-facing changes this release for Home, AltTracker, DevTool, QoL, Trackers, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
+# Trackers
+## Fixes
+- Starting a boss fight in an older dungeon or raid no longer errors.
+
+---
+
+*No user-facing changes this release for Home, AltTracker, DevTool, QoL, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
 
 ---
 
