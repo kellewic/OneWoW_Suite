@@ -20,6 +20,7 @@
 
 ## AFK Panel
 - Your character on the AFK screen stays in the middle gap and no longer covers the Character, Zone, or Info cards.
+- Enchanting, Mining, Herbalism, and Skinning weeklies show complete after you turn them in. They no longer stay on Not Yet Accepted.
 
 ---
 

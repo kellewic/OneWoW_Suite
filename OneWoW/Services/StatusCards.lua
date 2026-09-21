@@ -49,15 +49,21 @@ local IDLE_TIP_KEYS = {
     "STATUSCARD_TIP_BANK_GEAR",
 }
 
--- Parent skill line -> Artisan's Consortium "Services Requested" weeklies.
--- current always counts toward X/Y; prior (TWW leftover) only if on the quest or flagged completed.
+-- Parent skill line -> current-expansion profession weeklies (Consortium
+-- "Services Requested" or trainer pool). One weekly slot per profession:
+-- complete if any listed quest is done. prior (TWW leftover) only if on the
+-- quest or flagged completed.
 local PROFESSION_WEEKLY_QUESTS = {
     [171] = { current = { 93690 }, prior = { 84133 } }, -- Alchemy
     [164] = { current = { 93691 }, prior = { 84127 } }, -- Blacksmithing
+    [333] = { current = { 93697, 93698, 93699 }, prior = { 84084, 84085, 84086 } }, -- Enchanting
     [202] = { current = { 93692 }, prior = { 84128 } }, -- Engineering
+    [182] = { current = { 93700, 93701, 93702, 93703, 93704 }, prior = { 82916, 82958, 82962, 82965, 82970 } }, -- Herbalism
     [773] = { current = { 93693 }, prior = { 84129 } }, -- Inscription
     [755] = { current = { 93694 }, prior = { 84130 } }, -- Jewelcrafting
     [165] = { current = { 93695 }, prior = { 84131 } }, -- Leatherworking
+    [186] = { current = { 93705, 93706, 93707, 93708, 93709 }, prior = { 83102, 83103, 83104, 83105, 83106 } }, -- Mining
+    [393] = { current = { 93710, 93711, 93712, 93713, 93714 }, prior = { 82992, 82993, 83097, 83098, 83100 } }, -- Skinning
     [197] = { current = { 93696 }, prior = { 84132 } }, -- Tailoring
 }
 
@@ -451,22 +457,24 @@ local function CollectProfessionWeeklyRows()
                 for j = 1, #extras do
                     ids[#ids + 1] = extras[j]
                 end
-                local total = #ids
-                local doneCount, onCount = 0, 0
-                for j = 1, total do
+                local hasCandidates = #ids > 0
+                local doneAny, onAny = false, false
+                for j = 1, #ids do
                     local onQuest, done = QuestWeeklyState(ids[j])
                     if done then
-                        doneCount = doneCount + 1
+                        doneAny = true
                     elseif onQuest then
-                        onCount = onCount + 1
+                        onAny = true
                     end
                 end
+                local total = hasCandidates and 1 or 0
+                local doneCount = (hasCandidates and doneAny) and 1 or 0
                 local status
                 if total == 0 then
                     status = L["STATUSCARD_NOT_YET_ACCEPTED"]
-                elseif doneCount >= total then
+                elseif doneAny then
                     status = COMPLETE
-                elseif doneCount > 0 or onCount > 0 then
+                elseif onAny then
                     status = IN_PROGRESS
                 else
                     status = L["STATUSCARD_NOT_YET_ACCEPTED"]

@@ -107,6 +107,7 @@
 - Daily and Weekly notes stay in Notes. They no longer appear on AFK. You can hide the gold dock behind the cards. Character, Zone, and Info cards grow with the game window and leave space in the middle for your character.
 - Your character stays in that middle gap. It no longer covers the Character, Zone, or Info cards.
 - Character Card fills the dock. If Zone and Info are taller, Character grows to that height so there is no empty space above it.
+- Enchanting, Mining, Herbalism, and Skinning weeklies show complete after you turn them in. They no longer stay on Not Yet Accepted.
 
 #### Portals
 - Mage Teleports and Mage Portals are separate ESC flyouts. Show or hide each set in Portals settings. Class & Racial Abilities uses the same split.
