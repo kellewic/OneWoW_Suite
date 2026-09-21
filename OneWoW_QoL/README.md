@@ -29,7 +29,7 @@ UI panels, map tools, bars, and screen customization.
 - **Bag Bar** — movable bar of bag items matched by keyword expression
 - **Quest Item Bar** — clickable quest-item buttons with sorting and filters ([details](Modules/external/questitembar/README.md))
 - **Professions Panel** — expansion skills, recipe counts, and first-craft tracking beside the profession window
-- **Crafting Orders** — Craftable now / Missing mats / Recipe Unlearned on the profession orders page; Compact View and OneWoW prices by default; column width sliders and hide list scrollbar in Features; add missing mats to a Shopping List; start, craft, and complete from one button
+- **Crafting Orders** — Craftable now / Missing mats / Recipe Unlearned on the profession orders page; Compact View and OneWoW prices by default; click Order, Gold, Profit / Loss, or Time to sort; starting an order keeps that row in place; column width sliders and hide list scrollbar in Features; add missing mats to a Shopping List; start, craft, and complete from one button
 - **Character Info Sheet** — ilvl, enchants, gems, and durability on the character sheet
 - **Coords Display** — map coordinates near the minimap (right-click to copy)
 - **Cursor Enhancer** — ring and optional mouse trail

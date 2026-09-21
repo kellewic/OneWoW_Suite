@@ -52,6 +52,10 @@ local COLUMN_META = {
 
 local DEFAULT_HIDDEN = { gold = true, customer = true, reward = true }
 local DEFAULT_SIZES = { product = 27, you = 27, customer = 27, reward = 27 }
+-- Header click-to-sort. nil sortColumn = per-tab default (no arrow).
+-- First-click direction: Time soonest-first, Gold/Profit highest-first, Order A-Z.
+local SORTABLE = { name = true, gold = true, profit = true, time = true }
+local SORT_DEFAULT_ASC = { name = true, gold = false, profit = false, time = true }
 -- Player maximums per column. Layout shrinks toward WIDTH_MIN when the strip
 -- does not fit beside the order name. Icon lanes still grow with the icon
 -- cluster if that cluster is wider than the slider.
@@ -190,6 +194,14 @@ local function MergeLayout(saved)
             end
         end
     end
+    if SORTABLE[saved.sortColumn] then
+        layout.sortColumn = saved.sortColumn
+        if saved.sortAscending ~= nil then
+            layout.sortAscending = saved.sortAscending == true
+        else
+            layout.sortAscending = SORT_DEFAULT_ASC[saved.sortColumn] == true
+        end
+    end
     return layout
 end
 
@@ -215,6 +227,41 @@ function M:ResetLayout()
     local bucket = ns.ModuleRegistry:GetModuleBucket("craftingorders")
     bucket.layout = CopyLayoutDefaults()
     M._layoutObj = bucket.layout
+    M:OnLayoutChanged(true)
+end
+
+function M:IsSortableColumn(id)
+    return SORTABLE[id] == true
+end
+
+---@return string|nil
+function M:GetSortColumn()
+    return M:EnsureLayout().sortColumn
+end
+
+---@return boolean
+function M:GetSortAscending()
+    local layout = M:EnsureLayout()
+    if layout.sortAscending == nil then
+        return true
+    end
+    return layout.sortAscending == true
+end
+
+--- Click a sortable header: first click uses that column's default direction,
+--- same header again flips.
+---@param id string
+function M:CycleSortColumn(id)
+    if not SORTABLE[id] then
+        return
+    end
+    local layout = M:EnsureLayout()
+    if layout.sortColumn == id then
+        layout.sortAscending = not layout.sortAscending
+    else
+        layout.sortColumn = id
+        layout.sortAscending = SORT_DEFAULT_ASC[id] == true
+    end
     M:OnLayoutChanged(true)
 end
 

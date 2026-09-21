@@ -7,7 +7,8 @@ if not M then return end
 -- ============================================================================
 -- Vertical column list (show/hide + CreateReorderDrag), icon-size sliders,
 -- column-width sliders, Compact View, Hide scrollbar, hide-have-mats, and
--- the profit price-source picker. Overlay header drag is not in this pass.
+-- the profit price-source picker. Overlay headers click to sort; column
+-- reorder stays in Features (CreateReorderDrag), not header drag.
 -- Features On/Off only enables the existing controls; rebuilding the card
 -- stack from that click broke the toggle.
 -- ============================================================================

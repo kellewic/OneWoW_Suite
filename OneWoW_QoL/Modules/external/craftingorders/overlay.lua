@@ -60,6 +60,47 @@ local function PlaceColLabel(host, parent, rightInset, width, justifyH)
     end
 end
 
+local SORT_ARROW = "Interface\\Buttons\\UI-SortArrow"
+local SORT_ARROW_SIZE = 8
+
+local function EnsureSortArrow(host)
+    local arrow = host.sortArrow
+    if arrow then
+        return arrow
+    end
+    arrow = host:CreateTexture(nil, "OVERLAY")
+    arrow:SetSize(SORT_ARROW_SIZE, SORT_ARROW_SIZE)
+    arrow:SetPoint("RIGHT", host, "RIGHT", -2, 0)
+    arrow:SetTexture(SORT_ARROW)
+    host.sortArrow = arrow
+    return arrow
+end
+
+local function ApplySortArrow(host, columnId)
+    if not host then
+        return
+    end
+    if M:GetSortColumn() == columnId then
+        local arrow = EnsureSortArrow(host)
+        arrow:Show()
+        if M:GetSortAscending() then
+            arrow:SetTexCoord(0, 0.5625, 1, 0)
+        else
+            arrow:SetTexCoord(0, 0.5625, 0, 1)
+        end
+    elseif host.sortArrow then
+        host.sortArrow:Hide()
+    end
+end
+
+local function ApplySortIndicators(overlay)
+    ApplySortArrow(overlay.colCraft, "name")
+    local labels = overlay.colLabels
+    ApplySortArrow(labels.gold, "gold")
+    ApplySortArrow(labels.profit, "profit")
+    ApplySortArrow(labels.time, "time")
+end
+
 local function PlaceIconLane(frame, parent, rightInset, width, height)
     frame:ClearAllPoints()
     frame:SetPoint("RIGHT", parent, "RIGHT", -rightInset, 0)
@@ -89,7 +130,8 @@ function M:ApplyHeaderLayout(overlay)
     local host = overlay.headerLanes
     host:SetWidth(LaneHostWidth(insets))
     overlay.colCraft:ClearAllPoints()
-    overlay.colCraft:SetPoint("LEFT", overlay.headerBar, "LEFT", 4, 0)
+    overlay.colCraft:SetPoint("TOPLEFT", overlay.headerBar, "TOPLEFT", 4, 0)
+    overlay.colCraft:SetPoint("BOTTOMLEFT", overlay.headerBar, "BOTTOMLEFT", 4, 0)
     overlay.colCraft:SetPoint("RIGHT", host, "LEFT", 0, 0)
     local labels = overlay.colLabels
     local ids = M:ColumnIds()
@@ -108,10 +150,18 @@ function M:ApplyHeaderLayout(overlay)
                 text:SetText(M:ColumnLabel(id))
             end
             PlaceColLabel(fs, host, spec.right, spec.width, spec.justify)
+            if M:IsSortableColumn(id) and fs.text then
+                fs.text:ClearAllPoints()
+                fs.text:SetPoint("TOPLEFT", fs, "TOPLEFT", 0, 0)
+                fs.text:SetPoint("BOTTOMRIGHT", fs, "BOTTOMRIGHT", -10, 0)
+            end
         else
             fs:Hide()
         end
     end
+    local craftText = overlay.colCraft.text or overlay.colCraft
+    craftText:SetText(L["CRAFTORDERS_COL_CRAFT"])
+    ApplySortIndicators(overlay)
 end
 
 local RELEASE_W = 18
@@ -448,10 +498,11 @@ local function ApplyOverlayTheme(overlay)
     local bdR, bdG, bdB = OneWoW_GUI:GetThemeColor("BORDER_DEFAULT")
     overlay:SetBackdropColor(bgR, bgG, bgB, 0.97)
     overlay:SetBackdropBorderColor(bdR, bdG, bdB, 1)
-    overlay.colCraft:SetText(L["CRAFTORDERS_COL_CRAFT"])
+    local craftText = overlay.colCraft.text or overlay.colCraft
+    craftText:SetText(L["CRAFTORDERS_COL_CRAFT"])
     local tpR, tpG, tpB = OneWoW_GUI:GetThemeColor("TEXT_PRIMARY")
     overlay.statusText:SetTextColor(tpR, tpG, tpB)
-    overlay.colCraft:SetTextColor(tpR, tpG, tpB)
+    craftText:SetTextColor(tpR, tpG, tpB)
     local labels = overlay.colLabels
     for _, host in pairs(labels) do
         local text = host.text or host
@@ -989,9 +1040,17 @@ function M:EnsureOverlay()
     headerBar:SetBackdrop(OneWoW_GUI.Constants.BACKDROP_INNER)
     overlay.headerBar = headerBar
 
-    local colCraft = OneWoW_GUI:CreateFS(headerBar, 11)
-    colCraft:SetJustifyH("LEFT")
-    colCraft:SetText(L["CRAFTORDERS_COL_CRAFT"])
+    local colCraft = CreateFrame("Button", nil, headerBar)
+    colCraft:SetScript("OnClick", function()
+        M:CycleSortColumn("name")
+    end)
+    local colCraftText = OneWoW_GUI:CreateFS(colCraft, 11)
+    colCraftText:SetPoint("TOPLEFT", colCraft, "TOPLEFT", 0, 0)
+    colCraftText:SetPoint("BOTTOMRIGHT", colCraft, "BOTTOMRIGHT", -10, 0)
+    colCraftText:SetJustifyH("LEFT")
+    colCraftText:SetJustifyV("MIDDLE")
+    colCraftText:SetText(L["CRAFTORDERS_COL_CRAFT"])
+    colCraft.text = colCraftText
     overlay.colCraft = colCraft
 
     -- Clipping host for the header column labels; mirrors row.laneHost so an
@@ -1034,6 +1093,14 @@ function M:EnsureOverlay()
                 GameTooltip:Show()
             end)
             host:SetScript("OnLeave", GameTooltip_Hide)
+        end
+        if M:IsSortableColumn(id) then
+            host:SetScript("OnMouseUp", function(_, button)
+                if button ~= "LeftButton" then
+                    return
+                end
+                M:CycleSortColumn(id)
+            end)
         end
         colLabels[id] = host
     end

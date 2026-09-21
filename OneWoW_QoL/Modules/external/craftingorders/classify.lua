@@ -24,6 +24,7 @@ if not M then return end
 -- ============================================================================
 
 local GetItemCount = C_Item.GetItemCount
+local sort, tremove = sort, tremove
 
 local REAGENT_ALL = Enum.CraftingOrderReagentsType.All
 
@@ -244,6 +245,7 @@ function M:ClassifyBucket(bucket)
         kp = kp,
         acuity = acuity,
         gold = gold,
+        remaining = 0,
         isRecraft = false,
     }
 end
@@ -294,11 +296,23 @@ function M:ClassifyOrder(order)
     }
 end
 
+local function TieNameId(a, b)
+    local an, bn = a.name or "", b.name or ""
+    if an ~= bn then
+        return an < bn
+    end
+    local aid, bid = a.orderID or 0, b.orderID or 0
+    if aid ~= bid then
+        return aid < bid
+    end
+    return (a.spellID or 0) < (b.spellID or 0)
+end
+
 local function SortNpc(a, b)
     if a.kp ~= b.kp then return a.kp > b.kp end
     if a.acuity ~= b.acuity then return a.acuity > b.acuity end
     if a.gold ~= b.gold then return a.gold > b.gold end
-    return (a.name or "") < (b.name or "")
+    return TieNameId(a, b)
 end
 
 local function SortTipThenTime(a, b)
@@ -306,14 +320,56 @@ local function SortTipThenTime(a, b)
     local ar = a.remaining or 0
     local br = b.remaining or 0
     if ar ~= br then return ar < br end
-    return (a.name or "") < (b.name or "")
+    return TieNameId(a, b)
 end
 
 local function SortBuckets(a, b)
     if a.learned ~= b.learned then return a.learned end
     if a.numAvailable ~= b.numAvailable then return a.numAvailable > b.numAvailable end
     if a.gold ~= b.gold then return a.gold > b.gold end
-    return (a.name or "") < (b.name or "")
+    return TieNameId(a, b)
+end
+
+local function FieldValue(entry, col)
+    if col == "name" then
+        return entry.name or ""
+    end
+    if col == "gold" then
+        return entry.gold or 0
+    end
+    if col == "profit" then
+        return entry.profit or 0
+    end
+    return entry.remaining or 0
+end
+
+local function MakeUserSorter(col, asc)
+    return function(a, b)
+        local va, vb = FieldValue(a, col), FieldValue(b, col)
+        if va ~= vb then
+            if asc then
+                return va < vb
+            end
+            return va > vb
+        end
+        return TieNameId(a, b)
+    end
+end
+
+local function StampProfit(list)
+    for i = 1, #list do
+        list[i].profit = M:ComputeOrderProfit(list[i]) or 0
+    end
+end
+
+local function DefaultSorter(isBucket, orderType)
+    if isBucket then
+        return SortBuckets
+    end
+    if orderType == Enum.CraftingOrderType.Npc then
+        return SortNpc
+    end
+    return SortTipThenTime
 end
 
 local function AppendSection(entries, list, section)
@@ -348,21 +404,9 @@ function M:BuildOverlayEntries(rawList, isBucket, orderType)
         end
     end
 
-    local sorter
-    if isBucket then
-        sorter = SortBuckets
-    elseif orderType == Enum.CraftingOrderType.Npc then
-        sorter = SortNpc
-    else
-        sorter = SortTipThenTime
-    end
-    sort(ready, sorter)
-    sort(missing, sorter)
-    sort(unknown, sorter)
-
     -- A claimed order drops off the browse snapshot and is the only claim
-    -- allowed. Pin it at the top of every tab so Start / Concentration /
-    -- Create / Complete and release stay available until it is finished.
+    -- allowed. Inject it into Craftable now, then sort, so Start / Create /
+    -- Complete stay on the same row instead of jumping to the top.
     local claimed = C_CraftingOrders.GetClaimedOrder()
     if claimed then
         local claimedID = claimed.orderID
@@ -381,8 +425,24 @@ function M:BuildOverlayEntries(rawList, isBucket, orderType)
         strip(unknown)
         local entry = M:ClassifyOrder(claimed)
         entry.section = "ready"
-        tinsert(ready, 1, entry)
+        ready[#ready + 1] = entry
     end
+
+    local sortColumn = M:GetSortColumn()
+    local sorter
+    if sortColumn then
+        if sortColumn == "profit" then
+            StampProfit(ready)
+            StampProfit(missing)
+            StampProfit(unknown)
+        end
+        sorter = MakeUserSorter(sortColumn, M:GetSortAscending())
+    else
+        sorter = DefaultSorter(isBucket, orderType)
+    end
+    sort(ready, sorter)
+    sort(missing, sorter)
+    sort(unknown, sorter)
 
     local entries = {}
     AppendSection(entries, ready, "ready")

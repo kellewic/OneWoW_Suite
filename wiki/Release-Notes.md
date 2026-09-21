@@ -130,6 +130,7 @@
 - Recrafting an item that already used a spark no longer asks you to provide another spark.
 - Compact View and Hide list scrollbar no longer crowd the next option when you use a large font.
 - Only show mats I still need starts unchecked. Check it if you want the list filtered.
+- Click Order, Gold, Profit / Loss, or Time to sort the list. Starting an order no longer jumps that row to the top.
 
 #### Auto Open
 - Auto Open now opens Torn Sack of Pet Supplies from the Crysa's Flyers daily.

@@ -93,7 +93,13 @@ the overlay is shown. Patron / Guild / Personal are always a flat order list.
 - **Craftable now:** recipe learned and every crafter-provided required reagent
   is in bags, bank, reagent bank, or warband bank. Fully customer-supplied
   counts as now.
-- **Patron sort:** knowledge points, then Artisan's Acuity, then gold.
+- **Patron sort:** knowledge points, then Artisan's Acuity, then gold, until
+  you click a header. Click Order, Gold, Profit / Loss, or Time to sort
+  each section; click again to reverse. Features Reset clears the sort.
+  Column reorder stays in Features, not overlay header drag.
+- **Claimed order:** a started order is re-injected into Craftable now (it
+  drops off the browse snapshot) and sorted with the rest of the section, so
+  Start / Create / Complete stay on the same row.
 - **Personal:** right-click Decline matches Blizzard (`RejectOrder`).
 
 Weekly "Services Requested" quest IDs live in `rewards.lua` (Midnight first,
