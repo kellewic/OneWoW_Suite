@@ -858,6 +858,7 @@ function API.StoreQuestInfo(questID, data, opts)
     for key, value in pairs(data) do
         quest[key] = value
     end
+    ns:IndexQuestRewards(questID, quest)
 end
 
 ---@param questID number

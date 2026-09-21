@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "esES", {
     ["STATUSCARD_CLICK_CATALOG"] = "Haz clic para abrir esta zona en el Catálogo",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "Catalogo de zonas no cargado",
     ["CATALOG_NOT_ENABLED"] = "Catalogo no activado",
+    ["CATALOG_NOT_LOADED"] = "Datos del catalogo no cargados",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "Clic derecho para cargar ahora",
     ["STATUSCARD_ZONE_NOTES"] = "NOTAS DE ZONA",
     ["STATUSCARD_ZONE_TODOS"] = "Tareas:",

@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "itIT", {
     ["STATUSCARD_CLICK_CATALOG"] = "Clicca per aprire questa zona nel Catalogo",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "Catalogo zone non caricato",
     ["CATALOG_NOT_ENABLED"] = "Catalogo non attivato",
+    ["CATALOG_NOT_LOADED"] = "Dati del catalogo non caricati",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "Clic destro per caricare ora",
     ["STATUSCARD_ZONE_NOTES"] = "NOTE DI ZONA",
     ["STATUSCARD_ZONE_TODOS"] = "Compiti:",

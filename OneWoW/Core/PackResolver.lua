@@ -120,7 +120,7 @@ function ns:IsCatalogRoleFullyLoaded(roleOrName)
     return ns.CatalogData:IsRoleFullyLoaded(roleOrName)
 end
 
---- "Catalog not enabled" when a Catalog-backed surface cannot populate. Nil when it can.
+--- Catalog-off vs data-not-loaded-this-session. Nil when a requested role can query.
 ---@param roleOrRoles string|string[]
 ---@return string|nil
 function ns:GetCatalogUnavailableNotice(roleOrRoles)

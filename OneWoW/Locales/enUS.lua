@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "enUS", {
     ["STATUSCARD_CLICK_CATALOG"] = "Click to open this zone in Catalog",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "Zones Catalog not loaded",
     ["CATALOG_NOT_ENABLED"] = "Catalog not enabled",
+    ["CATALOG_NOT_LOADED"] = "Catalog data not loaded",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "Right-click to load now",
     ["STATUSCARD_ZONE_NOTES"] = "ZONE NOTES",
     ["STATUSCARD_ZONE_TODOS"] = "Tasks:",

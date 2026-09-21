@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "zhTW", {
     ["STATUSCARD_CLICK_CATALOG"] = "點擊在目錄中開啟此區域",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "區域目錄未載入",
     ["CATALOG_NOT_ENABLED"] = "目錄未啟用",
+    ["CATALOG_NOT_LOADED"] = "目錄資料未載入",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "右鍵立即載入",
     ["STATUSCARD_ZONE_NOTES"] = "區域筆記",
     ["STATUSCARD_ZONE_TODOS"] = "任務:",

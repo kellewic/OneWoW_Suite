@@ -35,6 +35,7 @@
 - Opening an NPC card asks the game for the name and remembers it. The list can still show an id until you open that card.
 
 #### Fixes
+- Quest rewards you learn from a dialog show up as item sources after that. Empty source lines say Catalog data not loaded when Catalog is on but that data is not in memory, not Catalog not enabled.
 - Opening the NPCs tab inside a dungeon or other instance no longer errors.
 - Opening a quest or NPC card no longer errors when the creature name is restricted, or on the location pin row.
 - View loot on an NPC opens that encounter on Zones. It no longer jumps to a city the NPC also visits.
@@ -135,6 +136,7 @@
 #### Tooltips
 - Item Tracker on item tooltips now has two blocks: Where it is (your copies) and Where to get it (quest, vendor, instance, profession). If Catalog or that expansion data is not loaded, Where to get it says Catalog not enabled.
 - Item Tracker no longer lists hidden or internal quests under Where to get it, and no longer shows quest or achievement IDs on those lines.
+- Where to get it uses Catalog data already loaded this session. If Catalog is on but that data is not in memory, it says Catalog data not loaded, not Catalog not enabled.
 
 #### Toggles
 - Toggles matches current Options. Colorblind UI is a checkbox; the color filter and its strength are separate. Anti-aliasing names match the game (None, FXAA Low, FXAA High, CMAA, CMAA 2). Unlimited FPS is Limit Foreground / Background FPS, not 0 on the slider (8 to 200). UI scale goes from 0.65 to 1.15. Particle density is Disabled through Ultra. Friendly nameplates are friendly players.

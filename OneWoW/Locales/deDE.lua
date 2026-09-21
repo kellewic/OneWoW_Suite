@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "deDE", {
     ["STATUSCARD_CLICK_CATALOG"] = "Klicken, um diese Zone im Katalog zu öffnen",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "Zonenkatalog nicht geladen",
     ["CATALOG_NOT_ENABLED"] = "Katalog nicht aktiviert",
+    ["CATALOG_NOT_LOADED"] = "Katalogdaten nicht geladen",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "Rechtsklick, um jetzt zu laden",
     ["STATUSCARD_ZONE_NOTES"] = "GEBIETSNOTIZEN",
     ["STATUSCARD_ZONE_TODOS"] = "Aufgaben:",

@@ -3,6 +3,7 @@
 # Catalog
 ## Fixes
 - Opening the profession window no longer errors when Tradeskills data has not loaded yet.
+- Quest rewards you learn from a dialog show up as item sources after that. Empty source lines say Catalog data not loaded when Catalog is on but that data is not in memory, not Catalog not enabled.
 
 ---
 
@@ -15,6 +16,7 @@
 # QoL
 ## Tooltips
 - Item Tracker no longer lists hidden or internal quests under Where to get it, and no longer shows quest or achievement IDs on those lines.
+- Where to get it uses Catalog data already loaded this session. If Catalog is on but that data is not in memory, it says Catalog data not loaded, not Catalog not enabled.
 
 ## AFK Panel
 - Your character on the AFK screen stays in the middle gap and no longer covers the Character, Zone, or Info cards.

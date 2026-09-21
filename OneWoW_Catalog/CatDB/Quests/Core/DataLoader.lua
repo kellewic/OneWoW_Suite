@@ -70,6 +70,18 @@ local function IndexRewardList(list, questID)
     end
 end
 
+--- Fill QuestsByRewardItem from a quest row. Safe to call again; IDs dedupe.
+---@param questID number
+---@param questData table
+function ns:IndexQuestRewards(questID, questData)
+    if type(questID) ~= "number" or type(questData) ~= "table" then
+        return
+    end
+    IndexRewardList(questData.rewardItems, questID)
+    IndexRewardList(questData.rewardChoices, questID)
+    IndexRewardList(questData.packageItems, questID)
+end
+
 --- Merge quest rows keyed by questID.
 ---@param source table<number, table>
 function ns:RegisterQuestData(source)
@@ -104,9 +116,7 @@ function ns:RegisterQuestData(source)
                 end
             end
 
-            IndexRewardList(questData.rewardItems, questID)
-            IndexRewardList(questData.rewardChoices, questID)
-            IndexRewardList(questData.packageItems, questID)
+            self:IndexQuestRewards(questID, questData)
         end
     end
 end

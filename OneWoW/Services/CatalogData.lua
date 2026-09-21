@@ -531,27 +531,30 @@ function CatalogData:IsRoleFullyLoaded(roleOrName)
     return wanted > 0 and ready == wanted
 end
 
-local function RoleUnavailable(self, role)
-    return not self:IsRoleQueryReady(role) or not self:IsRoleFullyLoaded(role)
-end
-
---- Player-facing reason a Catalog-backed line is empty. Nil when the role can query.
---- Empty sources while an expansion is still unloaded must not look like "no sources."
+--- Player-facing reason a Catalog-backed line is empty. Nil when a requested
+--- role can already answer from loaded data (even if other eras are still LoD).
 ---@param roleOrRoles string|string[]
 ---@return string|nil
 function CatalogData:GetUnavailableNotice(roleOrRoles)
+    local roles
     if type(roleOrRoles) == "table" then
-        for i = 1, #roleOrRoles do
-            if RoleUnavailable(self, roleOrRoles[i]) then
-                return ns.L["CATALOG_NOT_ENABLED"]
-            end
+        roles = roleOrRoles
+    elseif roleOrRoles then
+        roles = { roleOrRoles }
+    else
+        return nil
+    end
+
+    if not ns:IsFeatureWanted(RUNTIME_ADDON) then
+        return ns.L["CATALOG_NOT_ENABLED"]
+    end
+
+    for i = 1, #roles do
+        if self:IsRoleQueryReady(roles[i]) then
+            return nil
         end
-        return nil
     end
-    if not roleOrRoles or not RoleUnavailable(self, roleOrRoles) then
-        return nil
-    end
-    return ns.L["CATALOG_NOT_ENABLED"]
+    return ns.L["CATALOG_NOT_LOADED"]
 end
 
 --- True when Catalog is up and every wanted expansion's Journal place

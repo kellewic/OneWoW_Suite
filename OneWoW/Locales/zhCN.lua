@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "zhCN", {
     ["STATUSCARD_CLICK_CATALOG"] = "点击在目录中打开此区域",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "地区目录未加载",
     ["CATALOG_NOT_ENABLED"] = "目录未启用",
+    ["CATALOG_NOT_LOADED"] = "目录数据未加载",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "右键立即加载",
     ["STATUSCARD_ZONE_NOTES"] = "区域笔记",
     ["STATUSCARD_ZONE_TODOS"] = "任务:",

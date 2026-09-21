@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "koKR", {
     ["STATUSCARD_CLICK_CATALOG"] = "클릭하면 이 지역을 도감에서 엽니다",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "지역 도감이 로드되지 않았습니다",
     ["CATALOG_NOT_ENABLED"] = "도감이 활성화되지 않았습니다",
+    ["CATALOG_NOT_LOADED"] = "도감 데이터가 로드되지 않았습니다",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "지금 불러오려면 오른쪽 클릭",
     ["STATUSCARD_ZONE_NOTES"] = "지역 쪽지",
     ["STATUSCARD_ZONE_TODOS"] = "할 일:",

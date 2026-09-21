@@ -434,6 +434,7 @@ ns.Locale:Register(ADDON_NAME, "ruRU", {
     ["STATUSCARD_CLICK_CATALOG"] = "Нажмите, чтобы открыть эту зону в Каталоге",
     ["STATUSCARD_ZONES_NOT_LOADED"] = "Каталог зон не загружен",
     ["CATALOG_NOT_ENABLED"] = "Каталог не включен",
+    ["CATALOG_NOT_LOADED"] = "Данные каталога не загружены",
     ["STATUSCARD_CLICK_LOAD_ZONES"] = "Щелкните правой кнопкой, чтобы загрузить сейчас",
     ["STATUSCARD_ZONE_NOTES"] = "ЗАМЕТКИ ЗОНЫ",
     ["STATUSCARD_ZONE_TODOS"] = "Задачи:",
