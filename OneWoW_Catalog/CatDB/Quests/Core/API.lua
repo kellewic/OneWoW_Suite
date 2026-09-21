@@ -93,6 +93,91 @@ local function HasAnyValue(tbl)
     return type(tbl) == "table" and #tbl > 0
 end
 
+local INTERNAL_QUEST_NAME_TOKENS = {
+    "capstone",
+    "dnt",
+    "nth",
+    "ph]",
+    "(ph)",
+    "[nyi]",
+    "[removed]",
+    "removed]",
+    "placeholder",
+    "reward test",
+    "test case",
+    "test quest",
+    "test currency",
+    "nav test",
+    "tracking quest",
+    "reward quest",
+    "quest start",
+    "navigation playtest",
+    "event tracking",
+    "unused",
+    "do not use",
+    "vignette",
+}
+
+--- True when a quest title is hidden, DNT, or otherwise not player-facing.
+---@param name string|nil
+---@param questID number|nil
+---@return boolean
+function API.IsInternalQuestName(name, questID)
+    if not name or name == "" then
+        return true
+    end
+
+    local lowerName = tostring(name):lower()
+
+    if lowerName:match("^level%s+%d+$") then
+        return true
+    end
+
+    if questID ~= 71153 and lowerName:find("bonus objective", 1, true) then
+        return true
+    end
+
+    if lowerName:find("%[%s*[%a%s]+%s*%]") then
+        return true
+    end
+
+    if lowerName:find("%[%[deprecated%]%]") then
+        return true
+    end
+
+    if lowerName:find("%f[%a]poi%f[%A]") then
+        return true
+    end
+
+    if lowerName:match("^zz") or lowerName == "test" then
+        return true
+    end
+
+    if lowerName:find("^decor ") or lowerName:find("^deprecated")
+        or lowerName:find("^test ") or lowerName:find("^qa ") then
+        return true
+    end
+
+    for i = 1, #INTERNAL_QUEST_NAME_TOKENS do
+        local token = INTERNAL_QUEST_NAME_TOKENS[i]
+        if lowerName:find(token, 1, true) then
+            return true
+        end
+    end
+
+    return false
+end
+
+---@param name string|nil
+---@param questID number|nil
+---@return string|nil
+local function DisplayQuestName(name, questID)
+    if API.IsInternalQuestName(name, questID) then
+        return nil
+    end
+    return name
+end
+
 local function QuestAssociatedWithNPC(quest, npcID)
     npcID = tonumber(npcID)
     if not quest or not npcID then
@@ -671,8 +756,30 @@ function ns:SnapshotShippedQuestIDs()
     end
 end
 
-local function PersistLearnedQuest(questID, data)
+local function DropLearnedQuest(questID)
+    if not ns.questDb then
+        return
+    end
+    local db = ns:GetQuestDB()
+    local learned = db.learned
+    if type(learned) == "table" then
+        learned[questID] = nil
+    end
+end
+
+local function QuestRecordIsInternal(questID, data)
     if data.isInternal then
+        return true
+    end
+    local name = data.name
+    if type(name) == "string" and name ~= "" and API.IsInternalQuestName(name, questID) then
+        return true
+    end
+    return false
+end
+
+local function PersistLearnedQuest(questID, data)
+    if QuestRecordIsInternal(questID, data) then
         return
     end
     if not ns.questDb then
@@ -720,7 +827,7 @@ function API.GetSyncQueue()
         return out
     end
     for questID, rec in pairs(learned) do
-        if type(rec) == "table" and rec.sync then
+        if type(rec) == "table" and rec.sync and not QuestRecordIsInternal(questID, rec) then
             out[questID] = rec
         end
     end
@@ -732,6 +839,10 @@ end
 ---@param opts table|nil
 function API.StoreQuestInfo(questID, data, opts)
     if not questID or type(data) ~= "table" then
+        return
+    end
+    if QuestRecordIsInternal(questID, data) then
+        DropLearnedQuest(questID)
         return
     end
     local persist = not (opts and opts.skipPersist)
@@ -1015,15 +1126,15 @@ function API.GetQuestName(questID)
     end
     local quest = ns.ExternalQuestDB[questID]
     if quest and quest.name and quest.name ~= "" then
-        return quest.name
+        return DisplayQuestName(quest.name, questID)
     end
     local name = C_QuestLog.GetTitleForQuestID(questID)
     if name and name ~= "" then
-        return name
+        return DisplayQuestName(name, questID)
     end
     name = QuestUtils_GetQuestName(questID)
     if name and name ~= "" then
-        return name
+        return DisplayQuestName(name, questID)
     end
     return nil
 end

@@ -605,73 +605,9 @@ local function UpdateFavoritesFilterButton(button)
     end
 end
 
-local function ContainsAnyLower(text, tokens)
-    if not text or text == "" then return false end
-
-    for _, token in ipairs(tokens) do
-        if token and token ~= "" and text:find(token, 1, true) then
-            return true
-        end
-    end
-
-    return false
-end
-
-local ACTIVE_QUEST_NAME_FILTERS = {
-    "capstone",
-    "dnt",
-    "nth",
-    "ph]",
-    "(ph)",
-    "[nyi]",
-    "[removed]",
-    "removed]",
-    "placeholder",
-    "reward test",
-    "test case",
-    "test quest",
-    "test currency",
-    "nav test",
-    "tracking quest",
-    "reward quest",
-    "quest start",
-    "navigation playtest",
-    "event tracking",
-    "unused",
-    "do not use",
-    "vignette",
-}
-
-local function IsInternalActiveQuestName(name, questID)
-    if not name or name == "" then return true end
-
-    local lowerName = tostring(name):lower()
-
-    if lowerName:match("^level%s+%d+$") then
-        return true
-    end
-
-    if questID ~= 71153 and lowerName:find("bonus objective", 1, true) then
-        return true
-    end
-
-    if lowerName:find("%[%s*[%a%s]+%s*%]") then
-        return true
-    end
-
-    if lowerName:find("%[%[deprecated%]%]") then
-        return true
-    end
-
-    if lowerName:find("%f[%a]poi%f[%A]") then
-        return true
-    end
-
-    if lowerName:match("^zz") or lowerName == "test" then
-        return true
-    end
-
-    return ContainsAnyLower(lowerName, ACTIVE_QUEST_NAME_FILTERS)
+local function IsInternalQuestName(name, questID)
+    local api = ns.GetCatalogPackAPI("quests")
+    return api and api.IsInternalQuestName(name, questID)
 end
 
 local function IsVisibleActiveQuestLogInfo(info)
@@ -729,7 +665,7 @@ local function GetActiveQuestLogQuests(addon)
 
                 if questID
                     and C_QuestLog.IsOnQuest(questID)
-                    and not IsInternalActiveQuestName(title, questID)
+                    and not IsInternalQuestName(title, questID)
                 then
                     table.insert(quests, BuildQuestRecord(addon, questID, title, {
                         level = info.level,
@@ -785,7 +721,7 @@ local function GetAllCharactersActiveQuests(addon)
                                 and not byID[questID]
                                 and title
                                 and title ~= ""
-                                and not IsInternalActiveQuestName(title, questID)
+                                and not IsInternalQuestName(title, questID)
                             then
                                 local extras = {}
                                 if activeEntry.isDaily then

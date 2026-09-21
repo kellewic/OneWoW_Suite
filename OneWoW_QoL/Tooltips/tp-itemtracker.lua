@@ -1,7 +1,7 @@
 local _, ns = ...
 
 local OneWoW = OneWoW
-local tinsert, sort, pairs, format = tinsert, sort, pairs, format
+local tinsert, sort, pairs = tinsert, sort, pairs
 local RETRIEVING_DATA = RETRIEVING_DATA
 local RETRIEVING_ITEM_INFO = RETRIEVING_ITEM_INFO
 local UNKNOWNOBJECT = UNKNOWNOBJECT
@@ -301,10 +301,12 @@ local function AppendQuestLines(lines, seeCatalog, questAPI, questIDs)
     for i = 1, #order do
         local id = order[i]
         local name = CleanWhereName(questAPI.GetQuestName(id))
-        tinsert(rows, {
-            left = name or "",
-            right = format("QuestID:[%d]", id),
-        })
+        if name then
+            tinsert(rows, {
+                left = name,
+                right = "",
+            })
+        end
     end
     AppendCappedCategory(lines, BATTLE_PET_SOURCE_2, rows, 0.9, 0.85, 0.5, seeCatalog)
 end
@@ -327,10 +329,12 @@ local function AppendAchievementLines(lines, seeCatalog, achIDs)
     for i = 1, #order do
         local id = order[i]
         local name = CleanWhereName(select(2, GetAchievementInfo(id)))
-        tinsert(rows, {
-            left = name or "",
-            right = format("AchievementID:[%d]", id),
-        })
+        if name then
+            tinsert(rows, {
+                left = name,
+                right = "",
+            })
+        end
     end
     AppendCappedCategory(lines, BATTLE_PET_SOURCE_6, rows, 0.9, 0.8, 0.4, seeCatalog)
 end

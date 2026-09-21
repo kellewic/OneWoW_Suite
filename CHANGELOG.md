@@ -13,6 +13,9 @@
 ---
 
 # QoL
+## Tooltips
+- Item Tracker no longer lists hidden or internal quests under Where to get it, and no longer shows quest or achievement IDs on those lines.
+
 ## AFK Panel
 - Your character on the AFK screen stays in the middle gap and no longer covers the Character, Zone, or Info cards.
 
@@ -29,4 +32,4 @@
 
 ---
 
-- **Last Updated**: Sep 19, 2026
+- **Last Updated**: Sep 21, 2026

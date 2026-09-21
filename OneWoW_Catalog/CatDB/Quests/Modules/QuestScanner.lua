@@ -36,14 +36,6 @@ local QuestScanner = ns.QuestScanner
 
 local pendingQuestDetails = {}
 
-local INTERNAL_PATTERNS = {
-    "tracking quest",
-    "^decor ",
-    "^deprecated",
-    "^test ",
-    "^qa ",
-}
-
 local BOARD_QUEST_PATTERNS = {
     "^hero's call:",
     "^warchief's command:",
@@ -67,10 +59,11 @@ local function MatchesAnyPattern(value, patterns)
     return false
 end
 
-local function IsInternalQuest(name, info)
-    if not name then return true end
-    if info and info.isHidden then return true end
-    return MatchesAnyPattern(name, INTERNAL_PATTERNS)
+local function IsInternalQuest(name, info, questID)
+    if info and info.isHidden then
+        return true
+    end
+    return API.IsInternalQuestName(name, questID)
 end
 
 local function IsBoardSourcedQuest(name, sourceName)
@@ -439,6 +432,10 @@ local function CaptureQuestDetailSnapshot()
         capturedFrom = "QUEST_DETAIL",
     }
 
+    if IsInternalQuest(data.name, nil, questID) then
+        return
+    end
+
     local money = GetRewardMoney()
     if money and money > 0 then data.rewardGold = money end
     local xp = GetRewardXP()
@@ -472,6 +469,10 @@ local function CaptureQuestTurnInSnapshot(questID, sourceEvent)
         sourceName = sourceName,
         capturedFrom = sourceEvent or "QUEST_COMPLETE",
     }
+
+    if IsInternalQuest(data.name, nil, questID) then
+        return
+    end
 
     local desc = GetQuestText()
     if desc and desc ~= "" then data.description = desc end
@@ -507,8 +508,7 @@ local function CaptureQuestFromLog(questID)
     local logIndex = C_QuestLog.GetLogIndexForQuestID(questID)
     local logInfo = logIndex and C_QuestLog.GetInfo(logIndex)
 
-    if IsInternalQuest(data.name, logInfo) then
-        API.StoreQuestInfo(questID, { id = questID, name = data.name, isInternal = true })
+    if IsInternalQuest(data.name, logInfo, questID) then
         pendingQuestDetails[questID] = nil
         return
     end
