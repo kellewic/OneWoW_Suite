@@ -8,6 +8,7 @@
 # QoL
 ## Crafting Orders
 - You Provide shows reagents you already have. Check Only show mats I still need to hide them.
+- The Gold column can show gold only. Hover a row for silver and copper. The option is under Columns.
 
 ## ESC Menu Panel
 - Character Card can show gold only, without silver or copper. The option is under Character Card in ESC Menu Panel settings.

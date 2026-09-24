@@ -50,9 +50,11 @@ the overlay is shown. Patron / Guild / Personal are always a flat order list.
   every reagent already allocated on the order (`order.reagents` covers that
   slot). You Provide is required recipe slots with no allocation. Owned count
   is bags + character bank + reagent bank + warband bank. Rewards are
-  item/currency/gold icons with counts. Optional Gold shows **Your Cut**
+  item/currency/gold icons with counts.   Optional Gold shows **Your Cut**
   (commission minus Consortium Cut) as a money string; hover a row for
   commission, Consortium Cut, and Your Cut (always, including a 0 cut).
+  Gold only, under Columns, drops silver and copper from that cell. The
+  hover still lists them.
   Public recipe buckets have no cut on the API, so Gold stays as max tip
   and the hover also shows average commission when it differs.
   Optional Profit / Loss is the same net tip, plus

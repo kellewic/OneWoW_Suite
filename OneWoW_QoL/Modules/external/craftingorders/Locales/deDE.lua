@@ -24,6 +24,8 @@ OneWoW.Locale:Register(M._scope, "deDE", {
     ["CRAFTORDERS_COL_REWARD"] = "Ihr erhaltet",
     ["CRAFTORDERS_COL_GOLD"] = "Gold",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "Betrag, den ihr nach dem Anteil des Konsortiums erhaltet.",
+    ["CRAFTORDERS_GOLD_ONLY"] = "Nur Gold",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "In der Spalte Gold nur Gold anzeigen. Beim Daraufzeigen bleiben Silber und Kupfer sichtbar.",
     ["CRAFTORDERS_TIP_AVG"] = "Durchschnittliche Provision",
     ["CRAFTORDERS_COL_PROFIT"] = "Gewinn / Verlust",
     ["CRAFTORDERS_COL_ACTION"] = "Herstellen",

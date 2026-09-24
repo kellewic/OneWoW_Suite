@@ -849,12 +849,12 @@ local function BindHeader(row, entry)
     row.profitLane._entry = nil
 end
 
-local function BindMoney(fs, copper, allowNegative)
+local function BindMoney(fs, copper, allowNegative, goldOnly)
     if not copper or (copper == 0 and not allowNegative) then
         fs:SetText("")
         return
     end
-    fs:SetText(OneWoW.Format.FormatGold(copper))
+    fs:SetText(OneWoW.Format.FormatGold(copper, goldOnly))
     if copper < 0 then
         fs:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_WARNING"))
         return
@@ -905,7 +905,7 @@ local function BindRow(row, entry)
     row.timeLane._fullTime = fullTime
     row.timeText:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_SECONDARY"))
     local net, gross, cut = M:GetGoldReceived(entry.gold, entry.consortiumCut)
-    BindMoney(row.goldText, net, false)
+    BindMoney(row.goldText, net, false, M:EnsureLayout().goldOnly == true)
     row.goldLane._net = net
     row.goldLane._gross = gross
     row.goldLane._cut = cut

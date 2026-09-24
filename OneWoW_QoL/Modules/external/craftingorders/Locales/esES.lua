@@ -24,6 +24,8 @@ OneWoW.Locale:Register(M._scope, "esES", {
     ["CRAFTORDERS_COL_REWARD"] = "Recibes",
     ["CRAFTORDERS_COL_GOLD"] = "Oro",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "Cantidad que recibes despues de la parte del Consorcio.",
+    ["CRAFTORDERS_GOLD_ONLY"] = "Solo oro",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "Muestra el oro en la columna Oro. Pasa el cursor sobre una fila para ver la plata y el cobre.",
     ["CRAFTORDERS_TIP_AVG"] = "Comision media",
     ["CRAFTORDERS_COL_PROFIT"] = "Beneficio / Perdida",
     ["CRAFTORDERS_COL_ACTION"] = "Fabricar",

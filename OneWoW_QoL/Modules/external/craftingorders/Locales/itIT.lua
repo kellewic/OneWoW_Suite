@@ -24,6 +24,8 @@ OneWoW.Locale:Register(M._scope, "itIT", {
     ["CRAFTORDERS_COL_REWARD"] = "Ricevi",
     ["CRAFTORDERS_COL_GOLD"] = "Oro",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "Importo che ricevi dopo il guadagno del Consorzio.",
+    ["CRAFTORDERS_GOLD_ONLY"] = "Solo oro",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "Mostra solo l'oro nella colonna Oro. Passa il mouse su una riga per argento e rame.",
     ["CRAFTORDERS_TIP_AVG"] = "Commissione media",
     ["CRAFTORDERS_COL_PROFIT"] = "Profitto / Perdita",
     ["CRAFTORDERS_COL_ACTION"] = "Crea",

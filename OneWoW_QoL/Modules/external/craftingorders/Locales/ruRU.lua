@@ -24,6 +24,8 @@ OneWoW.Locale:Register(M._scope, "ruRU", {
     ["CRAFTORDERS_COL_REWARD"] = "Вы получаете",
     ["CRAFTORDERS_COL_GOLD"] = "Золото",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "Сумма, которую вы получите после доли Консорциума.",
+    ["CRAFTORDERS_GOLD_ONLY"] = "Только золото",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "В столбце Золото показывается только золото. Наведите курсор на строку, чтобы увидеть серебро и медь.",
     ["CRAFTORDERS_TIP_AVG"] = "Средняя комиссия",
     ["CRAFTORDERS_COL_PROFIT"] = "Прибыль / Убыток",
     ["CRAFTORDERS_COL_ACTION"] = "Создать",

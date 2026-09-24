@@ -23,6 +23,8 @@ OneWoW.Locale:Register(M._scope, "enUS", {
     ["CRAFTORDERS_COL_REWARD"] = "You Receive",
     ["CRAFTORDERS_COL_GOLD"] = "Gold",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "Amount you receive after the Consortium Cut.",
+    ["CRAFTORDERS_GOLD_ONLY"] = "Gold only",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "Show gold in the Gold column. Hover a row for silver and copper.",
     ["CRAFTORDERS_TIP_AVG"] = "Average commission",
     ["CRAFTORDERS_COL_PROFIT"] = "Profit / Loss",
     ["CRAFTORDERS_COL_ACTION"] = "Craft",

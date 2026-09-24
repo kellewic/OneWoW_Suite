@@ -102,6 +102,7 @@ local function CopyLayoutDefaults()
         hidden = CopyTable(DEFAULT_HIDDEN),
         sizes = CopyTable(DEFAULT_SIZES),
         hideHaveMats = false,
+        goldOnly = false,
         -- Old default was on. Applied means a later checkbox choice is kept.
         hideHaveMatsDefaultMigrated = true,
         tight = true,
@@ -183,6 +184,9 @@ local function MergeLayout(saved)
     -- off default once; the flag keeps a later check.
     if saved.hideHaveMatsDefaultMigrated ~= true then
         layout.hideHaveMats = false
+    end
+    if saved.goldOnly ~= nil then
+        layout.goldOnly = saved.goldOnly == true
     end
     if saved.tight ~= nil then
         layout.tight = saved.tight == true
@@ -318,6 +322,16 @@ function M:SetIconSize(key, value)
     end
     layout.sizes[key] = nextSize
     M:OnLayoutChanged()
+end
+
+function M:SetGoldOnly(goldOnly)
+    local layout = M:EnsureLayout()
+    local nextOnly = goldOnly == true
+    if layout.goldOnly == nextOnly then
+        return
+    end
+    layout.goldOnly = nextOnly
+    M:OnLayoutChanged(true)
 end
 
 function M:SetHideHaveMats(hidden)

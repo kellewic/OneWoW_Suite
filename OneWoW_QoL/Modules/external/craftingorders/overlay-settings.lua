@@ -250,11 +250,34 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
 
         RebuildRows()
 
+        local goldOnlyCb = OneWoW_GUI:CreateCheckbox(content, {
+            label = L["CRAFTORDERS_GOLD_ONLY"],
+            checked = M:GetLayout().goldOnly == true,
+            onClick = function(myself)
+                M:SetGoldOnly(myself:GetChecked())
+            end,
+        })
+        goldOnlyCb:SetPoint("TOPLEFT", host, "BOTTOMLEFT", 0, -8)
+        SetControlEnabled(goldOnlyCb, IsDetailEnabled())
+        widgets.goldOnlyCb = goldOnlyCb
+
+        local goldOnlyDesc = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        goldOnlyDesc:SetPoint("TOPLEFT", goldOnlyCb, "BOTTOMLEFT", 0, -2)
+        goldOnlyDesc:SetJustifyH("LEFT")
+        goldOnlyDesc:SetWordWrap(true)
+        if w >= 1 then
+            goldOnlyDesc:SetWidth(w)
+        else
+            goldOnlyDesc:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, 0)
+        end
+        goldOnlyDesc:SetText(L["CRAFTORDERS_GOLD_ONLY_DESC"])
+        goldOnlyDesc:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+
         local resetBtn = OneWoW_GUI:CreateFitTextButton(content, {
             text = RESET,
             height = 22,
         })
-        resetBtn:SetPoint("TOPLEFT", host, "BOTTOMLEFT", 0, -8)
+        resetBtn:SetPoint("TOPLEFT", goldOnlyDesc, "BOTTOMLEFT", 0, -8)
         resetBtn:SetScript("OnClick", function()
             M:ResetLayout()
             if refreshLayoutWidgets then
@@ -278,6 +301,9 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
             if widgets.hideHaveCb then
                 widgets.hideHaveCb:SetChecked(layout.hideHaveMats == true)
             end
+            if widgets.goldOnlyCb then
+                widgets.goldOnlyCb:SetChecked(layout.goldOnly == true)
+            end
             if widgets.hideScrollCb then
                 widgets.hideScrollCb:SetChecked(layout.hideScrollBar == true)
             end
@@ -294,7 +320,8 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
             RefreshShownSliders()
         end
 
-        return hintH + 8 + host:GetHeight() + 8 + 22
+        local goldOnlyH = goldOnlyCb:GetHeight() + 2 + (goldOnlyDesc:GetStringHeight() or 14)
+        return hintH + 8 + host:GetHeight() + 8 + goldOnlyH + 8 + 22
     end)
 
     widgets.sizeCard = stack:AddCard("craftingorders:sizes", L["CRAFTORDERS_LAYOUT_SIZES"], function(content, contentWidth)
@@ -621,6 +648,7 @@ local function BuildContent(cardsHost, isEnabled, applyHostHeight)
             end
         end
         SetControlEnabled(widgets.resetBtn, detailEnabled)
+        SetControlEnabled(widgets.goldOnlyCb, detailEnabled)
         SyncSizeControls()
         SetControlEnabled(widgets.hideHaveCb, detailEnabled)
         SetControlEnabled(widgets.hideScrollCb, detailEnabled)

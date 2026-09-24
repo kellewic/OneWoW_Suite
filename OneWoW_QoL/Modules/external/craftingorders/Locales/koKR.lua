@@ -24,6 +24,8 @@ OneWoW.Locale:Register(M._scope, "koKR", {
     ["CRAFTORDERS_COL_REWARD"] = "받는 것",
     ["CRAFTORDERS_COL_GOLD"] = "골드",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "무역연합의 몫을 뺀 후 받는 금액입니다.",
+    ["CRAFTORDERS_GOLD_ONLY"] = "골드만",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "골드 열에는 골드만 표시합니다. 행에 커서를 올리면 실버와 코퍼가 나옵니다.",
     ["CRAFTORDERS_TIP_AVG"] = "평균 수수료",
     ["CRAFTORDERS_COL_PROFIT"] = "이익 / 손실",
     ["CRAFTORDERS_COL_ACTION"] = "제작",

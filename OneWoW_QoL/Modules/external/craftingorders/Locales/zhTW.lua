@@ -24,6 +24,8 @@ OneWoW.Locale:Register(M._scope, "zhTW", {
     ["CRAFTORDERS_COL_REWARD"] = "你獲得",
     ["CRAFTORDERS_COL_GOLD"] = "金幣",
     ["CRAFTORDERS_COL_GOLD_TIP"] = "扣除聯盟分潤後你實際收到的金額。",
+    ["CRAFTORDERS_GOLD_ONLY"] = "僅顯示金幣",
+    ["CRAFTORDERS_GOLD_ONLY_DESC"] = "金幣欄只顯示金幣。將滑鼠懸停在一列上可查看銀幣和銅幣。",
     ["CRAFTORDERS_TIP_AVG"] = "平均委託金",
     ["CRAFTORDERS_COL_PROFIT"] = "利潤 / 虧損",
     ["CRAFTORDERS_COL_ACTION"] = "製造",
