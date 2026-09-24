@@ -184,9 +184,12 @@ end
 --     SetFontObject(GameFontNormal) on a falsy return, because SetFontObject
 --     forces BOTH font face AND size back to the object's baked defaults,
 --     silently discarding the caller's size.
---  2. The first SetFont call with an uncached TTF can "fail" while loading the
---     file into WoW's font cache as a side effect; a second immediate call
---     then succeeds. We retry once.
+--  2. The first SetFont call with an uncached TTF can return nil or false while
+--     only loading the file into WoW's font cache; the glyphs do not stick, so
+--     button and label text stays blank until some later SetFont. A second
+--     immediate call then succeeds. nil is not success here: some valid files
+--     also report nil once they do render, so we retry once per file and only
+--     treat an explicit false after that retry as unusable.
 --  3. A font file may be genuinely missing / corrupt (FONTS entry whose file
 --     is not on disk). To avoid leaving the fontstring with no font (which
 --     crashes SetText later), we fall back to GameFontNormal's *path* applied
@@ -202,6 +205,28 @@ end
 local function TrySetFont(fontString, path, size, flags)
     local ok, success = pcall(fontString.SetFont, fontString, path, size, flags)
     return ok, success
+end
+
+-- Paths whose second SetFont was not an explicit failure. Later sets hit the
+-- cache and only need one call. The fontstring that warms a path always gets
+-- the second call itself, so its own text is not left blank.
+local warmedFontPaths = {}
+
+local function ApplyFontFile(fontString, path, size, flags)
+    local ok, success = TrySetFont(fontString, path, size, flags)
+    if not ok then
+        return false
+    end
+    if not warmedFontPaths[path] then
+        ok, success = TrySetFont(fontString, path, size, flags)
+        if not ok then
+            return false
+        end
+        if success ~= false then
+            warmedFontPaths[path] = true
+        end
+    end
+    return success ~= false
 end
 
 local fontMetadata = setmetatable({}, { __mode = "k" })
@@ -238,40 +263,44 @@ function OneWoW_GUI:SafeSetFont(fontString, fontPath, size, flags)
     local stockPath = GetStockFontPath()
 
     local target = fontPath or stockPath
-    if target then
-        local ok, success = TrySetFont(fontString, target, adjustedSize, f)
-        if ok and success ~= false then
-            return
-        end
-        if ok and success == false then
-            local ok2, success2 = TrySetFont(fontString, target, adjustedSize, f)
-            if ok2 and success2 ~= false then
-                return
-            end
-        end
+    if target and ApplyFontFile(fontString, target, adjustedSize, f) then
+        return
     end
 
     -- Target font is unusable (missing file, bad args, etc.). Apply the stock
     -- font at the caller's size so the fontstring is never left without a font.
-    if stockPath and stockPath ~= target then
-        local ok = TrySetFont(fontString, stockPath, adjustedSize, f)
-        if ok then return end
+    if stockPath and stockPath ~= target and ApplyFontFile(fontString, stockPath, adjustedSize, f) then
+        return
     end
     fontString:SetFontObject(GameFontNormal)
 end
 
--- Pre-warm every shipped font once at load. The first SetFont call on an
--- uncached TTF is the "slow / sometimes-fails" one; subsequent calls hit WoW's
--- font cache and render reliably. By warming all fonts on a throwaway
--- fontstring we make later font changes immediate and consistent.
+-- Pre-warm every shipped font, plus the active face when it is an LSM path
+-- outside that list. Hide() before SetFont skips the cache load, which is why
+-- the old warm-up left the first real labels blank. The string stays shown at
+-- alpha 0, gets the same two-call apply as live text, then is discarded.
 function OneWoW_GUI:PrewarmFonts()
     local f = UIParent:CreateFontString(nil, "BACKGROUND")
-    f:Hide()
-    for _, entry in ipairs(FONTS) do
-        if entry.file then
-            pcall(f.SetFont, f, entry.file, 12, "")
+    f:SetAlpha(0)
+    local function warm(path)
+        if not path or warmedFontPaths[path] then
+            return
+        end
+        ApplyFontFile(f, path, 12, "")
+        f:SetText("A")
+        -- Alpha 0 can report a face as set when nothing rasterized. Leave the
+        -- path unwarmed so the first visible label still gets the second call.
+        if (f:GetStringWidth() or 0) <= 0 then
+            warmedFontPaths[path] = nil
         end
     end
+    for _, entry in ipairs(FONTS) do
+        warm(entry.file)
+    end
+    warm(self:GetFont())
+    f:SetText("")
+    f:Hide()
+    f:SetParent(nil)
 end
 
 function OneWoW_GUI:CreateFS(parent, size, layer)
@@ -303,9 +332,8 @@ function OneWoW_GUI:ApplyFontCapped(fs, size, maxOffset)
         -- Same file + same flags: SetFont keeps the previous size. WoW Default
         -- has no file path, so fall through to the stock face at cappedSize
         -- instead of SetFontObject (that bakes GameFontNormal's size).
-        local ok = pcall(fs.SetFont, fs, target, cappedSize, "OUTLINE")
-        if ok then
-            pcall(fs.SetFont, fs, target, cappedSize, "")
+        if ApplyFontFile(fs, target, cappedSize, "OUTLINE") then
+            ApplyFontFile(fs, target, cappedSize, "")
             return
         end
     end
