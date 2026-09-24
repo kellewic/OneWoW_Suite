@@ -14,6 +14,7 @@ ns.ModuleRegistry:Define(ADDON_NAME, {
         { id = "auto_turnin",  label = "QUESTTOOLS_TOGGLE_TURNIN",  description = "QUESTTOOLS_TOGGLE_TURNIN_DESC",  default = true  },
         { id = "reward_picker",label = "QUESTTOOLS_TOGGLE_REWARDS", description = "QUESTTOOLS_TOGGLE_REWARDS_DESC", default = true  },
         { id = "auto_gossip",  label = "QUESTTOOLS_TOGGLE_GOSSIP",  description = "QUESTTOOLS_TOGGLE_GOSSIP_DESC",  default = false },
+        { id = "require_modifier", label = "QUESTTOOLS_REQUIRE_MODIFIER", description = "QUESTTOOLS_REQUIRE_MODIFIER_DESC", default = false, detailOnly = true },
     },
     preview       = true,
     _acceptFrame  = nil,

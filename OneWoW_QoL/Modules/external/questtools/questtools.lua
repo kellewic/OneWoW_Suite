@@ -1,10 +1,51 @@
 local _, ns = ...
+local OneWoW_GUI = OneWoW_GUI
 
-local QuestToolsModule = ns.ModuleRegistry:Current()
+local QuestToolsModule, L = ns.ModuleRegistry:Current()
 if not QuestToolsModule then return end
+
+local collapsedCards = {}
+
+local MODIFIER_FNS = {
+    SHIFT = IsShiftKeyDown,
+    CTRL = IsControlKeyDown,
+    ALT = IsAltKeyDown,
+}
 
 local function GetToggle(id)
     return ns.ModuleRegistry:GetToggleValue("questtools", id)
+end
+
+local function GetModifierKey()
+    local key = ns.ModuleRegistry:GetModuleBucket("questtools").modifierKey
+    if key == "SHIFT" or key == "CTRL" or key == "ALT" then
+        return key
+    end
+    return "SHIFT"
+end
+
+local function SetModifierKey(key)
+    if key ~= "SHIFT" and key ~= "CTRL" and key ~= "ALT" then return end
+    ns.ModuleRegistry:GetModuleBucket("questtools").modifierKey = key
+end
+
+local function ModifierLabel(key)
+    if key == "CTRL" then return CTRL_KEY_TEXT end
+    if key == "ALT" then return ALT_KEY_TEXT end
+    return SHIFT_KEY_TEXT
+end
+
+local function ModifierHeld()
+    local fn = MODIFIER_FNS[GetModifierKey()] or IsShiftKeyDown
+    return fn()
+end
+
+local function ShouldAutomate()
+    local held = ModifierHeld()
+    if GetToggle("require_modifier") then
+        return held
+    end
+    return not held
 end
 
 local function GetDisplayedTextFromGossipButton(btn)
@@ -149,7 +190,7 @@ end
 
 function QuestToolsModule:TryAutoGossip()
     if not ns.ModuleRegistry:IsEnabled("questtools") or not GetToggle("auto_gossip") then return false end
-    if IsShiftKeyDown() then return false end
+    if not ShouldAutomate() then return false end
     local gf = GossipFrame
     if gf and not gf:IsShown() then return false end
 
@@ -176,7 +217,7 @@ end
 
 function QuestToolsModule:ScheduleGossipRetries()
     if not ns.ModuleRegistry:IsEnabled("questtools") or not GetToggle("auto_gossip") then return end
-    if IsShiftKeyDown() then return end
+    if not ShouldAutomate() then return end
 
     self._gossipRetryToken = (self._gossipRetryToken or 0) + 1
     local token = self._gossipRetryToken
@@ -186,7 +227,7 @@ function QuestToolsModule:ScheduleGossipRetries()
     local function step()
         if token ~= self._gossipRetryToken then return end
         if not GetToggle("auto_gossip") then return end
-        if IsShiftKeyDown() then return end
+        if not ShouldAutomate() then return end
         local gf = GossipFrame
         if gf and not gf:IsShown() then return end
         attempt = attempt + 1
@@ -201,7 +242,7 @@ end
 
 function QuestToolsModule:OnGossipOpen()
     if not ns.ModuleRegistry:IsEnabled("questtools") or not GetToggle("auto_gossip") then return end
-    if IsShiftKeyDown() then return end
+    if not ShouldAutomate() then return end
     self:HookGossipFrameShow()
     self:ScheduleGossipRetries()
 end
@@ -243,12 +284,12 @@ function QuestToolsModule:InitAccept()
     self._acceptFrame:SetScript("OnEvent", function(_, event)
         if event == "QUEST_DETAIL" then
             if not GetToggle("auto_accept") then return end
-            if IsShiftKeyDown() then return end
+            if not ShouldAutomate() then return end
             if QuestGetAutoAccept() then return end
             AcceptQuest()
         elseif event == "QUEST_GREETING" then
             if not GetToggle("auto_accept") then return end
-            if IsShiftKeyDown() then return end
+            if not ShouldAutomate() then return end
             local numActive = C_GossipInfo.GetNumActiveQuests()
             for i = 1, numActive do C_GossipInfo.SelectActiveQuest(i) end
             local numAvail = C_GossipInfo.GetNumAvailableQuests()
@@ -263,9 +304,11 @@ function QuestToolsModule:InitTurnin()
     self._turninFrame:SetScript("OnEvent", function(_, event)
         if event == "QUEST_PROGRESS" then
             if not GetToggle("auto_turnin") then return end
+            if not ShouldAutomate() then return end
             if IsQuestCompletable() then CompleteQuest() end
         elseif event == "QUEST_COMPLETE" then
             if not GetToggle("auto_turnin") then return end
+            if not ShouldAutomate() then return end
             local numChoices = GetNumQuestChoices()
             if numChoices <= 1 then GetQuestReward(1) end
         end
@@ -437,4 +480,142 @@ end
 
 OneWoW_QoL_DebugGossipDisplayed = function()
     QuestToolsModule:DebugPrintGossipApiVsUi()
+end
+
+function QuestToolsModule:CreateCustomDetail(detailScrollChild, yOffset, isEnabled, registerRefresh)
+    local cardsHost = CreateFrame("Frame", nil, detailScrollChild)
+    cardsHost:SetPoint("TOPLEFT", detailScrollChild, "TOPLEFT", 0, yOffset)
+    cardsHost:SetPoint("TOPRIGHT", detailScrollChild, "TOPRIGHT", 0, yOffset)
+
+    local stack = OneWoW_GUI:CreateCardStack(cardsHost, {
+        getCollapsed = function(key) return collapsedCards[key] end,
+        setCollapsed = function(key, collapsed) collapsedCards[key] = collapsed end,
+    })
+
+    local function applyHostHeight()
+        local h = math.max(1, cardsHost:GetHeight())
+        if detailScrollChild.UpdateDetailHeight then
+            detailScrollChild:SetHeight(h)
+            detailScrollChild.UpdateDetailHeight()
+        else
+            detailScrollChild:SetHeight(math.abs(yOffset) + h + 20)
+            if detailScrollChild.updateThumb then
+                detailScrollChild.updateThumb()
+            end
+        end
+    end
+    stack.OnRelayout = applyHostHeight
+
+    local automationRefresh
+
+    stack:AddCard("questtools:automation", L["QUESTTOOLS_AUTOMATION_HEADER"], function(content, contentWidth)
+        local w = tonumber(contentWidth) or 0
+        if w < 1 then
+            w = content:GetWidth() or 0
+        end
+
+        local requireCb = OneWoW_GUI:CreateCheckbox(content, {
+            label = L["QUESTTOOLS_REQUIRE_MODIFIER"],
+            checked = GetToggle("require_modifier"),
+            labelMaxWidth = (w > 40) and (w - 32) or nil,
+            wrap = true,
+            onClick = function(myself)
+                ns.ModuleRegistry:SetToggleValue("questtools", "require_modifier", myself:GetChecked() and true or false)
+            end,
+        })
+        requireCb:SetPoint("TOPLEFT", content, "TOPLEFT", 0, 0)
+
+        local requireDesc = OneWoW_GUI:CreateFS(content, 11)
+        requireDesc:SetPoint("TOPLEFT", requireCb, "BOTTOMLEFT", 0, -4)
+        requireDesc:SetJustifyH("LEFT")
+        requireDesc:SetWordWrap(true)
+        requireDesc:SetSpacing(2)
+        if w >= 1 then
+            requireDesc:SetWidth(w)
+        else
+            requireDesc:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+        end
+        requireDesc:SetText(L["QUESTTOOLS_REQUIRE_MODIFIER_DESC"])
+        requireDesc:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+
+        local keyLabel = OneWoW_GUI:CreateFS(content, 12)
+        keyLabel:SetPoint("TOPLEFT", requireDesc, "BOTTOMLEFT", 0, -12)
+        keyLabel:SetText(L["QUESTTOOLS_MODIFIER_KEY"])
+        keyLabel:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))
+
+        local keyDesc = OneWoW_GUI:CreateFS(content, 11)
+        keyDesc:SetPoint("TOPLEFT", keyLabel, "BOTTOMLEFT", 0, -4)
+        keyDesc:SetJustifyH("LEFT")
+        keyDesc:SetWordWrap(true)
+        keyDesc:SetSpacing(2)
+        if w >= 1 then
+            keyDesc:SetWidth(w)
+        else
+            keyDesc:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+        end
+        keyDesc:SetText(L["QUESTTOOLS_MODIFIER_KEY_DESC"])
+        keyDesc:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+
+        local modifierDD, modifierDDText = OneWoW_GUI:CreateDropdown(content, {
+            width = 220,
+            text = ModifierLabel(GetModifierKey()),
+        })
+        OneWoW_GUI:AttachFilterMenu(modifierDD, {
+            searchable = false,
+            buildItems = function()
+                return {
+                    { text = SHIFT_KEY_TEXT, value = "SHIFT" },
+                    { text = CTRL_KEY_TEXT, value = "CTRL" },
+                    { text = ALT_KEY_TEXT, value = "ALT" },
+                }
+            end,
+            onSelect = function(value, text)
+                modifierDDText:SetText(text)
+                SetModifierKey(value)
+            end,
+            getActiveValue = function()
+                return GetModifierKey()
+            end,
+        })
+        modifierDD:SetPoint("TOPLEFT", keyDesc, "BOTTOMLEFT", 0, -4)
+
+        local function ApplyEnabled(enabled)
+            if enabled then
+                requireCb:Enable()
+            else
+                requireCb:Disable()
+            end
+            requireCb.label:SetTextColor(OneWoW_GUI:GetThemeColor(enabled and "TEXT_PRIMARY" or "TEXT_MUTED"))
+            keyLabel:SetTextColor(OneWoW_GUI:GetThemeColor(enabled and "TEXT_PRIMARY" or "TEXT_MUTED"))
+            modifierDD:EnableMouse(enabled)
+            modifierDD:SetAlpha(enabled and 1 or 0.45)
+        end
+
+        automationRefresh = function()
+            requireCb:SetChecked(GetToggle("require_modifier") and true or false)
+            modifierDDText:SetText(ModifierLabel(GetModifierKey()))
+            ApplyEnabled(ns.ModuleRegistry:IsEnabled("questtools"))
+        end
+        ApplyEnabled(isEnabled)
+
+        local cbH = requireCb:GetMeasuredHeight()
+        local requireDescH = requireDesc:GetStringHeight() or 14
+        local keyLabelH = keyLabel:GetStringHeight() or 14
+        local keyDescH = keyDesc:GetStringHeight() or 14
+        local dropH = modifierDD:GetHeight() or 26
+        return math.max(1, cbH + 4 + requireDescH + 12 + keyLabelH + 4 + keyDescH + 4 + dropH)
+    end)
+
+    stack:Finish()
+    applyHostHeight()
+
+    if registerRefresh then
+        registerRefresh(function()
+            if automationRefresh then
+                automationRefresh()
+            end
+        end)
+    end
+
+    return yOffset - cardsHost:GetHeight()
 end

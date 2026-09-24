@@ -32,7 +32,7 @@ QoL has a **Tooltips** tab (not a module toggle). **Collections** puts Collected
 
 ### Automation
 
-Hands-off helpers: **Auto Repair**, **Fast Loot**, **Auto Mount**, **Auto Open** (containers; skips bank/mail/vendor and locked items; blacklist sortable by name or item ID), **Fast Forward** (skip cinematics; hold a modifier to watch), **Quest Tools** (accept/turn-in/gossip; Shift to skip), **Untrack Completed Achievements**, **Screenshot On Achievement**.
+Hands-off helpers: **Auto Repair**, **Fast Loot**, **Auto Mount**, **Auto Open** (containers; skips bank/mail/vendor and locked items; blacklist sortable by name or item ID), **Fast Forward** (skip cinematics; hold a modifier to watch), **Quest Tools** (accept/turn-in/gossip; hold a modifier to skip, or require that modifier first), **Untrack Completed Achievements**, **Screenshot On Achievement**.
 
 ### Interface
 
@@ -61,7 +61,7 @@ There are **36** external modules. The full labeled catalog lives in the repo ([
 * Start with a few modules (Repair, Fast Loot, Quest Tools) before enabling everything.
 * Open **Details** on a module to see who wrote it.
 * Bag Bar and similar tools use the same expression language as Bags — see [Search syntax](Bags-Search-Syntax).
-* Hold **Shift** on quest/gossip dialogs when Quest Tools is on and you want to handle the dialog yourself.
+* Hold the Quest Tools modifier (Shift by default) on a quest, turn-in, or gossip dialog when you want to handle it yourself. Quest Automation can instead require that key before those actions run.
 
 ## Related
 

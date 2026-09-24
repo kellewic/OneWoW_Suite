@@ -13,6 +13,9 @@
 ## ESC Menu Panel
 - Character Card can show gold only, without silver or copper. The option is under Character Card in ESC Menu Panel settings.
 
+## Quest Tools
+- Quest Automation can require Shift, Ctrl, or Alt before auto-accept, turn-in, or quest gossip runs. Leave it off and holding that key skips those actions, including turn-in.
+
 ---
 
 # Mail

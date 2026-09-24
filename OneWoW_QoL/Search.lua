@@ -112,3 +112,28 @@ Search:Register({
     },
     nav = { module = "qol", subtab = "features" },
 })
+
+local questScope = "OneWoW_QoL.questtools"
+
+local function QuestToolsText(key)
+    return function()
+        return OneWoW.Locale:GetTable(questScope)[key]
+    end
+end
+
+Search:Register({
+    id = "qol-mod:questtools:modifier-key",
+    title = "QUESTTOOLS_MODIFIER_KEY",
+    description = "QUESTTOOLS_MODIFIER_KEY_DESC",
+    scope = questScope,
+    tags = { "shift", "ctrl", "alt", "modifier" },
+    addonKey = "OneWoW_QoL",
+    path = {
+        SR.ModuleLabel("qol"),
+        function() return ns.L["TAB_FEATURES"] end,
+        QuestToolsText("QUESTTOOLS_TITLE"),
+        QuestToolsText("QUESTTOOLS_AUTOMATION_HEADER"),
+        QuestToolsText("QUESTTOOLS_MODIFIER_KEY"),
+    },
+    nav = { module = "qol", subtab = "features" },
+})

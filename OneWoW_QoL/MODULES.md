@@ -43,7 +43,7 @@ Automatically loots all items from a corpse or chest the moment the loot window 
 
 ### Quest Tools
 
-Automates quest acceptance, turn-in, reward highlight, and optional quest-labeled gossip. Hold Shift when opening a quest or gossip dialog to skip auto-accept or auto-gossip.
+Automates quest acceptance, turn-in, reward highlight, and optional quest-labeled gossip. Hold the modifier (Shift by default) to skip auto-accept, turn-in, or auto-gossip. Quest Automation can require that key before those actions run.
 
 - **Module id:** `questtools` · **Folder:** `Modules/external/questtools/`
 

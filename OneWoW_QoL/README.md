@@ -15,7 +15,7 @@ Hands-off helpers for repairs, looting, mounts, quests, and cinematics.
 - **Auto Mount** — mount when you start moving; smart terrain and dismount rules
 - **Auto Open** — open containers from your bags (skips bank/mail/vendor and locked items)
 - **Fast Forward** — skip movies and cinematics (hold a modifier to watch)
-- **Quest Tools** — auto-accept, turn-in, reward highlight, quest gossip (Shift to skip)
+- **Quest Tools** — auto-accept, turn-in, reward highlight, quest gossip (hold a modifier to skip, or require it first)
 - **Untrack Completed Achievements** — clear stuck achievement tracking slots on login
 - **Screenshot On Achievement** — capture achievement toasts to Screenshots
 
