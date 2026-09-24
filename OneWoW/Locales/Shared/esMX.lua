@@ -327,6 +327,7 @@ ns.Locale:RegisterShared("esMX", {
     ["OVR_ICON_CAT_MAP"] = "Marcadores de mapa",
     ["OVR_ICON_CAT_QUEST"] = "Iconos de misión",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Puntos de ruta",
+    ["WAYPOINT_ARROW"] = "Flecha de ruta",
     ["OVR_ICON_CAT_BAGS"] = "Bolsas y objetos",
     ["OVR_ICON_CAT_STATUS"] = "Colección y estado",
     ["OVR_ICON_CAT_WARBAND"] = "Banda guerrera y bandas",

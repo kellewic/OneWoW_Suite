@@ -190,6 +190,7 @@ ns.Locale:Register(ADDON_NAME, "koKR", {
     ["WHATS_NEW_H_ICONBROWSER_BODY"] = "QoL 기능에 아이콘 브라우저가 있습니다. 매크로, 은행 탭, 길드 은행 탭, 장비 구성, 형상변환 복장 아이콘을 고를 때 검색하고 필터할 수 있습니다.",
     ["WHATS_NEW_H_ALTTRACKER_BODY"] = "Progress 공격대는 공격대 귀속과 모험 안내서로 우두머리를 셉니다. 해일결속 동굴은 주간 세계 처치를 포함합니다. 신화+ 열은 이번 시즌 지도를 쓰므로 영어 이름과 맞추지 않아도 최고 기록이 나옵니다.",
     ["WHATS_NEW_H_TRACKERS_BODY"] = "오래된 던전이나 공격대에서 우두머리 전투를 시작해도 더 이상 오류가 나지 않습니다.",
+    ["WHATS_NEW_H_WAYPOINTS_BODY"] = "QoL의 웨이포인트 화살표는 클릭을 블리자드 지도 핀 또는 TomTom으로 보냅니다. TomTom은 그 애드온이 켜질 때까지 감지되지 않음으로 남습니다.",
     ["WHATS_NEW_H_WAYPINS_TITLE"] = "신규 기능 - OneWay Pins",
     ["WHATS_NEW_H_WAYPINS_BODY"] = "은행, 제작대, 상인 등 다시 찾을 장소를 저장합니다. 핀은 직접 고른 아이콘으로 세계 지도와 미니맵에 남습니다. Notes >> OneWay Pins 탭이나 세계 지도의 OneWoW 핀 단추에서 엽니다. 자기 유닛 프레임을 오른쪽 클릭하면 발밑에 핀을 놓고, NPC 대상 프레임을 오른쪽 클릭하면 그 NPC를 고정합니다. 위치 찾기로 지역 안 NPC를 찾습니다. 지역에서 핀 목록 표시(기본 켜짐)는 고정 창에 표시로 표시된 핀 목록을 엽니다. 표시된 핀이 없으면 목록이 없습니다. 고정된 지역 메모는 옆에 붙습니다. 미니맵 핀 애니메이션은 기본으로 꺼져 있습니다. 기능 관리의 Notes에서 OneWay Pins를 켜거나 끕니다. 지도, 클릭, 크기 옵션은 OneWay Pins 설정 패널에 있습니다. 지도 클릭 메뉴는 그 패널에서 끌 수 있습니다. 켜져 있으면 세계 지도에서 추가는 기본이 Ctrl-오른쪽입니다.",
     ["WHATS_NEW_H_PINPACKS_TITLE"] = "Notes - 핀 팩",

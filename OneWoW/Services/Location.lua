@@ -20,7 +20,8 @@ local _, ns = ...
 -- caller that knows its own storage is never subject to the tolerant guess,
 -- which would misread a legitimate sub-1% coordinate. Omitting it falls back to
 -- the tolerant reading, which is what mixed-source data (Catalog Navigation)
--- needs.
+-- needs. The active provider (settings.waypoints.arrow.provider) chooses
+-- Blizzard or TomTom at click time. opts.title is the arrow name.
 --
 -- Distance works in percent space because that is how radii are authored (a
 -- tracker step's waypointRadius and similar cutoffs are percent). Map percent
@@ -40,7 +41,7 @@ local _, ns = ...
 
 local tonumber = tonumber
 local sqrt, cos, sin = math.sqrt, math.cos, math.sin
-local C_Map, C_SuperTrack = C_Map, C_SuperTrack
+local C_Map, C_SuperTrack, C_Navigation, C_AddOns = C_Map, C_SuperTrack, C_Navigation, C_AddOns
 local UiMapPoint, OpenWorldMap, securecallfunction = UiMapPoint, OpenWorldMap, securecallfunction
 local CreateVector2D = CreateVector2D
 
@@ -48,6 +49,18 @@ local scratchMapPos = CreateVector2D(0, 0)
 
 ns.Location = {}
 local Location = ns.Location
+
+local PROVIDER_TAB = "waypoints"
+local PROVIDER_FEATURE = "arrow"
+local PROVIDER_KEY = "provider"
+
+-- The suite's current TomTom uid. Not saved. Replaced on the next drop.
+local tomtomUid = nil
+
+local PROVIDERS = {
+    { id = "blizzard", nameKey = "WAYPOINTS_PROVIDER_BLIZZARD" },
+    { id = "tomtom", nameKey = "WAYPOINTS_PROVIDER_TOMTOM" },
+}
 
 --- Tolerant conversion to the 0-1 fraction the map APIs expect. Values greater
 --- than 1 are read as 0-100 percent.
@@ -111,14 +124,156 @@ function Location.GetPlayerLocation()
     return mapID, x * 100, y * 100
 end
 
---- Drops a super-tracked user waypoint. x/y accept either coordinate format.
+--- Ordered waypoint providers. nameKey is a QoL locale key.
+---@return { id: string, nameKey: string }[]
+function Location.GetProviders()
+    return PROVIDERS
+end
+
+--- TomTom is usable only when loaded and the calls we make exist.
+---@return table|nil
+local function TomTomApi()
+    if not C_AddOns.IsAddOnLoaded("TomTom") then return nil end
+    local api = TomTom
+    if type(api) ~= "table" then return nil end
+    if type(api.AddWaypoint) ~= "function" then return nil end
+    if type(api.RemoveWaypoint) ~= "function" then return nil end
+    if type(api.GetDistanceToWaypoint) ~= "function" then return nil end
+    if type(api.IsValidWaypoint) ~= "function" then return nil end
+    return api
+end
+
+--- True when this provider can take a click right now.
+---@param id string
+---@return boolean
+function Location.IsProviderAvailable(id)
+    if id == "blizzard" then return true end
+    if id == "tomtom" then return TomTomApi() ~= nil end
+    return false
+end
+
+--- Saved provider id, before the availability check.
+---@return string
+local function SavedProvider()
+    local saved = ns.SettingsFeatureRegistry:GetSetting(PROVIDER_TAB, PROVIDER_FEATURE, PROVIDER_KEY)
+    if saved == "tomtom" then return "tomtom" end
+    return "blizzard"
+end
+
+--- Saved id when it can run, otherwise blizzard. Does not write the saved id.
+---@return string
+function Location.GetActiveProvider()
+    local saved = SavedProvider()
+    if Location.IsProviderAvailable(saved) then return saved end
+    return "blizzard"
+end
+
+--- Writes the provider after an availability check. Turning off the active
+--- row selects blizzard. Does not clear a saved tomtom id that cannot run.
+---@param id string
+---@return boolean wrote
+function Location.SetProvider(id)
+    if id ~= "blizzard" and not Location.IsProviderAvailable(id) then
+        return false
+    end
+    if id ~= "blizzard" and id ~= "tomtom" then return false end
+    if SavedProvider() == id then return true end
+    if id == "blizzard" then
+        Location.ClearActiveWaypoint()
+    end
+    ns.SettingsFeatureRegistry:SetSetting(PROVIDER_TAB, PROVIDER_FEATURE, PROVIDER_KEY, id)
+    return true
+end
+
+local function ClearTomTomUid()
+    local uid = tomtomUid
+    tomtomUid = nil
+    if type(uid) ~= "table" then return end
+    local api = TomTomApi()
+    if not api then return end
+    if api:IsValidWaypoint(uid) then
+        api:RemoveWaypoint(uid)
+    end
+end
+
+local function ClearBlizzardWaypoint()
+    if C_Map.HasUserWaypoint() then
+        C_Map.ClearUserWaypoint()
+    end
+end
+
+--- Drops the suite's current waypoint on whichever provider placed it.
+function Location.ClearActiveWaypoint()
+    local provider = Location.GetActiveProvider()
+    if provider == "tomtom" or tomtomUid then
+        ClearTomTomUid()
+    end
+    if provider == "blizzard" or C_Map.HasUserWaypoint() then
+        ClearBlizzardWaypoint()
+    end
+end
+
+--- True while the waypoint this service placed is still up.
+---@return boolean
+function Location.HasActiveWaypoint()
+    if Location.GetActiveProvider() == "tomtom" then
+        local api = TomTomApi()
+        return api ~= nil and type(tomtomUid) == "table" and api:IsValidWaypoint(tomtomUid)
+    end
+    return C_Map.HasUserWaypoint()
+end
+
+--- Yards to the suite waypoint. Nil when that provider has no distance.
+---@return number|nil
+function Location.GetActiveDistance()
+    if Location.GetActiveProvider() == "tomtom" then
+        local api = TomTomApi()
+        if not api or type(tomtomUid) ~= "table" or not api:IsValidWaypoint(tomtomUid) then
+            return nil
+        end
+        return api:GetDistanceToWaypoint(tomtomUid)
+    end
+    return C_Navigation.GetDistance()
+end
+
+local function SetBlizzardWaypoint(mapID, x, y, opts)
+    if not C_Map.CanSetUserWaypointOnMap(mapID) then return false end
+    ClearTomTomUid()
+    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(mapID, x, y))
+    if not opts or opts.superTrack ~= false then
+        C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+    end
+    return true
+end
+
+local function SetTomTomWaypoint(mapID, x, y, opts)
+    local api = TomTomApi()
+    if not api then return false end
+    ClearTomTomUid()
+    ClearBlizzardWaypoint()
+    local title = opts and opts.title
+    if title == "" then title = nil end
+    tomtomUid = api:AddWaypoint(mapID, x, y, {
+        title = title,
+        from = "OneWoW",
+        silent = true,
+        persistent = false,
+        crazy = true,
+        minimap = true,
+        world = true,
+        cleardistance = 0,
+    })
+    return tomtomUid ~= nil
+end
+
+--- Drops a waypoint on the active provider. x/y accept either coordinate format.
 --- Returns false when the coordinates are incomplete, outside 0-1 after
---- normalize, or the map refuses waypoints. Callers must not report success
+--- normalize, or the provider refuses the point. Callers must not report success
 --- unconditionally. World-space XY must be converted before this call.
 ---@param mapID number|string|nil
 ---@param x number|string|nil
 ---@param y number|string|nil
----@param opts table|nil format ("percent"/"fraction"), openMap, superTrack (default true)
+---@param opts table|nil format ("percent"/"fraction"), openMap, superTrack (default true), title
 ---@return boolean set
 function Location.SetWaypoint(mapID, x, y, opts)
     mapID = tonumber(mapID)
@@ -134,14 +289,11 @@ function Location.SetWaypoint(mapID, x, y, opts)
     if not (x and y) or x < 0 or x > 1 or y < 0 or y > 1 then
         return false
     end
-    if not C_Map.CanSetUserWaypointOnMap(mapID) then return false end
 
-    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(mapID, x, y))
-    if not opts or opts.superTrack ~= false then
-        C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+    if Location.GetActiveProvider() == "tomtom" then
+        return SetTomTomWaypoint(mapID, x, y, opts)
     end
-
-    return true
+    return SetBlizzardWaypoint(mapID, x, y, opts)
 end
 
 --- Straight-line distance between two points in map-percent space.

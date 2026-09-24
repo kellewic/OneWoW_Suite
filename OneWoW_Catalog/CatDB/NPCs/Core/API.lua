@@ -22,7 +22,6 @@ local UNKNOWNOBJECT = UNKNOWNOBJECT
 OneWoW_CatDB_NPCDB_API = {}
 
 local Location = OneWoW.Location
-local PERCENT_COORDS = { format = "percent", openMap = true }
 
 local viewsByID = {}
 local allVendorsCache
@@ -1418,7 +1417,11 @@ function OneWoW_CatDB_NPCDB_API.CreateWaypoint(vendor, mapID)
     if not location or not mapID then
         return false
     end
-    return Location.SetWaypoint(mapID, location.x or 0, location.y or 0, PERCENT_COORDS)
+    return Location.SetWaypoint(mapID, location.x or 0, location.y or 0, {
+        format = "percent",
+        openMap = true,
+        title = vendor.name,
+    })
 end
 
 OneWoW_GUI:RegisterEntityResolver("npc", {

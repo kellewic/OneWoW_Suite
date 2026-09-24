@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("itIT", {
     ["OVR_ICON_CAT_MAP"] = "Segnalini mappa",
     ["OVR_ICON_CAT_QUEST"] = "Icone missione",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Punti di passaggio",
+    ["WAYPOINT_ARROW"] = "Freccia di passaggio",
     ["OVR_ICON_CAT_BAGS"] = "Borse e oggetti",
     ["OVR_ICON_CAT_STATUS"] = "Collezione e stato",
     ["OVR_ICON_CAT_WARBAND"] = "Brigata e incursioni",

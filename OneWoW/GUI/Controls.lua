@@ -951,8 +951,9 @@ function OneWoW_GUI:CreateIntegrationRow(parent, options)
     local notCompatible = options.notCompatible
     local notCompatibleText = options.notCompatibleText or "Not Compatible"
     local detectedText = options.detectedText or "Detected"
+    local isDetected = options.isDetected
 
-    local detected = C_AddOns.IsAddOnLoaded(addonName)
+    local detected = isDetected and isDetected() or (not isDetected and C_AddOns.IsAddOnLoaded(addonName))
     local canToggle = detected and not notCompatible and isEnabled and onToggle
 
     local row = CreateFrame("Frame", nil, parent, "BackdropTemplate")

@@ -17,6 +17,7 @@ local function RegisterWithOneWoW()
         -- (TOAST_ALERTS_SUBTAB resolves via the shared scope).
         { name = "toastalerts", displayName = function() return ns.L["TOAST_ALERTS_SUBTAB"] end, create = function(p) ns.UI.CreateToastAlertsTab(p) end },
         { name = "tooltips",    displayName = function() return ns.L["TOOLTIPS_SUBTAB"]     end, create = function(p) ns.UI.CreateTooltipsTab(p) end },
+        { name = "waypoints",   displayName = function() return ns.L["OVR_ICON_CAT_WAYPOINTS"] end, create = function(p) ns.UI.CreateWaypointsTab(p) end },
         { name = "portals",     displayName = function() return ns.L["PORTALS_SUBTAB"]      end, create = function(p) ns.UI.CreatePortalsTab(p) end },
         { name = "overlays",    displayName = function() return ns.L["OVERLAYS_SUBTAB"]     end, create = function(p) ns.UI.CreateOverlaysTab(p) end },
     }

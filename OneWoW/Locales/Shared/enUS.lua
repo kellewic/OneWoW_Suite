@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("enUS", {
     ["OVR_ICON_CAT_MAP"] = "Map Markers",
     ["OVR_ICON_CAT_QUEST"] = "Quest Icons",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Waypoints",
+    ["WAYPOINT_ARROW"] = "Waypoint arrow",
     ["OVR_ICON_CAT_BAGS"] = "Bags & Items",
     ["OVR_ICON_CAT_STATUS"] = "Collection & Status",
     ["OVR_ICON_CAT_WARBAND"] = "Warband & Raids",

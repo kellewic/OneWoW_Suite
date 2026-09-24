@@ -190,6 +190,7 @@ ns.Locale:Register(ADDON_NAME, "zhCN", {
     ["WHATS_NEW_H_ICONBROWSER_BODY"] = "QoL 功能现已包含图标浏览器。选择宏、银行标签、公会银行标签、装备方案或幻化套装图标时可搜索并筛选。",
     ["WHATS_NEW_H_ALTTRACKER_BODY"] = "进度团队按团队副本锁定和冒险指南统计首领。潮缚石窟包含每周世界击杀。史诗钥石列使用本赛季地图，因此无需对照英文名称也能显示最佳纪录。",
     ["WHATS_NEW_H_TRACKERS_BODY"] = "在旧的地下城或团队副本中开始首领战斗不会再报错。",
+    ["WHATS_NEW_H_WAYPOINTS_BODY"] = "QoL 的路径点箭头把点击发到暴雪地图或 TomTom。TomTom 在该插件启用之前一直显示未检测到。",
     ["WHATS_NEW_H_WAYPINS_TITLE"] = "新功能 - OneWay Pins",
     ["WHATS_NEW_H_WAYPINS_BODY"] = "保存银行、制作台、商人以及任何你还会再去的地点。图钉用你自己的图标留在世界地图和微缩地图上。打开 Notes >> OneWay Pins，或世界地图上的 OneWoW 图钉按钮。右键自己的单位框体可在脚下插针，右键任意 NPC 的目标框体可钉住该 NPC。查找地点可搜索区域内的 NPC。在区域中显示标记列表（默认开启）会打开已勾选在固定窗口中显示的图钉列表。没有勾选就没有列表。已固定的区域笔记会靠在旁边。微缩地图图钉动画默认关闭。在管理功能的 Notes 下开关 OneWay Pins。地图、点击和大小选项在 OneWay Pins 设置面板中。可在该面板关闭地图点击菜单。开启时，从世界地图添加默认使用 Ctrl-右键。",
     ["WHATS_NEW_H_PINPACKS_TITLE"] = "Notes - 图钉包",

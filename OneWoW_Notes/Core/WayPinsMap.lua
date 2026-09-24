@@ -7,7 +7,7 @@ local Visual = ns.WayPinsVisual
 
 local ipairs, pairs, next, tinsert = ipairs, pairs, next, tinsert
 local abs, sqrt = math.abs, math.sqrt
-local C_Map, C_Timer, C_Navigation, C_Minimap = C_Map, C_Timer, C_Navigation, C_Minimap
+local C_Timer, C_Minimap = C_Timer, C_Minimap
 local GetCVar, GetPlayerFacing, IsControlKeyDown = GetCVar, GetPlayerFacing, IsControlKeyDown
 local MenuUtil, GameTooltip, GameTooltip_Hide = MenuUtil, GameTooltip, GameTooltip_Hide
 local GetCursorPosition, UIParent = GetCursorPosition, UIParent
@@ -23,7 +23,8 @@ local Minimap = Minimap
 -- World-map MapCanvas pins + minimap radar. Minimap placement uses world-yard
 -- dx/dy from Location.WorldDelta against C_Minimap.GetViewRadius so a landmark
 -- stays put while you walk. Out-of-range pins sit on the rim. Clicking a pin
--- sets the Blizzard user waypoint. Arrival clears that live track only.
+-- sets the suite waypoint (Blizzard or the active arrow provider). Arrival
+-- clears that live track only.
 -- The map-chrome button parents to GetCanvasContainer and sits under the
 -- lowest icon already in that top-right stack.
 -- ============================================================================
@@ -32,7 +33,6 @@ local WayPinsMap = {}
 ns.WayPinsMap = WayPinsMap
 
 local ARRIVE_YARDS = 22
-local PERCENT_COORDS = { format = "percent" }
 local PERCENT_FMT = "percent"
 local WORLD_PIN_TEMPLATE = "OneWoW_WayPinsWorldMapPinTemplate"
 local PREVIEW_MINIMAP_KEY = "__preview"
@@ -139,9 +139,7 @@ local function ClearLiveWaypoint()
     end
     livePinID = nil
     StopArrivalWatch()
-    if C_Map.HasUserWaypoint() then
-        C_Map.ClearUserWaypoint()
-    end
+    Location.ClearActiveWaypoint()
     MarkMinimapDirty()
     WayPinsMap:RefreshWorldMap()
     WayPinsMap:UpdateMinimapPins()
@@ -157,7 +155,7 @@ local function StartArrivalWatch()
             StopArrivalWatch()
             return
         end
-        if not C_Map.HasUserWaypoint() then
+        if not Location.HasActiveWaypoint() then
             livePinID = nil
             StopArrivalWatch()
             MarkMinimapDirty()
@@ -168,7 +166,7 @@ local function StartArrivalWatch()
             end
             return
         end
-        local dist = C_Navigation.GetDistance()
+        local dist = Location.GetActiveDistance()
         if dist and dist > 0 and dist < ARRIVE_YARDS then
             ClearLiveWaypoint()
             return
@@ -254,7 +252,10 @@ function WayPinsMap:TrackPin(pin)
     if type(pin) ~= "table" or not pin.mapID then
         return false
     end
-    local set = Location.SetWaypoint(pin.mapID, pin.x, pin.y, PERCENT_COORDS)
+    local set = Location.SetWaypoint(pin.mapID, pin.x, pin.y, {
+        format = "percent",
+        title = pin.title,
+    })
     if not set then
         return false
     end
@@ -1242,7 +1243,7 @@ function WayPinsMap:Initialize()
     f:RegisterEvent("ZONE_CHANGED")
     f:SetScript("OnEvent", function(_, event)
         if event == "USER_WAYPOINT_UPDATED" or event == "SUPER_TRACKING_CHANGED" then
-            if livePinID and not C_Map.HasUserWaypoint() then
+            if livePinID and not Location.HasActiveWaypoint() then
                 livePinID = nil
                 StopArrivalWatch()
                 MarkMinimapDirty()

@@ -26,6 +26,10 @@ QoL has a **Toggles** tab (not a module). It is a searchable list of current gam
 
 QoL has a **Tooltips** tab (not a module toggle). **Collections** puts Collected or Not Collected on the item type line. Optionally turn on Show status for non-collectable items to also show gold Not Collectable on items that are not a collectible. **Item Tracker** adds two blocks on item tooltips: **Where it is** (bags, bank, alts, and so on) and **Where to get it** (quest, vendor, instance, profession). Those source lines appear only when that Catalog pack is already loaded this session. Hovering an item does not load packs. Turn individual lines on or off under QoL → Tooltips → Item Tracker.
 
+## Waypoints
+
+QoL has a **Waypoints** tab (not a module). **Waypoint arrow** chooses where a click sends a coordinate: the Blizzard map pin, or TomTom when that addon is enabled. TomTom shows Not Detected until it is loaded, and cannot be turned on then. One row is Enabled. Turning TomTom off uses the Blizzard map pin again. The same choice covers tracker steps, OneWay Pins, vendors, NPCs, and hearth. The arrow name is the step, pin, vendor, NPC, or place you clicked.
+
 ---
 
 ## Module categories (overview)

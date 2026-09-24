@@ -13,9 +13,6 @@ ns.NPCs = NPCs
 
 local Location = OneWoW.Location
 
--- NPC note coordinates are stored as 0-100.
-local PERCENT_COORDS = { format = "percent" }
-
 function NPCs:GetNotesDB(storageType)
     return self:GetDataDB(storageType)
 end
@@ -109,7 +106,10 @@ end
 
 function NPCs:CreateWaypoint(_, npcData)
     if not npcData or not npcData.mapID or not npcData.coords then return false end
-    local set = Location.SetWaypoint(npcData.mapID, npcData.coords.x, npcData.coords.y, PERCENT_COORDS)
+    local set = Location.SetWaypoint(npcData.mapID, npcData.coords.x, npcData.coords.y, {
+        format = "percent",
+        title = npcData.name,
+    })
     if not set then
         return false, L["MSG_CANNOT_SET_WAYPOINT"]
     end

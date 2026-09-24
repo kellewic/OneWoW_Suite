@@ -333,7 +333,10 @@ local function PaintResults(list, catalogOk, total)
             goBtn:SetScript("OnClick", function(myself)
                 local data = myself:GetParent().hit
                 if data then
-                    Location.SetWaypoint(data.mapID, data.x, data.y, { format = "percent" })
+                    Location.SetWaypoint(data.mapID, data.x, data.y, {
+                        format = "percent",
+                        title = data.title,
+                    })
                 end
             end)
             row.goBtn = goBtn

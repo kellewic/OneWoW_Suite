@@ -30,12 +30,13 @@ local Navigation = ns.Navigation
 ---@param mapID number
 ---@param x number|nil  0-100 or 0-1
 ---@param y number|nil  0-100 or 0-1
+---@param title string|nil arrow name when the provider accepts one
 ---@return boolean opened
-function Navigation:OpenMapPin(mapID, x, y)
+function Navigation:OpenMapPin(mapID, x, y, title)
     mapID = tonumber(mapID)
     if not mapID or mapID == 0 then return false end
 
-    OneWoW.Location.SetWaypoint(mapID, x, y, { openMap = true })
+    OneWoW.Location.SetWaypoint(mapID, x, y, { openMap = true, title = title })
 
     return true
 end
@@ -128,7 +129,8 @@ local function MapPinScore(uiMapID)
     elseif mapType == Enum.UIMapType.Continent then
         score = score + 5
     end
-    if C_Map.CanSetUserWaypointOnMap(uiMapID) then
+    if OneWoW.Location.GetActiveProvider() ~= "tomtom"
+            and C_Map.CanSetUserWaypointOnMap(uiMapID) then
         score = score + 10
     end
     return score
@@ -242,8 +244,9 @@ end
 --- Super-tracks the official dungeon/raid pin when the client exposes it on that map.
 ---@param instanceID number
 ---@param entrances table|nil
+---@param title string|nil
 ---@return boolean opened
-function Navigation:OpenInstanceEntrance(instanceID, entrances)
+function Navigation:OpenInstanceEntrance(instanceID, entrances, title)
     local bestMapID, bestX, bestY, bestPoiID = ResolveInstanceEntrance(instanceID, entrances)
     if not bestMapID then
         return false
@@ -251,7 +254,11 @@ function Navigation:OpenInstanceEntrance(instanceID, entrances)
 
     -- User waypoint is the visible marker (quests use the same path). Official
     -- dungeon/raid AreaPOI super-track is a nicer arrow when the client has one.
-    self:OpenMapPin(bestMapID, bestX, bestY)
+    -- TomTom owns the arrow when it is the active provider.
+    self:OpenMapPin(bestMapID, bestX, bestY, title)
+    if OneWoW.Location.GetActiveProvider() == "tomtom" then
+        return true
+    end
     if SuperTrackDungeonEntrance(bestMapID, instanceID) then
         return true
     end

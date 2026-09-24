@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("ruRU", {
     ["OVR_ICON_CAT_MAP"] = "Маркеры карты",
     ["OVR_ICON_CAT_QUEST"] = "Значки заданий",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Путевые точки",
+    ["WAYPOINT_ARROW"] = "Стрелка маршрута",
     ["OVR_ICON_CAT_BAGS"] = "Сумки и предметы",
     ["OVR_ICON_CAT_STATUS"] = "Коллекция и статус",
     ["OVR_ICON_CAT_WARBAND"] = "Отряд и рейды",

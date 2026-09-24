@@ -13,7 +13,6 @@ local ipairs, format, tinsert, wipe = ipairs, format, tinsert, wipe
 
 -- Tracker steps store coordinates as 0-100, so the waypoint call declares that
 -- rather than letting Location guess from the magnitude.
-local PERCENT_COORDS = { format = "percent" }
 
 local LIST_TYPE_ICONS = {
     guide     = "Interface\\Icons\\INV_Misc_Book_09",
@@ -1257,7 +1256,10 @@ function ns.UI.CreateTrackerTab(parent)
                     if button == "LeftButton" then
                         local hasCoords = step.mapID and step.coordX and step.coordY and tonumber(step.mapID) and tonumber(step.coordX) and tonumber(step.coordY)
                         if hasCoords then
-                            if Location.SetWaypoint(step.mapID, step.coordX, step.coordY, PERCENT_COORDS) then
+                            if Location.SetWaypoint(step.mapID, step.coordX, step.coordY, {
+                                format = "percent",
+                                title = step.label or L["TRACKER_STEP_FALLBACK"],
+                            }) then
                                 print(format("%s %s", L["ADDON_CHAT_PREFIX"], format(L["TRACKER_WAYPOINT_SET"], step.label or L["TRACKER_STEP_FALLBACK"], tonumber(step.coordX), tonumber(step.coordY))))
                             else
                                 print(format("%s %s", L["ADDON_CHAT_PREFIX"], L["MSG_CANNOT_SET_WAYPOINT"]))

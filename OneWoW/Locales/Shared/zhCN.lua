@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("zhCN", {
     ["OVR_ICON_CAT_MAP"] = "地图标记",
     ["OVR_ICON_CAT_QUEST"] = "任务图标",
     ["OVR_ICON_CAT_WAYPOINTS"] = "路径点",
+    ["WAYPOINT_ARROW"] = "路径点箭头",
     ["OVR_ICON_CAT_BAGS"] = "背包与物品",
     ["OVR_ICON_CAT_STATUS"] = "收集与状态",
     ["OVR_ICON_CAT_WARBAND"] = "战团与团队副本",

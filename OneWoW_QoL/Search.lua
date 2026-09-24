@@ -4,6 +4,22 @@ local Search = OneWoW.Search
 local SR = OneWoW.SearchRegistry
 
 local portalsNav = { module = "qol", subtab = "portals" }
+local waypointsNav = { module = "qol", subtab = "waypoints" }
+
+Search:Register({
+    id = "qol:waypoints-arrow",
+    title = "WAYPOINT_ARROW",
+    description = "WAYPOINTS_CARD_DESC",
+    scope = "OneWoW_QoL",
+    tags = { "waypoint", "tomtom", "arrow", "map", "pin" },
+    addonKey = "OneWoW_QoL",
+    path = {
+        SR.ModuleLabel("qol"),
+        SR.TabLabel("qol", "waypoints"),
+        function() return ns.L["WAYPOINT_ARROW"] end,
+    },
+    nav = waypointsNav,
+})
 
 local function PortalsPath(leafKey)
     return {

@@ -1259,7 +1259,7 @@ local function PinLocationOnMap(addon, vendor, mapID)
         end
     end
     if mapID then
-        ns.Navigation:OpenMapPin(mapID, loc and loc.x, loc and loc.y)
+        ns.Navigation:OpenMapPin(mapID, loc and loc.x, loc and loc.y, vendor and vendor.name)
         return
     end
     if addon and not addon.CreateWaypoint(vendor, mapID) then

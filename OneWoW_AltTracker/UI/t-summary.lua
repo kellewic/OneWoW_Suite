@@ -6,7 +6,6 @@ local Location = OneWoW.Location
 
 -- Hearth coordinates are stored as raw API fractions here, unlike the 0-100 the
 -- rest of the suite keeps. The map opens even when no coordinates were captured.
-local HEARTH_WAYPOINT = { format = "fraction", openMap = true }
 
 ns.UI = ns.UI or {}
 
@@ -684,7 +683,11 @@ function ns.UI.RefreshSummaryTab(summaryTab)
 
             hearthContainer:EnableMouse(true)
             hearthContainer:SetScript("OnMouseUp", function()
-                Location.SetWaypoint(hearthMapID, hearthX, hearthY, HEARTH_WAYPOINT)
+                Location.SetWaypoint(hearthMapID, hearthX, hearthY, {
+                    format = "fraction",
+                    openMap = true,
+                    title = hearthLocation,
+                })
             end)
             hearthContainer:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")

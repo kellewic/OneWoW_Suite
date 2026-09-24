@@ -422,6 +422,9 @@ OneWoW.Locale:Register(ADDON_NAME, "koKR", {
 
     ["TAB_FEATURES"] = "QoL 기능",
     ["TAB_TOGGLES"] = "토글",
+    ["WAYPOINTS_CARD_DESC"] = "단계, 핀, 상인 또는 귀환 지점을 클릭할 때 OneWoW가 좌표를 보내는 곳입니다.",
+    ["WAYPOINTS_PROVIDER_BLIZZARD"] = "블리자드 지도",
+    ["WAYPOINTS_PROVIDER_TOMTOM"] = "TomTom",
 
     ["FEATURES_LIST_TITLE"] = "기능",
     ["FEATURES_FAVORITE_TT_TITLE"] = "즐겨찾기",

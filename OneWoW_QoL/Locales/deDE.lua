@@ -423,6 +423,9 @@ OneWoW.Locale:Register(ADDON_NAME, "deDE", {
 
     ["TAB_FEATURES"] = "QoL-Funktionen",
     ["TAB_TOGGLES"] = "Schalter",
+    ["WAYPOINTS_CARD_DESC"] = "Wohin OneWoW eine Koordinate schickt, wenn du einen Schritt, eine Markierung, einen Händler oder den Ruhestein anklickst.",
+    ["WAYPOINTS_PROVIDER_BLIZZARD"] = "Blizzard-Karte",
+    ["WAYPOINTS_PROVIDER_TOMTOM"] = "TomTom",
 
     ["FEATURES_LIST_TITLE"] = "Funktionen",
     ["FEATURES_FAVORITE_TT_TITLE"] = "Favorit",

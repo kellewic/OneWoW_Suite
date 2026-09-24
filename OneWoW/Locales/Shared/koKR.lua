@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("koKR", {
     ["OVR_ICON_CAT_MAP"] = "지도 표시",
     ["OVR_ICON_CAT_QUEST"] = "퀘스트 아이콘",
     ["OVR_ICON_CAT_WAYPOINTS"] = "웨이포인트",
+    ["WAYPOINT_ARROW"] = "웨이포인트 화살표",
     ["OVR_ICON_CAT_BAGS"] = "가방 및 아이템",
     ["OVR_ICON_CAT_STATUS"] = "수집 및 상태",
     ["OVR_ICON_CAT_WARBAND"] = "전투부대 및 공격대",

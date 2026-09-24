@@ -423,6 +423,9 @@ OneWoW.Locale:Register(ADDON_NAME, "ruRU", {
 
     ["TAB_FEATURES"] = "Функции QoL",
     ["TAB_TOGGLES"] = "Переключатели",
+    ["WAYPOINTS_CARD_DESC"] = "Куда OneWoW отправляет координату при щелчке по шагу, метке, торговцу или дому.",
+    ["WAYPOINTS_PROVIDER_BLIZZARD"] = "Карта Blizzard",
+    ["WAYPOINTS_PROVIDER_TOMTOM"] = "TomTom",
 
     ["FEATURES_LIST_TITLE"] = "Функции",
     ["FEATURES_FAVORITE_TT_TITLE"] = "Избранное",

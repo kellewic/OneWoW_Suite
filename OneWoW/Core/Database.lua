@@ -317,6 +317,11 @@ local DEFAULTS = {
             upgrades       = { enabled = false, sound = SOUNDKIT.READY_CHECK },
             anchor         = { visible = true, locked = false },
         },
+        -- Waypoint arrow. provider is the saved id; Location.GetActiveProvider
+        -- falls back to blizzard when that id cannot run.
+        waypoints = {
+            arrow = { provider = "blizzard" },
+        },
         tooltips = {
             general = { enabled = true },
             technicalids = {

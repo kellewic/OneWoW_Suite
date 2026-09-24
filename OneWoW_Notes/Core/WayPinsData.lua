@@ -21,7 +21,6 @@ local WayPins = ns.DataModule:New("waypins", nil, {})
 ns.WayPins = WayPins
 
 local DEFAULT_ICON = { kind = "list", value = "VignetteEvent-SuperTracked" }
-local PERCENT_COORDS = { format = "percent" }
 local idSeq = 0
 
 local function CopyIcon(spec)
@@ -313,7 +312,10 @@ function WayPins:Track(pinID)
     if ns.WayPinsMap then
         return ns.WayPinsMap:TrackPin(pin)
     end
-    return Location.SetWaypoint(pin.mapID, pin.x, pin.y, PERCENT_COORDS)
+    return Location.SetWaypoint(pin.mapID, pin.x, pin.y, {
+        format = "percent",
+        title = pin.title,
+    })
 end
 
 function WayPins:MapDisplayName(mapID)

@@ -423,6 +423,9 @@ OneWoW.Locale:Register(ADDON_NAME, "zhCN", {
 
     ["TAB_FEATURES"] = "QoL 功能",
     ["TAB_TOGGLES"] = "开关",
+    ["WAYPOINTS_CARD_DESC"] = "点击步骤、标记、商人或炉石时，OneWoW 把坐标发到哪里。",
+    ["WAYPOINTS_PROVIDER_BLIZZARD"] = "暴雪地图",
+    ["WAYPOINTS_PROVIDER_TOMTOM"] = "TomTom",
 
     ["FEATURES_LIST_TITLE"] = "功能",
     ["FEATURES_FAVORITE_TT_TITLE"] = "收藏",

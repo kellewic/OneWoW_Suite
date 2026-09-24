@@ -38,6 +38,9 @@
 #### Quest Tools
 - Quest Automation can require Shift, Ctrl, or Alt before auto-accept, turn-in, or quest gossip runs. Leave it off and holding that key skips those actions, including turn-in.
 
+#### Waypoints
+- Waypoint arrow (QoL, Waypoints) chooses where a click sends a coordinate: the Blizzard map pin, or TomTom when that addon is enabled. TomTom shows Not Detected until it is loaded. The same choice covers tracker steps, OneWay Pins, vendors, NPCs, and hearth.
+
 ---
 
 ### Mail

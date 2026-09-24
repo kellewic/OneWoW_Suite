@@ -22,7 +22,7 @@
 
 ## OneWay Pins
 
-OneWay Pins are custom map landmarks: banks, craft tables, vendors, and anything you come back to. They stay on the world map and minimap with your own icons until you delete them. Click a pin for a **live waypoint** that clears when you arrive; the icon stays.
+OneWay Pins are custom map landmarks: banks, craft tables, vendors, and anything you come back to. They stay on the world map and minimap with your own icons until you delete them. Click a pin for a **live waypoint** that clears when you arrive; the icon stays. That live waypoint follows **Waypoint arrow** under QoL → Waypoints.
 
 Turn **OneWay Pins** off in **Manage Features** (Settings) under Notes to hide the tab, map icons, map click, lists, and add menus. Saved pins stay. Journal notes, zone notes, NPC notes, and the rest of Notes keep working. Open **OneWay Pins settings** from Notes settings, the Pins tab, or the world-map pin button for map, click, size, and animation options.
 

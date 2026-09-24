@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("ptBR", {
     ["OVR_ICON_CAT_MAP"] = "Marcadores de mapa",
     ["OVR_ICON_CAT_QUEST"] = "Ícones de missão",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Pontos de passagem",
+    ["WAYPOINT_ARROW"] = "Seta de rota",
     ["OVR_ICON_CAT_BAGS"] = "Bolsas e itens",
     ["OVR_ICON_CAT_STATUS"] = "Coleção e status",
     ["OVR_ICON_CAT_WARBAND"] = "Bando de Guerra e raides",

@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("frFR", {
     ["OVR_ICON_CAT_MAP"] = "Marqueurs de carte",
     ["OVR_ICON_CAT_QUEST"] = "Icônes de quête",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Points de passage",
+    ["WAYPOINT_ARROW"] = "Flèche de passage",
     ["OVR_ICON_CAT_BAGS"] = "Sacs et objets",
     ["OVR_ICON_CAT_STATUS"] = "Collection et état",
     ["OVR_ICON_CAT_WARBAND"] = "Bataillon et raids",

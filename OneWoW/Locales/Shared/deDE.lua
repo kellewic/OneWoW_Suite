@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("deDE", {
     ["OVR_ICON_CAT_MAP"] = "Kartenmarkierungen",
     ["OVR_ICON_CAT_QUEST"] = "Questsymbole",
     ["OVR_ICON_CAT_WAYPOINTS"] = "Wegpunkte",
+    ["WAYPOINT_ARROW"] = "Wegpunktpfeil",
     ["OVR_ICON_CAT_BAGS"] = "Taschen & Gegenstände",
     ["OVR_ICON_CAT_STATUS"] = "Sammlung & Status",
     ["OVR_ICON_CAT_WARBAND"] = "Kriegsmeute & Schlachtzüge",

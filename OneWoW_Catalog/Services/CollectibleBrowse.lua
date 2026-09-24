@@ -788,7 +788,7 @@ function Browse.JumpToRare(lock)
     if not lock or not lock.mapID then
         return
     end
-    ns.Navigation:OpenMapPin(lock.mapID, lock.x, lock.y)
+    ns.Navigation:OpenMapPin(lock.mapID, lock.x, lock.y, lock.name or lock.title)
 end
 
 function Browse.JumpToAchievement(achievementID)

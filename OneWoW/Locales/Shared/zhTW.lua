@@ -326,6 +326,7 @@ ns.Locale:RegisterShared("zhTW", {
     ["OVR_ICON_CAT_MAP"] = "地圖標記",
     ["OVR_ICON_CAT_QUEST"] = "任務圖示",
     ["OVR_ICON_CAT_WAYPOINTS"] = "路徑點",
+    ["WAYPOINT_ARROW"] = "路徑點箭頭",
     ["OVR_ICON_CAT_BAGS"] = "背包與物品",
     ["OVR_ICON_CAT_STATUS"] = "收集與狀態",
     ["OVR_ICON_CAT_WARBAND"] = "戰隊與團隊副本",

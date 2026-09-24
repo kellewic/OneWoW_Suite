@@ -423,6 +423,9 @@ OneWoW.Locale:Register(ADDON_NAME, "esMX", {
 
     ["TAB_FEATURES"] = "Funciones QoL",
     ["TAB_TOGGLES"] = "Interruptores",
+    ["WAYPOINTS_CARD_DESC"] = "Adónde OneWoW envía una coordenada al hacer clic en un paso, un marcador, un vendedor o un hogar.",
+    ["WAYPOINTS_PROVIDER_BLIZZARD"] = "Mapa de Blizzard",
+    ["WAYPOINTS_PROVIDER_TOMTOM"] = "TomTom",
 
     ["FEATURES_LIST_TITLE"] = "Funciones",
     ["FEATURES_FAVORITE_TT_TITLE"] = "Favorito",

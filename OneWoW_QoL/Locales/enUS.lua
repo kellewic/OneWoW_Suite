@@ -423,6 +423,9 @@ OneWoW.Locale:Register(ADDON_NAME, "enUS", {
 
     ["TAB_FEATURES"] = "QoL Features",
     ["TAB_TOGGLES"] = "Toggles",
+    ["WAYPOINTS_CARD_DESC"] = "Where OneWoW sends a coordinate when you click a step, pin, vendor, or hearth.",
+    ["WAYPOINTS_PROVIDER_BLIZZARD"] = "Blizzard map",
+    ["WAYPOINTS_PROVIDER_TOMTOM"] = "TomTom",
 
     ["FEATURES_LIST_TITLE"] = "Features",
     ["FEATURES_FAVORITE_TT_TITLE"] = "Favorite",

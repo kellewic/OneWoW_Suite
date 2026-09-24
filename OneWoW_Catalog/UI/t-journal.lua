@@ -1459,7 +1459,7 @@ local function CreateInstanceListRow(parent, _)
             if not instData or not instData.instanceID then
                 return
             end
-            ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances)
+            ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances, instData.name)
         end,
     })
     pinBtn:SetPoint("TOPRIGHT", favBtn, "TOPLEFT", -4, 0)
@@ -1480,7 +1480,7 @@ local function CreateInstanceListRow(parent, _)
             end
             return
         end
-        ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances)
+        ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances, instData.name)
     end)
     card.pinBtn = pinBtn
 
@@ -2144,7 +2144,7 @@ local function AddEncounterNavLinks(encBtn, encounter, instData)
             tooltipTitle = L["JOURNAL_SEE_MAP"],
             tooltipText = L["JOURNAL_SEE_MAP_TT"],
             onClick = function()
-                ns.Navigation:OpenMapPin(mapID, x, y)
+                ns.Navigation:OpenMapPin(mapID, x, y, encounter.name)
             end,
         })
         seeMap:SetFrameLevel((encBtn:GetFrameLevel() or 0) + 2)
@@ -3779,7 +3779,7 @@ function ns.UI.CreateJournalTab(parent)
             if not instData or not instData.instanceID then
                 return
             end
-            ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances)
+            ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances, instData.name)
         end,
     })
     detailPinBtn:SetPoint("TOPRIGHT", panels.detailPanel, "TOPRIGHT", -32, -8)
@@ -3801,7 +3801,7 @@ function ns.UI.CreateJournalTab(parent)
             end
             return
         end
-        ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances)
+        ns.Navigation:OpenInstanceEntrance(instData.instanceID, instData.entrances, instData.name)
     end)
     panels.detailPinBtn = detailPinBtn
 
