@@ -25,6 +25,7 @@ Reusable plans:
 * Keep / cap / top-up rules for items and gold; in-transit mail always counts toward restock targets
 * When topping up, choose whether the recipient's bags, bank, Warband Bank, and guild bank count as already owned (Warband Bank starts on). You still send from your bags.
 * Role distribute: fill first, round-robin, or equal split
+* **Other realms**, under the target: Send (the usual full letter), Cancel shipment (send nothing when someone outside this realm group cannot take the whole letter; Activity says who), or Warbound items only (full letter in this realm group, Warbound items to your alts on other realms). Connected realms count as this realm. Shipments you already have stay on Send until you change them.
 * Auto-run can plan on mailbox open and hold for review on Activity
 
 ---

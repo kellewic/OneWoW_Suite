@@ -83,6 +83,10 @@ local SKIP_MSG = {
     ["cap-zero"] = "LOG_SKIP_CAP_ZERO",
     ["no-match"] = "LOG_SKIP_NO_MATCH",
     ["nothing"] = "LOG_SKIP_NOTHING",
+    ["cross-realm-cancel"] = "LOG_SKIP_CROSS_REALM_CANCEL",
+    ["cross-realm-warbound"] = "LOG_SKIP_CROSS_REALM_WARBAND",
+    ["cross-realm-gold"] = "LOG_SKIP_CROSS_REALM_GOLD",
+    ["cross-realm-other"] = "LOG_SKIP_CROSS_REALM_OTHER",
 }
 
 local function LogSkippedPlans(result)
@@ -95,6 +99,12 @@ local function LogSkippedPlans(result)
             ns.RunLog:Add("info", name, plan.target, L[key], {
                 code = reason,
                 detail = plan.skipDetail,
+            })
+        end
+        if plan.omitDetail then
+            local name = plan.shipment and (plan.shipment.name or plan.shipment.id) or nil
+            ns.RunLog:Add("info", name, plan.target, plan.omitDetail, {
+                code = "cross-realm-omit",
             })
         end
     end
@@ -231,7 +241,9 @@ local function MarkSessionResults(result, summary)
         if id and ShipmentFrequency(shipment) == "session" and not plan.error then
             local targetKey = PlanTargetKey(plan)
             local failed = failedTargets[id] and targetKey and failedTargets[id][targetKey]
-            if not failed then
+            if plan.skipReason == "cross-realm-cancel" then
+                sessionDone[id] = nil
+            elseif not failed then
                 -- Success including empty plan / no jobs.
                 MarkTargetSuccess(shipment, targetKey)
             end

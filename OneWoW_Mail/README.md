@@ -22,6 +22,7 @@ Reusable logistics plans for mailing items and gold:
 - Per-item rules: leave some on this character, cap send amount, or **top up** the target using known alt inventory (bags, bank, Warband Bank, optional guild bank; in-transit mail always counts)
 - Gold rules: keep / cap / restock on the recipient
 - Role distribute modes: fill first, round-robin, or equal split
+- **Other realms** (under the target): Send keeps today's full letter. Cancel shipment sends nothing when someone outside this realm group cannot take the whole letter, and Activity says who. Warbound items only still sends the full letter inside this realm group, and sends Warbound items to your alts on other realms. Connected realms count as this realm. Existing shipments stay on Send until you change them.
 - Auto-run modes can plan on mailbox open and wait for review on Activity, or send according to shipment settings
 - Skip role members already successfully shipped this session
 

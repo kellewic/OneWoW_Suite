@@ -35,7 +35,7 @@ Player overview and install: [`../README.md`](../README.md).
 ## Role-targeted shipments
 
 - Roles live in core (`OneWoW.AltScope` / `OneWoW_DB.global.roles`); Mail does not depend on AltTracker hub UI.
-- Shipment fields: `targetKind` (`char`|`role`), `target` / `targetRoleId`, `roleDistribute` (`fill_first`|`round_robin`|`equal_split`).
+- Shipment fields: `targetKind` (`char`|`role`), `target` / `targetRoleId`, `roleDistribute` (`fill_first`|`round_robin`|`equal_split`), `crossRealm` (`send`|`cancel`|`warbound`, missing = `send`).
 - Plan-time expand to N recipients (exclude self); keep/cap/restock apply per recipient; shared sender pool uses `roleDistribute` when underfunded.
 - `restockSources` (`bags` / `bank` / `warband` / `guild`) is recipient-owned stock for top-up, not sender pull. Sender always mails from bags. Missing `warband` migrates to `true`. In-transit always counts. `shipments.schema_version` and per-row `editedAt` (`time()` on player edit). AutoRun `sessionDone` is memory-only. Soulbound is forced off at plan time.
 

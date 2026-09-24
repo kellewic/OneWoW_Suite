@@ -36,6 +36,12 @@
 
 ---
 
+### Mail
+#### Shipments
+- Each shipment has an Other realms choice under the target. Send is unchanged. Cancel shipment sends nothing when someone outside this realm group cannot take the whole letter, and Activity says who. Warbound items only still mails this realm group in full, and mails Warbound items to your alts on other realms.
+
+---
+
 ### AltTracker
 #### Auctions
 - Expired auction alerts only count listings still waiting at the AH or in the mail, not every expired listing in history.
@@ -43,7 +49,7 @@
 
 ---
 
-*No user-facing changes this release for Home, DevTool, Mail, Notes, Shopping List, Bags, or Direct Deposit.*
+*No user-facing changes this release for Home, DevTool, Notes, Shopping List, Bags, or Direct Deposit.*
 
 ---
 

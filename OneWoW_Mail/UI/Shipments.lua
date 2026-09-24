@@ -86,6 +86,7 @@ local function MakeShipment(name)
         target = "",
         targetRoleId = "",
         roleDistribute = "fill_first",
+        crossRealm = "send",
         keepQty = 0,
         maxQtyEnabled = false,
         maxQty = 0,
@@ -570,6 +571,11 @@ local function EnsureDetailWidgets()
         round_robin = L["ROLE_DIST_RR"],
         equal_split = L["ROLE_DIST_EQUAL"],
     }
+    local CROSS_LABELS = {
+        send = L["CROSS_REALM_SEND"],
+        cancel = L["CROSS_REALM_CANCEL"],
+        warbound = L["CROSS_REALM_WARBAND"],
+    }
 
     dw.roleDropdown = OneWoW_GUI:CreateDropdown(content, {
         width = 200,
@@ -614,6 +620,47 @@ local function EnsureDetailWidgets()
 
     nextY(28)
 
+    dw.crossLabel = OneWoW_GUI:CreateFS(content, 11)
+    dw.crossLabel:SetPoint("TOPLEFT", content, "TOPLEFT", 8, y)
+    dw.crossLabel:SetText(L["CROSS_REALM"] .. ":")
+    AttachTooltip(dw.crossLabel, L["CROSS_REALM"], L["TT_CROSS_REALM"])
+    nextY(16)
+
+    dw.crossDropdown = OneWoW_GUI:CreateDropdown(content, {
+        width = 220,
+        height = 24,
+        text = CROSS_LABELS.send,
+    })
+    dw.crossDropdown:SetPoint("TOPLEFT", content, "TOPLEFT", 8, y)
+    OneWoW_GUI:AttachFilterMenu(dw.crossDropdown, {
+        searchable = false,
+        menuHeight = 100,
+        buildItems = function()
+            return {
+                { text = CROSS_LABELS.send, value = "send", tooltip = L["TT_CROSS_REALM_SEND"] },
+                { text = CROSS_LABELS.cancel, value = "cancel", tooltip = L["TT_CROSS_REALM_CANCEL"] },
+                { text = CROSS_LABELS.warbound, value = "warbound", tooltip = L["TT_CROSS_REALM_WARBAND"] },
+            }
+        end,
+        onSelect = function(value, text)
+            local s = Current()
+            if s then
+                s.crossRealm = value
+                TouchEdited(s)
+            end
+            dw.crossDropdown._text:SetText(text)
+            dw.crossDropdown._activeValue = value
+        end,
+        getActiveValue = function()
+            local s = Current()
+            return (s and s.crossRealm) or "send"
+        end,
+    })
+    AttachTooltip(dw.crossDropdown, L["CROSS_REALM"], L["TT_CROSS_REALM"])
+    nextY(36)
+
+    local rulesTopChar = y
+
     dw.distLabel = OneWoW_GUI:CreateFS(content, 11)
     dw.distLabel:SetPoint("TOPLEFT", content, "TOPLEFT", 8, y)
     dw.distLabel:SetText(L["ROLE_DISTRIBUTE"] .. ":")
@@ -653,6 +700,26 @@ local function EnsureDetailWidgets()
     AttachTooltip(dw.distDropdown, L["ROLE_DISTRIBUTE"], L["TT_ROLE_DISTRIBUTE"])
     nextY(36)
 
+    local rulesTopRole = y
+    dw.rulesTop = rulesTopChar
+
+    local function AnchorRules()
+        local top = dw.rulesTop
+        if dw.itemPanel then
+            dw.itemPanel:ClearAllPoints()
+            dw.itemPanel:SetPoint("TOPLEFT", content, "TOPLEFT", 0, top)
+            dw.itemPanel:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, top)
+        end
+        if dw.goldPanel then
+            dw.goldPanel:ClearAllPoints()
+            dw.goldPanel:SetPoint("TOPLEFT", content, "TOPLEFT", 0, top)
+            dw.goldPanel:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, top)
+        end
+        if dw.LayoutPreviewUnderRules then
+            dw.LayoutPreviewUnderRules()
+        end
+    end
+
     function dw.SyncTargetKind()
         local s = Current()
         local kind = (s and s.targetKind) or "char"
@@ -667,6 +734,7 @@ local function EnsureDetailWidgets()
             dw.roleDropdown:Show()
             dw.distLabel:Show()
             dw.distDropdown:Show()
+            dw.rulesTop = rulesTopRole
         else
             dw.targetBox:Show()
             if dw.targetSuggest and dw.targetSuggest.chevron then
@@ -675,15 +743,15 @@ local function EnsureDetailWidgets()
             dw.roleDropdown:Hide()
             dw.distLabel:Hide()
             dw.distDropdown:Hide()
+            dw.rulesTop = rulesTopChar
         end
+        AnchorRules()
     end
-
-    local rulesTop = y
 
     -- Item-specific panel.
     dw.itemPanel = CreateFrame("Frame", nil, content)
-    dw.itemPanel:SetPoint("TOPLEFT", content, "TOPLEFT", 0, rulesTop)
-    dw.itemPanel:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, rulesTop)
+    dw.itemPanel:SetPoint("TOPLEFT", content, "TOPLEFT", 0, rulesTopRole)
+    dw.itemPanel:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, rulesTopRole)
 
     local iy = 0
     local function nextIY(delta)
@@ -837,8 +905,8 @@ local function EnsureDetailWidgets()
 
     -- Gold-specific panel (same vertical slot as item panel).
     dw.goldPanel = CreateFrame("Frame", nil, content)
-    dw.goldPanel:SetPoint("TOPLEFT", content, "TOPLEFT", 0, rulesTop)
-    dw.goldPanel:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, rulesTop)
+    dw.goldPanel:SetPoint("TOPLEFT", content, "TOPLEFT", 0, rulesTopRole)
+    dw.goldPanel:SetPoint("TOPRIGHT", content, "TOPRIGHT", 0, rulesTopRole)
     dw.goldPanel:Hide()
 
     local gy = 0
@@ -1046,7 +1114,7 @@ local function EnsureDetailWidgets()
         dw.previewScroll:SetPoint("TOPLEFT", panel, "BOTTOMLEFT", 8, -10)
         dw.previewScroll:SetPoint("TOPRIGHT", panel, "BOTTOMRIGHT", -8, -10)
         dw.previewScroll:SetHeight(PREVIEW_H)
-        content:SetHeight(math.max(1, -(rulesTop - rulesH - 10) + PREVIEW_H + 10))
+        content:SetHeight(math.max(1, -(dw.rulesTop - rulesH - 10) + PREVIEW_H + 10))
         local width = math.max(100, (dw.previewScroll:GetWidth() or 400) - PREVIEW_SCROLL_W)
         dw.previewChild:SetWidth(width)
     end
@@ -1059,6 +1127,10 @@ local function EnsureDetailWidgets()
         ["cap-zero"] = "PREVIEW_SKIP_CAP_ZERO",
         ["no-match"] = "PREVIEW_SKIP_NO_MATCH",
         ["nothing"] = "PREVIEW_SKIP_NOTHING",
+        ["cross-realm-cancel"] = "PREVIEW_SKIP_CROSS_REALM_CANCEL",
+        ["cross-realm-warbound"] = "PREVIEW_SKIP_CROSS_REALM_WARBAND",
+        ["cross-realm-gold"] = "PREVIEW_SKIP_CROSS_REALM_GOLD",
+        ["cross-realm-other"] = "PREVIEW_SKIP_CROSS_REALM_OTHER",
     }
     local SKIP_FULL = {
         ["restock-met"] = "LOG_SKIP_RESTOCK_MET",
@@ -1067,6 +1139,10 @@ local function EnsureDetailWidgets()
         ["cap-zero"] = "LOG_SKIP_CAP_ZERO",
         ["no-match"] = "LOG_SKIP_NO_MATCH",
         ["nothing"] = "LOG_SKIP_NOTHING",
+        ["cross-realm-cancel"] = "LOG_SKIP_CROSS_REALM_CANCEL",
+        ["cross-realm-warbound"] = "LOG_SKIP_CROSS_REALM_WARBAND",
+        ["cross-realm-gold"] = "LOG_SKIP_CROSS_REALM_GOLD",
+        ["cross-realm-other"] = "LOG_SKIP_CROSS_REALM_OTHER",
     }
 
     local function CommitDetailFields()
@@ -1081,6 +1157,7 @@ local function EnsureDetailWidgets()
         else
             s.target = dw.targetSuggest:GetText()
         end
+        s.crossRealm = dw.crossDropdown._activeValue or s.crossRealm or "send"
         s.kind = (dw.kindButtons.gold:GetChecked() and "gold") or "items"
         s.frequency = (dw.freqButtons.visit:GetChecked() and "visit") or "session"
         if s.kind == "gold" then
@@ -1177,6 +1254,12 @@ local function EnsureDetailWidgets()
                     text = string.format("%s  |  %s", who, L[shortKey]),
                     tipTitle = who,
                     tipBody = tipBody,
+                })
+            elseif plan.omitDetail then
+                tinsert(rows, {
+                    text = string.format("%s  |  %s", who, L["PREVIEW_SKIP_CROSS_REALM_WARBAND"]),
+                    tipTitle = who,
+                    tipBody = plan.omitDetail,
                 })
             end
         end
@@ -1407,6 +1490,17 @@ local function RefreshDetail()
         equal_split = L["ROLE_DIST_EQUAL"],
     }
     dw.distDropdown._text:SetText(distLabels[dist] or distLabels.fill_first)
+    local cross = s.crossRealm or "send"
+    if cross ~= "send" and cross ~= "cancel" and cross ~= "warbound" then
+        cross = "send"
+    end
+    local crossLabels = {
+        send = L["CROSS_REALM_SEND"],
+        cancel = L["CROSS_REALM_CANCEL"],
+        warbound = L["CROSS_REALM_WARBAND"],
+    }
+    dw.crossDropdown._activeValue = cross
+    dw.crossDropdown._text:SetText(crossLabels[cross] or crossLabels.send)
     dw.SyncTargetKind()
     dw.matchBox:SetText(s.match or "")
     dw.matchBox:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_PRIMARY"))

@@ -74,6 +74,9 @@ function ns:InitializeDatabase()
         if not shipment.roleDistribute then
             shipment.roleDistribute = "fill_first"
         end
+        if shipment.crossRealm ~= "send" and shipment.crossRealm ~= "cancel" and shipment.crossRealm ~= "warbound" then
+            shipment.crossRealm = "send"
+        end
         shipment.targetRoleId = shipment.targetRoleId or ""
         if shipment.kind == "gold" then
             shipment.keepCopper = shipment.keepCopper or 0
@@ -142,6 +145,7 @@ function ns:EnsurePresetShipments()
             targetKind = "char",
             targetRoleId = "",
             roleDistribute = "fill_first",
+            crossRealm = "send",
             keepQty = 0,
             maxQtyEnabled = false,
             maxQty = 0,
@@ -160,6 +164,7 @@ function ns:EnsurePresetShipments()
             targetKind = "char",
             targetRoleId = "",
             roleDistribute = "fill_first",
+            crossRealm = "send",
             keepQty = 0,
             maxQtyEnabled = false,
             maxQty = 0,
@@ -178,6 +183,7 @@ function ns:EnsurePresetShipments()
             targetKind = "char",
             targetRoleId = "",
             roleDistribute = "fill_first",
+            crossRealm = "send",
             keepQty = 0,
             maxQtyEnabled = false,
             maxQty = 0,
@@ -196,6 +202,7 @@ function ns:EnsurePresetShipments()
             targetKind = "char",
             targetRoleId = "",
             roleDistribute = "fill_first",
+            crossRealm = "send",
             keepQty = 0,
             maxQtyEnabled = false,
             maxQty = 0,
@@ -214,6 +221,7 @@ function ns:EnsurePresetShipments()
             targetKind = "char",
             targetRoleId = "",
             roleDistribute = "fill_first",
+            crossRealm = "send",
             keepQty = 0,
             maxQtyEnabled = false,
             maxQty = 0,

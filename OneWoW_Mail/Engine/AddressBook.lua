@@ -129,6 +129,49 @@ function AddressBook:IsSelfRecipient(recipient)
     return false
 end
 
+local function NormRealm(realm)
+    if not realm or realm == "" then
+        return ""
+    end
+    return strlower((tostring(realm):gsub("%s+", "")))
+end
+
+--- Realm half of a mail recipient. A bare name is this character's realm.
+---@param recipient string|nil
+---@return string normalized realm, spaces removed, lower case
+function AddressBook:RecipientRealm(recipient)
+    recipient = strtrim(recipient or "")
+    local _, realm = strsplit("-", recipient, 2)
+    if not realm or strtrim(realm) == "" then
+        realm = GetNormalizedRealmName() or GetRealmName() or ""
+    end
+    return NormRealm(realm)
+end
+
+--- True when `recipient` is on this realm or a connected realm.
+--- Connected realms share mail with this character (gold and non-Warbound items).
+---@param recipient string|nil
+---@return boolean
+function AddressBook:IsSameRealmGroup(recipient)
+    local realm = self:RecipientRealm(recipient)
+    if realm == "" then
+        return true
+    end
+    local own = NormRealm(GetNormalizedRealmName() or GetRealmName() or "")
+    if realm == own then
+        return true
+    end
+    local connected = C_AutoComplete.GetAutoCompleteRealms()
+    if connected then
+        for _, name in ipairs(connected) do
+            if NormRealm(name) == realm then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 --- Build address suggestions: alts → favorites → recent → contacts → friends → guild.
 ---@return table entries { { text, source, classFile? }, ... }
 function AddressBook:GetSuggestions()

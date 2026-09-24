@@ -19,6 +19,26 @@ local DISTRIBUTE_FILL = "fill_first"
 local DISTRIBUTE_RR = "round_robin"
 local DISTRIBUTE_EQUAL = "equal_split"
 
+local function CrossRealmMode(shipment)
+    local mode = shipment and shipment.crossRealm
+    if mode == "cancel" or mode == "warbound" then
+        return mode
+    end
+    return "send"
+end
+
+--- "full" shares this realm group. "warbound" is a known alt outside it.
+--- "none" is anyone else outside the group.
+local function RealmTier(target)
+    if ns.AddressBook:IsSameRealmGroup(target) then
+        return "full"
+    end
+    if ns.AddressBook:IsSuiteAlt(target) then
+        return "warbound"
+    end
+    return "none"
+end
+
 local function SlotStackCount(slot)
     return slot.stackCount or slot.count or slot.quantity or 1
 end
@@ -124,12 +144,15 @@ local function ScanMatchingSlots(pred, blacklist, exclusions)
                     ns.ItemLabel.RequestLoadIfNeeded(itemID, link)
                     local props = PE:BuildProps(itemID, bag, slot)
                     if props and not props.isSoulbound and pred(props) then
+                        local bindKnown = rawget(props, "currentbind") ~= nil
                         tinsert(out, {
                             bag = bag,
                             slot = slot,
                             itemID = itemID,
                             count = info.stackCount or 1,
                             link = link,
+                            isWarbound = bindKnown and props.isWarbound and true or false,
+                            bindKnown = bindKnown,
                         })
                     end
                 end
@@ -364,11 +387,41 @@ local function PlanGoldShipment(shipment, skipSet)
     -- allocate send amounts from (pool - postage * potential), then create jobs.
     local plans = {}
     local sendPool = pool
-    local alloc, meta = AllocateGold(shipment, targets, sendPool)
+    local goldTargets = targets
+    if CrossRealmMode(shipment) == "warbound" then
+        goldTargets = {}
+        for _, target in ipairs(targets) do
+            if RealmTier(target) == "full" then
+                tinsert(goldTargets, target)
+            end
+        end
+    end
+    local alloc, meta = AllocateGold(shipment, goldTargets, sendPool)
 
     -- Re-walk: each successful send costs postage; shrink later if pool can't cover.
     local remainingPool = pool
     for _, target in ipairs(targets) do
+        if CrossRealmMode(shipment) == "warbound" and RealmTier(target) ~= "full" then
+            local need, have = GoldNeed(shipment, target)
+            local reason = "cross-realm-gold"
+            local detail
+            if RealmTier(target) == "none" then
+                reason = "cross-realm-other"
+            end
+            if need == 0 and shipment.restock and have ~= nil then
+                reason = "restock-met"
+                detail = string.format(
+                    ns.L["LOG_SKIP_RESTOCK_DETAIL"],
+                    OneWoW.Format.FormatGold(have),
+                    OneWoW.Format.FormatGold(shipment.restockCopper or 0)
+                )
+            elseif shipment.maxCopperEnabled and (shipment.maxCopper or 0) == 0 then
+                reason = "cap-zero"
+            elseif need == 0 then
+                reason = "nothing"
+            end
+            tinsert(plans, EmptyPlan(shipment, target, reason, detail))
+        else
         local info = meta[target] or {}
         local want = alloc[target] or 0
         if want > 0 then
@@ -428,6 +481,7 @@ local function PlanGoldShipment(shipment, skipSet)
                 reason = "nothing"
             end
             tinsert(plans, EmptyPlan(shipment, target, reason))
+        end
         end
     end
 
@@ -584,8 +638,14 @@ local function PlanItemsShipment(shipment, reserved, skipSet)
     for _, loc in ipairs(slots) do
         local row = byItem[loc.itemID]
         if not row then
-            row = { itemID = loc.itemID, total = 0, slots = {} }
+            row = { itemID = loc.itemID, total = 0, slots = {}, isWarbound = true, bindKnown = true }
             byItem[loc.itemID] = row
+        end
+        if not loc.bindKnown then
+            row.bindKnown = false
+            row.isWarbound = false
+        elseif not loc.isWarbound then
+            row.isWarbound = false
         end
         row.total = row.total + loc.count
         tinsert(row.slots, loc)
@@ -609,7 +669,30 @@ local function PlanItemsShipment(shipment, reserved, skipSet)
             available = 0
         end
 
-        local alloc = AllocateItem(shipment, targets, available, itemID, restockSources)
+        local allocTargets = targets
+        if CrossRealmMode(shipment) == "warbound" then
+            allocTargets = {}
+            local deliverable = row.bindKnown and row.isWarbound
+            for _, target in ipairs(targets) do
+                local tier = RealmTier(target)
+                if tier == "full" or (tier == "warbound" and deliverable) then
+                    tinsert(allocTargets, target)
+                elseif tier == "warbound" and available > 0 and ItemNeed(shipment, target, itemID, restockSources) > 0 then
+                    local held = perTarget[target].held
+                    if not held then
+                        held = {}
+                        perTarget[target].held = held
+                    end
+                    if not row.bindKnown then
+                        held.unknown = true
+                    else
+                        held.item = true
+                    end
+                end
+            end
+        end
+
+        local alloc = AllocateItem(shipment, allocTargets, available, itemID, restockSources)
         local usedSlots = {}
         for _, loc in ipairs(row.slots) do
             usedSlots[loc] = loc.count
@@ -634,6 +717,8 @@ local function PlanItemsShipment(shipment, reserved, skipSet)
                             count = take,
                             itemID = itemID,
                             link = loc.link,
+                            isWarbound = loc.isWarbound,
+                            bindKnown = loc.bindKnown,
                         })
                         usedSlots[loc] = remain - take
                         left = left - take
@@ -701,9 +786,95 @@ local function PlanItemsShipment(shipment, reserved, skipSet)
                 end
             end
         end
+        if CrossRealmMode(shipment) == "warbound" then
+            local tier = RealmTier(target)
+            local held = bucket.held
+            if #jobs == 0 and (plan.skipReason == "underfunded" or plan.skipReason == "nothing") then
+                if tier == "none" then
+                    plan.skipReason = "cross-realm-other"
+                elseif tier == "warbound" and held then
+                    plan.skipReason = "cross-realm-warbound"
+                end
+            elseif #jobs > 0 and held then
+                plan.omitDetail = ns.L["LOG_OMIT_CROSS_REALM_ITEMS"]
+                if held.unknown then
+                    plan.omitDetail = ns.L["LOG_OMIT_CROSS_REALM_UNKNOWN"]
+                end
+            end
+        end
         tinsert(plans, plan)
     end
     return plans
+end
+
+local function BlockerBits(plan)
+    local gold, item, unknown = false, false, false
+    for _, job in ipairs(plan.jobs or {}) do
+        if (job.money or 0) > 0 then
+            gold = true
+        end
+        for _, loc in ipairs(job.slots or {}) do
+            if not loc.bindKnown then
+                unknown = true
+            elseif not loc.isWarbound then
+                item = true
+            end
+        end
+    end
+    return gold, item, unknown
+end
+
+local function FormatBlocker(target, gold, item, unknown)
+    local why = {}
+    if gold then
+        tinsert(why, ns.L["CROSS_REALM_BLOCK_GOLD"])
+    end
+    if item then
+        tinsert(why, ns.L["CROSS_REALM_BLOCK_ITEM"])
+    end
+    if unknown then
+        tinsert(why, ns.L["CROSS_REALM_BLOCK_UNKNOWN"])
+    end
+    local name = target or "?"
+    return string.format("%s (%s)", name, table.concat(why, ", "))
+end
+
+--- Cancel mode: if any off-group recipient would get gold, a non-Warbound
+--- item, or an unread bind, drop every job and leave one skip for Activity.
+local function ApplyCrossRealmCancel(shipment, plans, reserved)
+    if CrossRealmMode(shipment) ~= "cancel" then
+        return plans
+    end
+    local lines = {}
+    local firstTarget
+    for _, plan in ipairs(plans) do
+        if #(plan.jobs or {}) > 0 and not ns.AddressBook:IsSameRealmGroup(plan.target) then
+            local gold, item, unknown = BlockerBits(plan)
+            if gold or item or unknown then
+                if not firstTarget then
+                    firstTarget = plan.target
+                end
+                tinsert(lines, FormatBlocker(plan.target, gold, item, unknown))
+            end
+        end
+    end
+    if #lines == 0 then
+        return plans
+    end
+    if reserved then
+        for _, plan in ipairs(plans) do
+            for _, entry in ipairs(plan.entries or {}) do
+                if entry.itemID and entry.quantity then
+                    local left = (reserved[entry.itemID] or 0) - entry.quantity
+                    if left < 0 then
+                        left = 0
+                    end
+                    reserved[entry.itemID] = left
+                end
+            end
+        end
+    end
+    return { EmptyPlan(shipment, firstTarget, "cross-realm-cancel", table.concat(lines, "\n")) }
 end
 
 --- Build plan(s) for one shipment. Role targets yield one plan per member.
@@ -712,10 +883,13 @@ end
 ---@param skipSet table|nil
 ---@return table plans
 local function PlanShipment(shipment, reserved, skipSet)
+    local plans
     if (shipment.kind or "items") == "gold" then
-        return PlanGoldShipment(shipment, skipSet)
+        plans = PlanGoldShipment(shipment, skipSet)
+    else
+        plans = PlanItemsShipment(shipment, reserved, skipSet)
     end
-    return PlanItemsShipment(shipment, reserved, skipSet)
+    return ApplyCrossRealmCancel(shipment, plans, reserved)
 end
 
 --- Dry-run plan for a selection of shipments.
