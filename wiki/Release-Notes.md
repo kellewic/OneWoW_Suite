@@ -28,6 +28,7 @@
 - Enchanting, Mining, Herbalism, and Skinning weeklies show complete after you turn them in. They no longer stay on Not Yet Accepted.
 
 #### Crafting Orders
+- You Provide shows reagents you already have. Check Only show mats I still need to hide them.
 - Click Order, Gold, Profit / Loss, or Time to sort the list. Starting an order no longer jumps that row to the top.
 
 #### ESC Menu Panel

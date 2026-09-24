@@ -26,7 +26,7 @@ the overlay is shown. Patron / Guild / Personal are always a flat order list.
   (Order name stays pinned left). Defaults show You Provide, Cart,
   Profit / Loss, Time, and Craft, in that order. Gold, Customer Provides,
   and You Receive start hidden. Icon sizes default to 27. "Only mats I still
-  need" starts on. Profit / Loss prices default to OneWoW. Compact View
+  need" starts off. Profit / Loss prices default to OneWoW. Compact View
   starts on (Blizzard's 20px row height, icons capped at 16; icon sliders
   apply when Compact View is off). Features has a width slider for each
   shown column (maximums; they still apply in Compact View). Hide list

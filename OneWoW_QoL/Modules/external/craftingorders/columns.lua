@@ -102,6 +102,8 @@ local function CopyLayoutDefaults()
         hidden = CopyTable(DEFAULT_HIDDEN),
         sizes = CopyTable(DEFAULT_SIZES),
         hideHaveMats = false,
+        -- Old default was on. Applied means a later checkbox choice is kept.
+        hideHaveMatsDefaultMigrated = true,
         tight = true,
         hideScrollBar = false,
         priceSource = "onewow",
@@ -176,6 +178,11 @@ local function MergeLayout(saved)
     end
     if saved.hideHaveMats ~= nil then
         layout.hideHaveMats = saved.hideHaveMats == true
+    end
+    -- Saved true is either the old default or an explicit check. Apply the
+    -- off default once; the flag keeps a later check.
+    if saved.hideHaveMatsDefaultMigrated ~= true then
+        layout.hideHaveMats = false
     end
     if saved.tight ~= nil then
         layout.tight = saved.tight == true
