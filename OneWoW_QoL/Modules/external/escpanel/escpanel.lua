@@ -71,6 +71,45 @@ function ESCPanelModule:CreateCustomDetail(detailScrollChild, yOffset, _, regist
     stack.OnRelayout = applyHostHeight
 
     local layoutRefresh
+    local characterRefresh
+
+    stack:AddCard("escpanel:character", L["ESCPANEL_TOGGLE_SHOW_CHARACTER"], function(content, contentWidth)
+        local w = tonumber(contentWidth) or 0
+        if w < 1 then
+            w = content:GetWidth() or 0
+        end
+
+        local goldCb = OneWoW_GUI:CreateCheckbox(content, {
+            label = L["ESCPANEL_GOLD_ONLY"],
+            checked = OneWoW:GetPortalHub().escGoldOnly and true or false,
+            onClick = function(myself)
+                OneWoW:GetPortalHub().escGoldOnly = myself:GetChecked() and true or false
+                ns.PortalHubEsc:Reload()
+            end,
+        })
+        goldCb:SetPoint("TOPLEFT", content, "TOPLEFT", 0, 0)
+
+        local goldDesc = content:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        goldDesc:SetPoint("TOPLEFT", goldCb, "BOTTOMLEFT", 0, -4)
+        goldDesc:SetJustifyH("LEFT")
+        goldDesc:SetWordWrap(true)
+        goldDesc:SetSpacing(2)
+        if w >= 1 then
+            goldDesc:SetWidth(w)
+        else
+            goldDesc:SetPoint("RIGHT", content, "RIGHT", 0, 0)
+        end
+        goldDesc:SetText(L["ESCPANEL_GOLD_ONLY_DESC"])
+        goldDesc:SetTextColor(OneWoW_GUI:GetThemeColor("TEXT_MUTED"))
+
+        characterRefresh = function()
+            goldCb:SetChecked(OneWoW:GetPortalHub().escGoldOnly and true or false)
+        end
+
+        local cbH = goldCb:GetMeasuredHeight()
+        local descH = goldDesc:GetStringHeight() or 14
+        return math.max(1, cbH + 4 + descH)
+    end)
 
     stack:AddCard("escpanel:layout", L["ESCPANEL_LAYOUT_HEADER"], function(content, contentWidth)
         local gap = 8
@@ -231,6 +270,9 @@ function ESCPanelModule:CreateCustomDetail(detailScrollChild, yOffset, _, regist
 
     if registerRefresh then
         registerRefresh(function()
+            if characterRefresh then
+                characterRefresh()
+            end
             if layoutRefresh then
                 layoutRefresh()
             end

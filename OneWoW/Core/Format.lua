@@ -89,10 +89,12 @@ end
 --- Format a copper amount as gold/silver/copper text. Respects the
 --- moneyDisplay settings: coin textures vs colored g/s/c letters, and
 --- white vs classic gold/silver/copper digits in both modes. Gold amounts
---- always use FormatNumber grouping.
+--- always use FormatNumber grouping. goldOnly keeps the gold amount
+--- (including 0) and drops silver and copper.
 ---@param copper number|nil copper amount; nil/non-number treated as 0
+---@param goldOnly boolean|nil when true, omit silver and copper
 ---@return string
-function Format.FormatGold(copper)
+function Format.FormatGold(copper, goldOnly)
     if copper == nil or type(copper) ~= "number" then
         copper = 0
     else
@@ -108,6 +110,14 @@ function Format.FormatGold(copper)
     local cop = absCopper % 100
     local prefix = isNegative and "-" or ""
     local goldNum = Format.FormatNumber(gold)
+
+    if goldOnly then
+        local gC = AmountColors(useWhite)
+        if not useLetters then
+            return prefix .. GOLD_AMOUNT_TEXTURE_STRING:format(gC .. goldNum .. "|r", 0, 0)
+        end
+        return prefix .. format("%s%s|r%sg|r", gC, goldNum, GOLD_DIGIT)
+    end
 
     if not useLetters then
         return prefix .. CoinTextureString(gold, silver, cop, useWhite)

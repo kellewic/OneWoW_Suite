@@ -1492,7 +1492,7 @@ function StatusCards:RefreshYou(panel, data)
 
     panel.statStrip:SetItemValue(1, tostring(data.itemLevel))
     panel.statStrip:SetItemValue(2, tostring(data.mythicPlusRating))
-    panel.statStrip:SetItemValue(3, ns.Format.FormatGold(data.money))
+    panel.statStrip:SetItemValue(3, ns.Format.FormatGold(data.money, panel.goldOnly))
 
     local identityH = math.max(
         PORTRAIT_SIZE + 8,

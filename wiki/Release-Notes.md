@@ -30,6 +30,9 @@
 #### Crafting Orders
 - Click Order, Gold, Profit / Loss, or Time to sort the list. Starting an order no longer jumps that row to the top.
 
+#### ESC Menu Panel
+- Character Card can show gold only, without silver or copper. The option is under Character Card in ESC Menu Panel settings.
+
 ---
 
 ### AltTracker
@@ -43,7 +46,7 @@
 
 ---
 
-- **Last Updated**: Sep 21, 2026
+- **Last Updated**: Sep 24, 2026
 
 ## R6.2609.1519
 

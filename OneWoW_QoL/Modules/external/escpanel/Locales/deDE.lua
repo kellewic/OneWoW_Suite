@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "deDE", {
     ["ESCPANEL_SIDE_RIGHT"] = "Rechts vom Menü",
     ["ESCPANEL_LAYOUT_DESC"] = "Schalte Charakterkarte, Zonenkarte und Portale oben ein oder aus. Bilder der beiden Karten stehen darunter. Wenn Karten und Portale auf derselben Seite sind, sitzen die Portale außen (weiter vom Menü) und die Karten neben dem Menü.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "Größe der Portalsymbole",
+    ["ESCPANEL_GOLD_ONLY"] = "Nur Gold",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "Zeigt auf der Charakterkarte nur Gold. Silber und Kupfer entfallen.",
 })

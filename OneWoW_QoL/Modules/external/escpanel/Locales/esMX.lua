@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "esMX", {
     ["ESCPANEL_SIDE_RIGHT"] = "A la derecha del menu",
     ["ESCPANEL_LAYOUT_DESC"] = "Activa o desactiva Carta de personaje, Carta de zona y Portales arriba. Las imagenes de las dos cartas estan debajo. Si las cartas y los portales estan en el mismo lado, los portales quedan fuera (mas lejos del menu) y las cartas junto al menu.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "Tamano de icono de portal",
+    ["ESCPANEL_GOLD_ONLY"] = "Solo oro",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "Muestra el oro en la carta de personaje. La plata y el cobre no aparecen.",
 })

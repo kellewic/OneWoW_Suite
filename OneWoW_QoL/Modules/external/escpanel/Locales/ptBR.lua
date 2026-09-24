@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "ptBR", {
     ["ESCPANEL_SIDE_RIGHT"] = "A direita do menu",
     ["ESCPANEL_LAYOUT_DESC"] = "Ative ou desative Cartao de personagem, Cartao de zona e Portais acima. As imagens dos dois cartoes ficam abaixo. Quando cartoes e portais ficam do mesmo lado, os portais ficam do lado de fora (mais longe do menu) e os cartoes ao lado do menu.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "Tamanho do icone de portal",
+    ["ESCPANEL_GOLD_ONLY"] = "Somente ouro",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "Mostra so ouro no cartao de personagem. Prata e cobre ficam de fora.",
 })

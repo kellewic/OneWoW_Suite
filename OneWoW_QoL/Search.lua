@@ -88,3 +88,27 @@ Search:Register({
     path = PortalsPath("PORTAL_SHOW_MAGE_PORTALS"),
     nav = portalsNav,
 })
+
+local escScope = "OneWoW_QoL.escpanel"
+
+local function EscPanelText(key)
+    return function()
+        return OneWoW.Locale:GetTable(escScope)[key]
+    end
+end
+
+Search:Register({
+    id = "qol-mod:escpanel:gold-only",
+    title = "ESCPANEL_GOLD_ONLY",
+    description = "ESCPANEL_GOLD_ONLY_DESC",
+    scope = escScope,
+    tags = { "gold", "money", "silver", "copper", "character", "esc" },
+    addonKey = "OneWoW_QoL",
+    path = {
+        SR.ModuleLabel("qol"),
+        function() return ns.L["TAB_FEATURES"] end,
+        EscPanelText("ESCPANEL_TITLE"),
+        EscPanelText("ESCPANEL_GOLD_ONLY"),
+    },
+    nav = { module = "qol", subtab = "features" },
+})

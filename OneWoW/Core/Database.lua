@@ -77,6 +77,7 @@ local DEFAULTS = {
         escShowHere = true,
         escPortalsEnabled = true,
         escShowCharacterInfo = true,
+        escGoldOnly = false,
         escPanelsSide = "left",
         escPortalsSide = "right",
         allFavorites = {},

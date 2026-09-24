@@ -335,6 +335,7 @@ local function BuildYou(container, anchorPanel, hMode)
 	end
 	local panel = panelFrames.charInfo
 	AnchorBelow(panel, anchorPanel, hMode, 0)
+	panel.goldOnly = OneWoW:GetPortalHub().escGoldOnly and true or false
 	panel.showEndeavors = true
 	WireEndeavorEvents()
 	OneWoW.StatusCards:RefreshYou(panel, OneWoW.StatusCards:CollectYou({

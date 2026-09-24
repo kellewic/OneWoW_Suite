@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "frFR", {
     ["ESCPANEL_SIDE_RIGHT"] = "A droite du menu",
     ["ESCPANEL_LAYOUT_DESC"] = "Activez ou desactivez Carte Personnage, Carte Zone et Portails ci-dessus. Les images des deux cartes sont en dessous. Quand les cartes et les portails sont du meme cote, les portails se placent a l'exterieur (plus loin du menu) et les cartes a cote du menu.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "Taille des icones de portail",
+    ["ESCPANEL_GOLD_ONLY"] = "Or seulement",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "Affiche l'or sur la carte Personnage. L'argent et le cuivre sont omis.",
 })

@@ -18,4 +18,6 @@ OneWoW.Locale:Register(M._scope, "enUS", {
     ["ESCPANEL_SIDE_RIGHT"] = "Right of menu",
     ["ESCPANEL_LAYOUT_DESC"] = "Turn Character Card, Zone Card, and Portals on or off above. Pictures of the two cards are below. When cards and portals share a side, portals sit on the outside (farther from the menu) and cards sit next to the menu.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "Portal icon size",
+    ["ESCPANEL_GOLD_ONLY"] = "Gold only",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "Show gold on the Character Card. Silver and copper are left off.",
 })

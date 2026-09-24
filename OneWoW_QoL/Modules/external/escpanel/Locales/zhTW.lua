@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "zhTW", {
     ["ESCPANEL_SIDE_RIGHT"] = "選單右側",
     ["ESCPANEL_LAYOUT_DESC"] = "在上方開關角色卡片、區域卡片和傳送門。兩張卡片的圖片在下方。卡片和傳送門在同一側時，傳送門在外側（離選單較遠），卡片緊鄰選單。",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "傳送門圖示大小",
+    ["ESCPANEL_GOLD_ONLY"] = "僅顯示金幣",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "角色卡片只顯示金幣，不顯示銀幣和銅幣。",
 })

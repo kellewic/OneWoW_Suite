@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "koKR", {
     ["ESCPANEL_SIDE_RIGHT"] = "메뉴 오른쪽",
     ["ESCPANEL_LAYOUT_DESC"] = "위에서 캐릭터 카드, 지역 카드, 차원문을 켜거나 끕니다. 두 카드 그림이 아래에 있습니다. 카드와 차원문이 같은 쪽이면 차원문은 바깥쪽(메뉴에서 더 멀리)에, 카드는 메뉴 옆에 놓입니다.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "차원문 아이콘 크기",
+    ["ESCPANEL_GOLD_ONLY"] = "골드만",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "캐릭터 카드에는 골드만 나옵니다. 실버와 코퍼는 표시하지 않습니다.",
 })

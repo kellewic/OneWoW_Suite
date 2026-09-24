@@ -19,4 +19,6 @@ OneWoW.Locale:Register(M._scope, "itIT", {
     ["ESCPANEL_SIDE_RIGHT"] = "A destra del menu",
     ["ESCPANEL_LAYOUT_DESC"] = "Attiva o disattiva Scheda personaggio, Scheda zona e Portali qui sopra. Le immagini delle due schede sono sotto. Se schede e portali sono dallo stesso lato, i portali stanno fuori (piu lontani dal menu) e le schede accanto al menu.",
     ["ESCPANEL_ICON_SIZE_LABEL"] = "Dimensione icone portale",
+    ["ESCPANEL_GOLD_ONLY"] = "Solo oro",
+    ["ESCPANEL_GOLD_ONLY_DESC"] = "Mostra solo l'oro sulla scheda personaggio. Argento e rame restano fuori.",
 })
