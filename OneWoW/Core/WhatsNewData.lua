@@ -14,12 +14,11 @@ local _, ns = ...
 
 ns.WhatsNewData = {
     highlights = {
-        { titleKey = "WHATS_NEW_H_AFK_TITLE", bodyKey = "WHATS_NEW_H_AFK_BODY" },
+        { titleKey = "WHATS_NEW_H_FIRSTOPEN_TITLE", bodyKey = "WHATS_NEW_H_FIRSTOPEN_BODY" },
         { titleKey = "WHATS_NEW_H_CRAFTORDERS_TITLE", bodyKey = "WHATS_NEW_H_CRAFTORDERS_BODY" },
-        { titleKey = "WHATS_NEW_H_AUCTIONS_TITLE", bodyKey = "WHATS_NEW_H_AUCTIONS_BODY" },
-        { titleKey = "WHATS_NEW_H_TOOLTIPS_TITLE", bodyKey = "WHATS_NEW_H_TOOLTIPS_BODY" },
-        { titleKey = "MODULE_CATALOG", bodyKey = "WHATS_NEW_H_CATALOG_BODY" },
-        { titleKey = "MODULE_TRACKERS", bodyKey = "WHATS_NEW_H_TRACKERS_BODY" },
+        { titleKey = "WHATS_NEW_H_ESCGOLD_TITLE", bodyKey = "WHATS_NEW_H_ESCGOLD_BODY" },
+        { titleKey = "WHATS_NEW_H_QUESTAUTO_TITLE", bodyKey = "WHATS_NEW_H_QUESTAUTO_BODY" },
         { titleKey = "WAYPOINT_ARROW", bodyKey = "WHATS_NEW_H_WAYPOINTS_BODY" },
+        { titleKey = "MAIL", bodyKey = "WHATS_NEW_H_SHIPMENTS_BODY" },
     },
 }
