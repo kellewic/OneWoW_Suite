@@ -5,32 +5,12 @@
 ### Fixes
 - Button and label text shows the first time a window opens, including What's New and Patron orders, instead of staying blank until that font has been used once.
 
-### Catalog
-#### Fixes
-- Opening the profession window no longer errors when Tradeskills data has not loaded yet.
-- Quest rewards you learn from a dialog show up as item sources after that. Empty source lines say Catalog data not loaded when Catalog is on but that data is not in memory, not Catalog not enabled.
-
----
-
-### Trackers
-#### Fixes
-- Starting a boss fight in an older dungeon or raid no longer errors.
-
 ---
 
 ### QoL
-#### Tooltips
-- Item Tracker no longer lists hidden or internal quests under Where to get it, and no longer shows quest or achievement IDs on those lines.
-- Where to get it uses Catalog data already loaded this session. If Catalog is on but that data is not in memory, it says Catalog data not loaded, not Catalog not enabled.
-
-#### AFK Panel
-- Your character on the AFK screen stays in the middle gap and no longer covers the Character, Zone, or Info cards.
-- Enchanting, Mining, Herbalism, and Skinning weeklies show complete after you turn them in. They no longer stay on Not Yet Accepted.
-
 #### Crafting Orders
 - You Provide shows reagents you already have. Check Only show mats I still need to hide them.
 - The Gold column can show gold only. Hover a row for silver and copper. The option is under Columns.
-- Click Order, Gold, Profit / Loss, or Time to sort the list. Starting an order no longer jumps that row to the top.
 
 #### ESC Menu Panel
 - Character Card can show gold only, without silver or copper. The option is under Character Card in ESC Menu Panel settings.
@@ -46,21 +26,6 @@
 ### Mail
 #### Shipments
 - Each shipment has an Other realms choice under the target. Send is unchanged. Cancel shipment sends nothing when someone outside this realm group cannot take the whole letter, and Activity says who. Warbound items only still mails this realm group in full, and mails Warbound items to your alts on other realms.
-
----
-
-### AltTracker
-#### Auctions
-- Expired auction alerts only count listings still waiting at the AH or in the mail, not every expired listing in history.
-- Full auction-house scans start processing once price data is ready, instead of staying on Waiting for auction data.
-
----
-
-*No user-facing changes this release for Home, DevTool, Notes, Shopping List, Bags, or Direct Deposit.*
-
----
-
-- **Last Updated**: Sep 24, 2026
 
 ## R6.2609.1519
 
