@@ -416,14 +416,15 @@ function CatalogData:EnsureRole(roleOrName)
         ns:EnsureLoaded(TRADESKILL_ADDON)
         return TRADESKILL_ADDON
     end
+    if not ns:EnsureLoaded(RUNTIME_ADDON) then
+        return nil
+    end
     if self:IsEraAddon(roleOrName) then
-        ns:EnsureLoaded(RUNTIME_ADDON)
         ns:EnsureLoaded(roleOrName)
         self:ActivateEnabled(roleOrName)
         return RUNTIME_ADDON
     end
     local role = ROLE_TOPICS[roleOrName] and roleOrName or nil
-    ns:EnsureLoaded(RUNTIME_ADDON)
     -- Journal/zones place tables load per expansion via EnsureJournalShards.
     -- NPC / quest / item shards use the same current-first, rest-across-frames path.
     if role and role ~= "journal" and role ~= "zones" then
@@ -796,7 +797,9 @@ function CatalogData:EnsureRoleShards(role, expansionID)
     if not expansionID or expansionID == 0 or expansionID == -1 then
         return
     end
-    ns:EnsureLoaded(RUNTIME_ADDON)
+    if not ns:EnsureLoaded(RUNTIME_ADDON) then
+        return
+    end
     ScanInstalled()
     for i = 1, #eras do
         local era = eras[i]
@@ -821,7 +824,9 @@ function CatalogData:EnsureRoleShardsForFilter(role, expansionID, onUpdate)
         self:EnsureJournalShardsForFilter(expansionID, onUpdate)
         return
     end
-    ns:EnsureLoaded(RUNTIME_ADDON)
+    if not ns:EnsureLoaded(RUNTIME_ADDON) then
+        return
+    end
     ScanInstalled()
     if expansionID and expansionID ~= 0 and expansionID ~= -1 then
         self:CancelRoleShardJob(role)
